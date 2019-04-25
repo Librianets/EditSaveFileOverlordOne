@@ -1,3 +1,1 @@
-temp/funcsmain.o
-temp/main.o
-temp/overlord.o
+temp/*.o
