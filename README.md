@@ -2,7 +2,7 @@ Compressed/uncompressed save data
 
 Game: Overlord - Raising Hell
 
-Version program: 0.1
+Version program: 0.1 (by Librianets)
 
 Version game check: 0.4
 
