@@ -1,7 +1,8 @@
 CC = i686-w64-mingw32-gcc
 ar = 
 ranlib = 
-exe = overlord_sv.exe 
+exe = OverlordG_esd.exe 
+#project name = overlord game editor save data
 
 
 idir = ./include/
@@ -14,11 +15,6 @@ save = ./save/
 l = $(libdir)libz.a
 I = -I$(idir) -I./
 D =
-## -DDEBUG
-## -DDEBUG_hex
-## -Dchecksumfail
-## -Dcrcfail
-
 
 all: rm obj
 	@echo "gcc .o -->> .exe"
