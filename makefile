@@ -1,35 +1,30 @@
+#project name = overlord game editor save data = OG_ESD
+#project name = overlord game unpack and pack = OG_UPAP
+
 CC = i686-w64-mingw32-gcc
 ar = 
 ranlib = 
-exe = OverlordG_esd.exe 
-#project name = overlord game editor save data
+
+wg = ./gui/
+wc = ./console/
+
+include console/makefile
+include gui/makefile
+
+BLACK='\033[0;30m'     #  ${BLACK}    # чёрный цвет знаков
+RED='\033[0;31m'       #  ${RED}      # красный цвет знаков
+GREEN='\033[0;32m'     #  ${GREEN}    # зелёный цвет знаков
+YELLOW='\033[0;33m'     #  ${YELLOW}    # желтый цвет знаков
+BLUE='\033[0;34m'       #  ${BLUE}      # синий цвет знаков
+MAGENTA='\033[0;35m'     #  ${MAGENTA}    # фиолетовый цвет знаков
+CYAN='\033[0;36m'       #  ${CYAN}      # цвет морской волны знаков
+GRAY='\033[0;37m'       #  ${GRAY}      # серый цвет знаков
+ECHO_C='\033[0m'		# все атрибуты по умолчанию
 
 
-idir = ./include/
-libdir = ./lib/
-srcdir = ./win32/
-buildir = ./build/
-temp = ./temp/
-save = ./save/
 
-l = $(libdir)libz.a
-I = -I$(idir) -I./
-D =
 
-all: rm obj
-	@echo "gcc .o -->> .exe"
-	@$(CC) $(temp)funcsmain.o $(temp)main.o $(temp)overlord.o $(l) \
-	-o $(buildir)$(exe) 
-	@strip $(buildir)$(exe)
+#all: all_UPAP all_ESD
 
-rm:
-	@echo delete file
-	@rm -f $(temp)*.*
-	@rm -f $(buildir)*.*
-	@rm -f *.txt
-
-obj:
-	@echo "gcc .c -->> .o"
-	@$(CC) -c $(srcdir)main.c -o $(temp)main.o $(I) $(D)
-	@$(CC) -c $(srcdir)funcsmain.c -o $(temp)funcsmain.o $(I) $(D)
-	@$(CC) -c $(srcdir)overlord.c -o $(temp)overlord.o $(I) $(D)
+all:
+	@echo all_UPAP all_ESD
