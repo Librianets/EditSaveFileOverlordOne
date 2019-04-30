@@ -1,3 +1,4 @@
+.PHONY:
 #project name = overlord game editor save data = OG_ESD
 #project name = overlord game unpack and pack = OG_UPAP
 
@@ -8,8 +9,13 @@ ranlib =
 wg = ./gui/
 wc = ./console/
 
-include console/makefile
+ifdef gui
 include gui/makefile
+endif
+
+ifdef console
+include console/makefile
+endif
 
 BLACK='\033[0;30m'     #  ${BLACK}    # чёрный цвет знаков
 RED='\033[0;31m'       #  ${RED}      # красный цвет знаков
