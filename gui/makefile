@@ -13,8 +13,8 @@ bui_d 		= $(build)debug/
 
 I 			= -I $(include)
 l 			= 
-opt 		= -mwindows
-lang 		=  -x c++ 
+opt 		= -mwindows -fno-exceptions
+lang 		=
 
 ######
 punt =,
@@ -30,7 +30,7 @@ all_ESD: dir rm test strip
 
 test: $(includeobject)
 	@echo "gcc .o -->> .exe"
-	@$(CC) $(temp)$(includeobject_2) -o $(bui_d)$(exe) $(I) $(l) $(opt)
+	@$(CC) $(temp){$(includeobject_2)} -o $(bui_d)$(exe) $(I) $(l) $(opt)
 
 $(includeobject):
 	@echo "gcc .cpp -->> .o"
