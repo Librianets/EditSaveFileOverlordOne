@@ -2,9 +2,13 @@
 #project name = overlord game editor save data = OG_ESD
 #project name = overlord game unpack and pack = OG_UPAP
 
-CC = i686-w64-mingw32-gcc
-ar = 
-ranlib = 
+compile = i686-w64-mingw32
+CC = $(compile)-gcc
+ar = $(compile)-ar
+ranlib = $(compile)-ranlib
+wres = $(compile)-windres
+strip = $(compile)-strip.exe
+
 
 wg = ./gui/
 wc = ./console/

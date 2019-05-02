@@ -10,10 +10,13 @@ include 	= $(wg)include/
 build 		= $(wg)build/
 bui_r 		= $(build)release/
 bui_d 		= $(build)debug/
+res 		= $(wg)res/
 
-I 			= -I $(include)
-l 			= 
-opt 		= -mwindows -fno-exceptions
+I 			= -I$(include) -I$(res) -L$(lib)
+l 			= -lres
+opt 		= -mwindows -fno-exceptions -municode
+#-municode
+# -D_UNICODE -DUNICODE
 lang 		=
 
 ######
@@ -25,7 +28,7 @@ includefile 	= $(notdir $(wildcard $(w32)*.cpp))
 includeobject 	= $(patsubst %.cpp, %.o, $(includefile))
 includeobject_2 = $(subst $(space),$(punt),$(strip $(includeobject)))
 
-all_ESD: dir rm test strip
+all_ESD: dir rm windres test strip
 	@echo "project name -> overlord game editor save data -> OG_ESD"
 
 test: $(includeobject)
@@ -36,9 +39,19 @@ $(includeobject):
 	@echo "gcc .cpp -->> .o"
 	@$(CC) $(lang) -c $(w32)$*.cpp -o $(temp)$*.o $(I) $(l) $(opt)
 
+ar:
+	@echo "ar"
+
+ranlib:
+	@echo "ranlib"
+
+windres:
+	@echo "rc --> libres.a"
+	@$(wres) --input=$(res)res.rc --output=$(lib)libres.a
+
 strip:
 	@echo "strip exe"
-	@strip $(bui_d)$(exe)
+	@$(strip) $(bui_d)$(exe)
 
 dir:
 	@mkdir -v -p $(w32)
@@ -55,3 +68,4 @@ rm:
 	@rm -f $(bui_d)*.*
 	@rm -f $(bui_r)*.*
 	@rm -f $(temp)*.*
+	@rm -f $(lib)*.a
