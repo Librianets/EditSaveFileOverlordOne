@@ -1,24 +1,19 @@
-#include "cw.h"
-
-void destroy_all (void)
-{
-CloseWindow(global_window);
-UnregisterClass(name_global_class, win32_hinst);
-PostQuitMessage(0);
-}
+#include "global.hpp"
 
 void OnPaint(HWND hInstance)
 {
-PAINTSTRUCT ps;
+PAINTSTRUCT ps; // typedef struct PAINTSTRUCT {HDC  hdc; BOOL fErase; RECT rcPaint; BOOL fRestore; BOOL fIncUpdate; BYTE rgbReserved[32];}
 RECT rc;
+HDC hdc_globalwindow;
 
-HDC hdc = BeginPaint(hInstance, &ps);
-GetClientRect(hInstance, &rc);
-FillRect(hdc, &rc, (HBRUSH) COLOR_WINDOW);
+hdc_globalwindow = BeginPaint(hInstance, &ps);
+if (hdc_globalwindow == NULL){PostQuitMessage(WM_NULL);}
+
+GetClientRect(hInstance, &rc); //заполнитель... 
+
+FillRect(hdc_globalwindow, &rc, (HBRUSH) LTGRAY_BRUSH);
 EndPaint(hInstance, &ps);
 }
-
-
 
 BOOL lia_RegClass (WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTANCE hinstance)
 {
@@ -35,41 +30,41 @@ BOOL lia_RegClass (WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTA
 	classex.lpszClassName = szClassName;
 	classex.hIconSm = NULL;
 	
-	unsigned int f_r;
-	f_r = RegisterClassEx(&classex);
+	if (!RegisterClassEx(&classex)){error(gclassnot, exit_app);}
 	
-	if (f_r == 0) 
-	{
-		MessageBox(NULL, L"Error 0: Не могу зарегистрировать класс окна!", L"Ошибка", MB_OK);
-		exit(1);
-	} 
-	else {return TRUE;}
+return TRUE;
 }
 
 LRESULT CALLBACK global_call (HWND hInstance, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	
-switch (msg)
-{
-case WM_PAINT:
-{
-OnPaint(hInstance);
-break;
-}
-
-case WM_DESTROY: destroy_all(); break;
-case WM_COMMAND:
+	switch (msg)
 	{
+		case WM_PAINT: 
+		{
+		if (global_window != NULL) {OnPaint(hInstance);}
+		break;
+		}
+		
+		case WM_DESTROY: {destroy_all(); break;}
+		
+		case WM_COMMAND:
+		{
 		if (HIWORD(wParam) == 0)
 		{
 			switch (LOWORD(wParam))
 			{
-				case IDM_ABOUT:
+				case IDMI_ABOUT:
 				{
-					notmodaldialog = CreateDialog(win32_hinst, MAKEINTRESOURCE(IDM_ABOUT), global_window, about_funcs);
+					notmodaldialog = CreateDialog(gapp.inst, MAKEINTRESOURCE(IDMI_ABOUT), global_window, about_funcs);
 					ShowWindow(notmodaldialog, SW_SHOW); //nCmdShow
 				}break;
-		
+				
+				case IDMI_EXIT:
+				{
+					PostQuitMessage(WM_DESTROY);
+				}break;
+				
 				default: return (DefWindowProc(hInstance, msg, wParam, lParam));
 			}
 		} else {break;}
@@ -86,19 +81,54 @@ BOOL CALLBACK about_funcs(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		case WM_INITDIALOG: return TRUE; break;
 		case WM_COMMAND:
 		{
-		if (LOWORD(wparam) == IDM_ABOUT_ctrl1){EndDialog(hwnd, 0);} else {break;}
+		if (LOWORD(wparam) == IDMI_ABOUT_1){EndDialog(hwnd, 0);} else {break;}
 		}
 	}
 		
 return FALSE;
 }
 
-
-void Paintlogo(HWND hInstance)
+void CreateMainWindow (void) 
 {
-logo = CreateWindowEx(WS_EX_TRANSPARENT, NULL, L"123", SS_BITMAP, 500, 500, 400, 203, NULL, NULL, win32_hinst, NULL);
+	lia_RegClass(global_class, global_call, gapp._class, gapp.inst);
+	
+	gapp.wnd = CreateWindowEx(0, gapp._class, gapp._wnd, \
+	WS_CAPTION | WS_POPUPWINDOW | WS_MINIMIZEBOX, 300, 300, 600, 600, NULL, NULL, gapp.inst, NULL); //|WS_EX_TRANSPARENT|WS_EX_OVERLAPPEDWINDOW WS_EX_DLGMODALFRAME
 
-ShowWindow(logo, SW_SHOW);
-sleep(5);
-CloseWindow(logo);
+	if (!gapp.wnd){error(gwndnot, exit_app);}
+
+
+	ShowWindow(gapp.wnd,SW_SHOW); //nCmdShow
+	
+	UpdateWindow(gapp.wnd);//WM_PAINT
+
+
+//	CreateMainMenu();
+//	SetMenu(gApp.hWnd, gApp.hMenu);
+}
+
+void runmsg(void)
+{
+	haccel = LoadAccelerators(gapp.inst, MAKEINTRESOURCE(ID_G_ACCEL)); 
+    if (haccel == NULL) {error(gaccelnot, exit_app);}
+	
+	while(GetMessage(&msg, NULL, 0, 0))
+	{
+		if (IsDialogMessage(notmodaldialog, &msg) == TRUE)
+		{
+			
+		}
+		else
+		{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+		}
+	}
+}
+
+void destroy_all (void)
+{
+CloseWindow(global_window);
+UnregisterClass(gapp._class, gapp.inst);
+PostQuitMessage(WM_NULL);
 }

@@ -17,7 +17,7 @@ l 			= -lres
 opt 		= -mwindows -fno-exceptions -municode
 #-municode
 # -D_UNICODE -DUNICODE
-lang 		=
+lang 		= -x c++
 
 ######
 punt =,
@@ -28,29 +28,39 @@ includefile 	= $(notdir $(wildcard $(w32)*.cpp))
 includeobject 	= $(patsubst %.cpp, %.o, $(includefile))
 includeobject_2 = $(subst $(space),$(punt),$(strip $(includeobject)))
 
-all_ESD: dir rm windres test strip
-	@echo "project name -> overlord game editor save data -> OG_ESD"
+all_ESD: start dir rm windres test strip end
+	
+
+end:
+	@echo -e ""
+	@echo -e "${GREEN}Ending compile project."
+	@echo -e "${YELLOW}Project name -> overlord game editor save data -> OG_ESD$(ECHO_C)"
+
+start:
+	@echo -e "${YELLOW}Start compile project."
+	@echo -e "${GREEN}Project name -> overlord game editor save data -> OG_ESD"
+	@echo -e "$(ECHO_C)"
 
 test: $(includeobject)
-	@echo "gcc .o -->> .exe"
+	@echo -e "$(includeobject_2) -->> $(exe)"
 	@$(CC) $(temp){$(includeobject_2)} -o $(bui_d)$(exe) $(I) $(l) $(opt)
 
 $(includeobject):
-	@echo "gcc .cpp -->> .o"
+	@echo -e "$*.cpp -->> $*.o"
 	@$(CC) $(lang) -c $(w32)$*.cpp -o $(temp)$*.o $(I) $(l) $(opt)
 
 ar:
-	@echo "ar"
+	@echo -e "ar"
 
 ranlib:
-	@echo "ranlib"
+	@echo -e "ranlib"
 
 windres:
-	@echo "rc --> libres.a"
+	@echo -e "res.rc --> libres.a"
 	@$(wres) --input=$(res)res.rc --output=$(lib)libres.a
 
 strip:
-	@echo "strip exe"
+	@echo -e "${YELLOW}strip $(exe)$(ECHO_C)"
 	@$(strip) $(bui_d)$(exe)
 
 dir:
