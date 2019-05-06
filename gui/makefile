@@ -12,8 +12,9 @@ bui_r 		= $(build)release/
 bui_d 		= $(build)debug/
 res 		= $(wg)res/
 
-I 			= -I$(include) -I$(res) -L$(lib)
-l 			= -lres
+I 			= -I$(include) -I$(res)
+l 			= -lres -L$(lib) -static-libgcc -static-libstdc++
+# -lkernel32 -luser32 -lgdi32 -lcomdlg32
 opt 		= -mwindows -fno-exceptions -municode
 #-municode
 # -D_UNICODE -DUNICODE
@@ -28,7 +29,7 @@ includefile 	= $(notdir $(wildcard $(w32)*.cpp))
 includeobject 	= $(patsubst %.cpp, %.o, $(includefile))
 includeobject_2 = $(subst $(space),$(punt),$(strip $(includeobject)))
 
-all_ESD: start dir rm windres test strip end
+all_ESD: start dir rm windres test strip deltemp end
 	
 
 end:
@@ -57,7 +58,7 @@ ranlib:
 
 windres:
 	@echo -e "res.rc --> libres.a"
-	@$(wres) --input=$(res)res.rc --output=$(lib)libres.a
+	@$(wres) --input=$(res)res.rc --output=$(lib)libres.a $(I)
 
 strip:
 	@echo -e "${YELLOW}strip $(exe)$(ECHO_C)"
@@ -74,8 +75,10 @@ dir:
 	@mkdir -v -p $(bui_r)
 	@mkdir -v -p $(bui_d)
 	
-rm:
+rm: deltemp
 	@rm -f $(bui_d)*.*
 	@rm -f $(bui_r)*.*
+
+deltemp:
 	@rm -f $(temp)*.*
-	@rm -f $(lib)*.a
+	@rm -f $(lib)*.a	

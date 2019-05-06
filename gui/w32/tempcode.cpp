@@ -1,6 +1,10 @@
-
-
-
+/*
+HMODULE handle = GetModuleHandle(NULL);
+HRSRC rc = FindResource(handle, MAKEINTRESOURCE(name), MAKEINTRESOURCE(type));
+HGLOBAL rcData = LoadResource(handle, rc);
+DWORD size = SizeofResource(handle, rc);
+const char *data = static_cast<const char *>(LockResource(rcData));
+*/
 
 
 
