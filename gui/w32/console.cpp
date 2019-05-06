@@ -14,6 +14,9 @@ void openconsole (void)
 	AllocConsole();
 	SetConsoleTitle(L"Overlord_console");
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	CreateConsoleScreenBuffer(GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+	//PCONSOLE_SCREEN_BUFFER_INFO 
+	//GetConsoleScreenBufferInfo(hConsole, );
 	}
 	else{error(console, notexitapp);}
 }
