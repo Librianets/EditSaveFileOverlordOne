@@ -2,19 +2,19 @@
 
 RECT rectmainwnd;
 
-HWND hDialog1;
+HWND hDlgAbout;
+HWND hDlgConsole;
 HACCEL hAccel;
-WNDCLASSEX WndC_main;
 HWND hLogo;
-HANDLE hConsole;
+
+WNDCLASSEX WndC_main;
 
 AppData gapp;
 Data dapp[MAXCOUNTERPOINTER];
 sizeall scwnd, szwnd, pwnd, t_xy_dia;
 
 wchar_t s_gclass[MAXCLASSNAME] = L"Class main window";
-wchar_t s_gwnd[MAXCLASSNAME] = L"Editor save data Overlord Game";
-
+wchar_t s_gwnd[MAXCLASSNAME] = L"Редактор сохранений игры Overlord";
 
 wchar_t sError[MAXMSGLEN] 		= L"Ошибка";
 wchar_t sWarning[MAXMSGLEN] 	= L"Предупреждение";
@@ -22,8 +22,8 @@ wchar_t s_gwndnot[MAXMSGLEN] 	= L"Не удалось создать главн�
 wchar_t s_gclassnot[MAXMSGLEN] 	= L"Не удалось зарегистрировать класс окна";
 wchar_t s_gaccelnot[MAXMSGLEN] 	= L"Проблемы с таблицей акселератов";
 wchar_t s_filecheck[MAXMSGLEN] 	= L"Проблемы с файлом. Повторите попытку";
-wchar_t s_console[MAXMSGLEN] 	= L"Консоль уже открыта";
-
+wchar_t s_console[MAXMSGLEN] 	= L"Не удалось создать консоль";
+wchar_t globalmsg[MAXPATHLEN]	= L"TEST TEST TEST";
 
 wchar_t fileopen[MAXPATHLEN];
 
@@ -34,6 +34,7 @@ void clearval(void)
 
 void initiationval(HINSTANCE hInstance)
 {
+
 gapp.inst = NULL;
 gapp.wnd = NULL;
 gapp.menu = NULL;
@@ -58,8 +59,10 @@ AdjustWindowRectEx(&rectmainwnd, WS_CAPTION | WS_POPUPWINDOW | WS_MINIMIZEBOX, T
 szwnd.x = rectmainwnd.right-rectmainwnd.left;
 szwnd.y = rectmainwnd.bottom-rectmainwnd.top;
 
-dapp[0].hWnd = hDialog1;
+dapp[0].hWnd = hDlgAbout;
 dapp[0].WndProc = AboutWndProc;
 
-hConsole = NULL;
+dapp[1].hWnd = hDlgConsole;
+dapp[1].WndProc = ConsoleWndProc;
+
 }

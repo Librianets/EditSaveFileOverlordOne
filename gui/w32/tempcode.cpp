@@ -86,3 +86,40 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return (INT_PTR)FALSE;
 }*/
+
+
+
+
+	
+/*
+#define maxfilesize		1048576
+HANDLE hfileread;
+CreateFile()
+unsigned char [maxfilesize];
+ReadFile(hFile, lpBuff, dwBuffSize, &dwCount, NULL);
+
+Чтение из файла в буфер lpBuff размером dwBuffSize. В переменную dwCount записывается реальное количество прочитанных байт. Последний опциональный аргумент называется lpOverlapped и о нем сейчас знать не нужно.
+
+WriteFile(hFile, lpBuff, dwBuffSize, &dwCount, NULL);
+Аргументы и семантика процедуры WriteFile полностью аналогичны ReadFile.
+
+CloseHandle(hFile);*/
+	
+/*
+HANDLE CreateFile(
+  LPCTSTR  lpFileName,                         // имя файла
+  DWORD  dwDesiredAccess,                      // режим доступа
+  DWORD  dwShareMode,                          // совместный доступ
+  LPSECURITY_ATTRIBUTES  lpSecurityAttributes, // SD (дескр. защиты)
+  DWORD  dwCreationDisposition,                // как действовать
+  DWORD  dwFlagsAndAttributes,                 // атрибуты файла
+  HANDLE  hTemplateFile                        // дескр.шаблона файла
+);
+
+BOOL ReadFile(
+  HANDLE hFile,                // дескриптор файла
+  LPVOID lpBuffer,             // буфер данных
+  DWORD nNumberOfBytesToRead,  // число байтов для чтения
+  LPDWORD lpNumberOfBytesRead, // число прочитанных байтов
+  LPOVERLAPPED lpOverlapped    // асинхронный буфер
+);*/

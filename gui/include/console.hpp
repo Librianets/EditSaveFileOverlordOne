@@ -1,10 +1,10 @@
 #ifndef __CONSOLE_HPP__
 #define __CONSOLE_HPP__
 
-extern HANDLE hConsole;
-void logging (wchar_t nametype, typeval val);
-void openconsole (void);
-void closeconsole (void);
-void writeconsole (void);
+void initconsole(void);
+void log(const wchar_t *fmt, ...);
+void writedlgconsole(void);
+void dlgconsoleshow(void);
+void dlgconsolehide(void);
 
 #endif //__CONSOLE_HPP__

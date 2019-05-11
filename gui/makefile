@@ -29,7 +29,13 @@ includefile 	= $(notdir $(wildcard $(w32)*.cpp))
 includeobject 	= $(patsubst %.cpp, %.o, $(includefile))
 includeobject_2 = $(subst $(space),$(punt),$(strip $(includeobject)))
 
-all_ESD: start dir rm windres test strip deltemp end
+ifdef log_mode
+opt += -Dlog_mode
+endif
+
+all_ESD: start dir rm windres
+all_ESD_test2: $(includeobject)
+all_ESD_test: exe strip deltemp end
 	
 
 end:
@@ -42,7 +48,7 @@ start:
 	@echo -e "${GREEN}Project name -> overlord game editor save data -> OG_ESD"
 	@echo -e "$(ECHO_C)"
 
-test: $(includeobject)
+exe:
 	@echo -e "$(includeobject_2) -->> $(exe)"
 	@$(CC) $(temp){$(includeobject_2)} -o $(bui_d)$(exe) $(I) $(l) $(opt)
 

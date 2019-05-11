@@ -4,10 +4,12 @@ int WINAPI wWinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpszCmd
 {
 	initiationval(hInstance);
 	CreateMainWindow();
+	initconsole();
+
 	runmsg();
-	
 return 0;	
 }
+
 /*
 s		string					строка	sClientName
 sz		zero-terminated string	строка, ограниченная нулевым символом	szClientName

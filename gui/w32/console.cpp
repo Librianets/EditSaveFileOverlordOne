@@ -1,36 +1,43 @@
 #include "global.hpp"
 
-DWORD tmp;
-void logging (wchar_t nametype, typeval val)
+
+void initconsole(void)
 {
+dapp[1].hWnd = CreateDialog(gapp.inst, MAKEINTRESOURCE(IDDLG_CONSOLE), gapp.wnd, dapp[1].WndProc);
+HMENU hMenuConsole = LoadMenu(gapp.inst, MAKEINTRESOURCE(IDM_MENUCONSOLE));
+SetMenu(dapp[1].hWnd, hMenuConsole);
+position_dia(gapp.wnd, dapp[1].hWnd);
+SetWindowPos(dapp[1].hWnd, HWND_TOP, t_xy_dia.x,(t_xy_dia.y+(-25+Y_CONSOLE_DLG)*2), 0, 0, SWP_NOSIZE );
+ShowWindow(dapp[1].hWnd, SW_HIDE);
+log(L"Project: ESD overlord.\n");
+wchar_t sTeststringconsole[15] = L"TEST ТЕСТ";
+log(L"TEST ТЕСТ. i=%i, c=%c, f=%f, s=%ls, wc=%ls", 5, 't', 5.5, L"ТЕСТ TEST", sTeststringconsole);
+}
+
+void log(const wchar_t *fmt, ...)
+{
+	va_list list;
+	DWORD tmp;
+	va_start(list, fmt);
+	vswprintf(globalmsg, sizeof(globalmsg), fmt, list);
+	va_end(list);
+	writedlgconsole();
 	
 }
 
-void openconsole (void)
+void writedlgconsole(void)
 {
-	if (hConsole == NULL)
-	{
-	tmp = 0x00;
-	AllocConsole();
-	SetConsoleTitle(L"Overlord_console");
-	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	CreateConsoleScreenBuffer(GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-	//PCONSOLE_SCREEN_BUFFER_INFO 
-	//GetConsoleScreenBufferInfo(hConsole, );
-	}
-	else{error(console, notexitapp);}
+	SendDlgItemMessage(dapp[1].hWnd, ID_CONSOLE_LB, LB_ADDSTRING,0,(LPARAM)globalmsg);
 }
 
-void closeconsole (void)
+void dlgconsoleshow(void)
 {
-	FreeConsole();
-	hConsole = NULL;
-	tmp = 0x00;
+	position_dia(gapp.wnd, dapp[1].hWnd);
+	SetWindowPos(dapp[1].hWnd, HWND_TOP, t_xy_dia.x,(t_xy_dia.y+(-25+Y_CONSOLE_DLG)*2), 0, 0, SWP_NOSIZE );
+	ShowWindow(dapp[1].hWnd, SW_SHOW);
 }
 
-void writeconsole (void)
+void dlgconsolehide(void)
 {
-	/*LPDWORD aa;
-	wchar_t ab[105] = L"qwe";
-	WriteConsole(hConsole, ab, 3, aa, NULL);*/
+	ShowWindow(dapp[1].hWnd, SW_HIDE);
 }
