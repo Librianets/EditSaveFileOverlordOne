@@ -2,38 +2,42 @@
 
 uniDataInfo uniDInfo;
 
-BOOL CheckFileSignature(uniDataInfo Info)
+BOOL CheckFileSignature(puniDataInfo Info, void* aBuf, void* table)
 {
-	uniDInfo.data.iConst1 		= 0xDEADBEEF;
-	uniDInfo.data.iConst2 		= 0xFEEDDEAF;
-	uniDInfo.data.iReserved 	= 0x00000002;
-	uniDInfo.data.iSignature 	= 0x5E78;
+	unsigned char *Buf = (unsigned char*) aBuf;
+	
+	Info->data.iConst1 		= 0xDEADBEEF;
+	Info->data.iConst2 		= 0xFEEDDEAF;
+	Info->data.iReserved 	= 0x00000002;
+	Info->data.iSignature 	= 0x5E78;
 	
 	if 
 	(
-	memcmp(&aGlobalBuffer[uniDInfo.data.iLenFile-12], &uniDInfo.data.iConst2, 4) 	== 0 &&
-	memcmp(&aGlobalBuffer[uniDInfo.data.iLenFile-16], &uniDInfo.data.iConst1, 4) 	== 0 &&
-	memcmp(&aGlobalBuffer[uniDInfo.data.iLenFile-4], &uniDInfo.data.iReserved, 4) 	== 0 &&
-	memcmp(&aGlobalBuffer[4], &uniDInfo.data.iSignature, 2) 						== 0
+	memcmp( &Buf[Info->data.iLenFile-0xC], &Info->data.iConst2, 4) 	== 0 &&
+	memcmp( &Buf[Info->data.iLenFile-0x10], &Info->data.iConst1, 4) 	== 0 &&
+	memcmp( &Buf[Info->data.iLenFile-0x4], &Info->data.iReserved, 4) 	== 0 &&
+	memcmp( &Buf[4], &Info->data.iSignature, 2) 					== 0
 	) {log(L"File check ok");} else {Error(ERROR_CHECKCONST, ERROR_NOTEXITAPP);return FALSE;}
 	
-	memcpy (&uniDInfo.data.iCrc32, &aGlobalBuffer[uniDInfo.data.iLenFile-8], 4);
-	memcpy (&uniDInfo.data.iChecksum, &aGlobalBuffer[uniDInfo.data.iLenFile-20], 4);
-	memcpy (&uniDInfo.data.iUnzip, &aGlobalBuffer[0], 4);
+	memcpy (&Info->data.iCrc32, &Buf[Info->data.iLenFile-0x8], 4);
+	memcpy (&Info->data.iChecksum, &Buf[Info->data.iLenFile-0xE], 4);
+	memcpy (&Info->data.iUnzip, &Buf[0], 4);
 	
-	log(L"info.iUnzip=%i", 		uniDInfo.data.iUnzip);
-	log(L"info.iCrc32=%x", 		uniDInfo.data.iCrc32);
-	log(L"info.iChecksum=%x",	uniDInfo.data.iChecksum);
-	log(L"info.iLenFile=%i", 	uniDInfo.data.iLenFile);
+	log(L"Info->iUnzip=%i", 	Info->data.iUnzip);
+	log(L"Info->iCrc32=%x", 	Info->data.iCrc32);
+	log(L"Info->iChecksum=%x",	Info->data.iChecksum);
+	log(L"Info->iLenFile=%i", 	Info->data.iLenFile);
 	
-	if (CheckCrc32((uniDInfo.data.iLenFile-(0x4+0x4+0x8)), &aGlobalBuffer[0x0], aTableCrc32) != uniDInfo.data.iCrc32) {Error(ERROR_CHECKCRC32, ERROR_NOTEXITAPP); return FALSE;}
+	if (CheckCrc32((Info->data.iLenFile-(0x4+0x4+0x8)), &Buf[0x0], table) != Info->data.iCrc32) {Error(ERROR_CHECKCRC32, ERROR_NOTEXITAPP); return FALSE;}
 	
 	PostMessage(gapp.wnd, MSG_CHECKFILE, 0, 0);
 }
 
-BOOL Compression(size_t iLenIn, size_t iLenOut, void* pAddressIn, void* pAddressOut)
+BOOL Compression(size_t iLenIn, size_t iLenOut, void* pAddressIn, void* pAddressOut, puniDataInfo Info)
 {
-
+	unsigned char *In = (unsigned char*) pAddressIn;
+	unsigned char *Out = (unsigned char*) pAddressOut;
+	
 	z_stream stream_dec;
 	memset(&stream_dec, 0, sizeof(stream_dec));
 	stream_dec.next_in = NULL;
@@ -43,43 +47,46 @@ BOOL Compression(size_t iLenIn, size_t iLenOut, void* pAddressIn, void* pAddress
 	stream_dec.opaque = Z_NULL;
 	stream_dec.avail_in = iLenIn;
 	stream_dec.avail_out = iLenOut;	
-	int windowBits =  -15;
-	memset((unsigned char*) pAddressOut, 0, 0x10000);
+	int iWindowBits = -15;
+	memset(Out, 0, iLenOut);
 	
-	stream_dec.next_in = (unsigned char*) pAddressIn;
-	stream_dec.next_out = &((unsigned char*) pAddressOut)[0x6];
+	stream_dec.next_in = In;
+	stream_dec.next_out = &(Out)[0x6];
 	
-	if (deflateInit2(&stream_dec, Z_OVERLORD_SPEED, Z_DEFLATED, windowBits, 8, Z_DEFAULT_STRATEGY) != Z_OK) {Error(ERROR_COMPRESS, ERROR_NOTEXITAPP); return FALSE;}	
+	if (deflateInit2(&stream_dec, Z_OVERLORD_SPEED, Z_DEFLATED, iWindowBits, 8, Z_DEFAULT_STRATEGY) != Z_OK) {Error(ERROR_COMPRESS, ERROR_NOTEXITAPP); return FALSE;}	
 	deflateReset(&stream_dec);
 	
 	if (deflate(&stream_dec, Z_FINISH) != Z_STREAM_END) {Error(ERROR_COMPRESS, ERROR_NOTEXITAPP); return FALSE;}	
 	log(L"deflate msg = %s", stream_dec.msg);		
-	log(L"deflate total_in  = %i", stream_dec.total_in);	
-	log(L"deflate total_out  = %i", stream_dec.total_out);
-	memcpy( &((unsigned char*) pAddressOut)[0x0], &stream_dec.total_in, 4);
-	memcpy( &((unsigned char*) pAddressOut)[0x4], &uniDInfo.data.iSignature, 2);
+	log(L"deflate total_in = %i", stream_dec.total_in);	
+	log(L"deflate total_out = %i", stream_dec.total_out);
+	memcpy( &(Out)[0x0], &stream_dec.total_in, 4);
+	memcpy( &(Out)[0x4], &Info->data.iSignature, 2);
 	
-	uniDInfo.data.iChecksum = CheckSum(iLenIn, (unsigned char*) pAddressIn);
-	if (uniDInfo.data.iChecksum <= 0){Error(ERROR_CHECKSUM, ERROR_NOTEXITAPP); return FALSE;}
-	memcpy( &((unsigned char*) pAddressOut)[stream_dec.total_out+0x6], &uniDInfo.data.iChecksum, 4);
+	Info->data.iChecksum = CheckSum(iLenIn, In);
+	if (Info->data.iChecksum <= 0){Error(ERROR_CHECKSUM, ERROR_NOTEXITAPP); return FALSE;}
+	memcpy( &(Out)[stream_dec.total_out+0x6], &Info->data.iChecksum, 4);
 	
-	uniDInfo.data.iCrc32 = CheckCrc32( (stream_dec.total_out+0x6+0x4), (unsigned char*) pAddressOut, aTableCrc32);
-	log(L"totalout = %i", (stream_dec.total_out+0x6+0x4));
-	log(L"out = %x", ((unsigned char*) pAddressOut)[0x4]);
+	Info->data.iCrc32 = CheckCrc32( (stream_dec.total_out+0x6+0x4), Out, aTableCrc32);
 	
-	if (uniDInfo.data.iCrc32 <= 0) {Error(ERROR_CHECKCRC32, ERROR_NOTEXITAPP); return FALSE;}
-	memcpy( &((unsigned char*) pAddressOut)[stream_dec.total_out+0x6+0x4], &uniDInfo.data.iConst1, 4);
-	memcpy( &((unsigned char*) pAddressOut)[stream_dec.total_out+0x6+0x4+0x4], &uniDInfo.data.iConst2, 4);
-	memcpy( &((unsigned char*) pAddressOut)[stream_dec.total_out+0x6+0x4+0x4+0x4], &uniDInfo.data.iCrc32, 4);
-	memcpy( &((unsigned char*) pAddressOut)[stream_dec.total_out+0x6+0x4+0x4+0x4+0x4], &uniDInfo.data.iReserved, 4);
+	if (Info->data.iCrc32 <= 0) {Error(ERROR_CHECKCRC32, ERROR_NOTEXITAPP); return FALSE;}
+	memcpy( &(Out)[stream_dec.total_out+0x6+0x4], 				&Info->data.iConst1, 4);
+	memcpy( &(Out)[stream_dec.total_out+0x6+0x4+0x4], 			&Info->data.iConst2, 4);
+	memcpy( &(Out)[stream_dec.total_out+0x6+0x4+0x4+0x4], 		&Info->data.iCrc32, 4);
+	memcpy( &(Out)[stream_dec.total_out+0x6+0x4+0x4+0x4+0x4], 	&Info->data.iReserved, 4);
+	
+	log(L"deflate totalout = %i", (stream_dec.total_out+0x6+0x4+0x4+0x8+0x4));
 	
 	deflateEnd(&stream_dec);
 	
 	PostMessage(gapp.wnd, MSG_COMP, 0, 0);
 }
 
-BOOL Decompression(size_t iLenOut, size_t iLenIn, void* pAddressIn, void* pAddressOut)
+BOOL Decompression(size_t iLenIn, size_t iLenOut, void* pAddressIn, void* pAddressOut, puniDataInfo Info)
 {
+	unsigned char *In = (unsigned char*) pAddressIn;
+	unsigned char *Out = (unsigned char*) pAddressOut;
+	
 	z_stream stream_dec;
 	memset(&stream_dec, 0, sizeof(stream_dec));
 	stream_dec.next_in = NULL;
@@ -87,24 +94,25 @@ BOOL Decompression(size_t iLenOut, size_t iLenIn, void* pAddressIn, void* pAddre
 	stream_dec.zalloc = Z_NULL;
 	stream_dec.zfree = Z_NULL;
 	stream_dec.opaque = Z_NULL;
-	int windowBits =  -15;
-	
-	if ( inflateInit2(&stream_dec, windowBits) != Z_OK ) {Error(ERROR_DECOMPRESS, ERROR_NOTEXITAPP); return FALSE;}
+	int iWindowBits = -15;
+	log(L"Dec: iLenIn=%i, iLenOut=%i, pAddressIn=%x, pAddressOut=%x", iLenIn, iLenOut, (In)[0x0], (Out)[0x0]);
+	if ( inflateInit2(&stream_dec, iWindowBits) != Z_OK ) {Error(ERROR_DECOMPRESS, ERROR_NOTEXITAPP); return FALSE;}
 	inflateReset(&stream_dec);
 	
 	stream_dec.avail_in = (iLenIn-0x6-0x4-0x4-0x4-0x8);
-	stream_dec.avail_out = 0x10000;
-	memset(pAddressOut, 0, 0x10000);
+	stream_dec.avail_out = iLenOut;
+	memset(Out, 0, iLenOut);
 	
-	stream_dec.next_in = (unsigned char*) pAddressIn;
-	stream_dec.next_out = (unsigned char*) pAddressOut;
+	stream_dec.next_in = In;
+	stream_dec.next_out = Out;
 	
 	if (inflate(&stream_dec, Z_NO_FLUSH) != Z_STREAM_END) {Error(ERROR_DECOMPRESS, ERROR_NOTEXITAPP); return FALSE;}	
-	log(L"stream_dec.msg = %s", stream_dec.msg);		
-	log(L"total_in  = %i", stream_dec.total_in);	
-	log(L"total_out  = %i", stream_dec.total_out);	
+	log(L"inflate stream_dec.msg = %s", stream_dec.msg);		
+	log(L"inflate total_in = %i", stream_dec.total_in);	
+	log(L"inflate total_out = %i", stream_dec.total_out);	
 	inflateEnd(&stream_dec);
-	if (CheckSum(uniDInfo.data.iUnzip, (unsigned char*) pAddressOut) != uniDInfo.data.iChecksum){Error(ERROR_CHECKSUM, ERROR_NOTEXITAPP); return FALSE;}
+	
+	if (CheckSum(Info->data.iUnzip, pAddressOut) != Info->data.iChecksum){Error(ERROR_CHECKSUM, ERROR_NOTEXITAPP); return FALSE;}
 	PostMessage(gapp.wnd, MSG_DECOMP, 0, 0);
 }
 
@@ -129,16 +137,11 @@ unsigned int CheckCrc32 (size_t iLenFile, void* pAddress, void* table)
 
 unsigned int CheckSum(size_t iNumByte, void* pAddress)
 {
-	val64 rax, ecx, edx, edi, buf;
-	int checksum_currect = 0;
-	unsigned char *hex;
-	hex = (unsigned char*) pAddress;
+	RegisterVal64 ecx, edi, buf;
+	unsigned char *hex = (unsigned char*) pAddress;
 	
-//	rax edi;
 	edi.rax = 0x0;
-//	rax ecx;
 	ecx.rax = 0x0;
-//	rax buf;
 	buf.rax = 0x0;
 	
 	unsigned int val_z = 1;
@@ -243,8 +246,7 @@ unsigned int CheckSum(size_t iNumByte, void* pAddress)
 	return buf.edx_eax.eax;
 }
 
-
-unsigned int aTableCrc32 [256] = 
+unsigned int aTableCrc32 [0x100] = 
 {
 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F, 0xE963A535, 
 0x9E6495A3, 0x0EDB8832, 0x79DCB8A4, 0xE0D5E91E, 0x97D2D988, 0x09B64C2B, 

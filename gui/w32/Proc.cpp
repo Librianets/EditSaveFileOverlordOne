@@ -13,14 +13,10 @@ LRESULT WINAPI MainWndProc (HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		
 		///////// PROJECT MESSAGE //////////////
 		case MSG_SELECTOPENFILE: ReadFile(); break;
-		case MSG_READFILE: CheckFileSignature(uniDInfo); break;
-		case MSG_CHECKFILE: 
-		{
-			Decompression(uniDInfo.data.iUnzip, uniDInfo.data.iLenFile, &aGlobalBuffer[0x6], &aBufferDecomp[0x0]); 
-			Compression(uniDInfo.data.iUnzip, 0x10000, aBufferDecomp, aGlobalBuffer);
-			break;
-		}
-		
+		case MSG_READFILE: CheckFileSignature(&uniDInfo, aGlobalBuffer, aTableCrc32); break;
+		case MSG_CHECKFILE: Decompression(uniDInfo.data.iLenFile, MAXSIZEFILE, &aGlobalBuffer[0x6], &aBufferDecomp[0x0], &uniDInfo); 
+		case MSG_DECOMP: Compression(uniDInfo.data.iUnzip, MAXSIZEFILE, aBufferDecomp, aGlobalBuffer, &uniDInfo); break;
+	
 		
 		
 		

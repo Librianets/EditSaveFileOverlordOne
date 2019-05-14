@@ -28,16 +28,15 @@ long long rax;
 		unsigned int eax; // 4
 		unsigned int edx; // 4
 	} edx_eax;
-}val64;
+} RegisterVal64, *pRegisterVal64;
 
 extern unsigned int aTableCrc32[];
 extern uniDataInfo uniDInfo;
-extern val64 rax;
 
-BOOL CheckFileSignature(uniDataInfo Info);
+BOOL CheckFileSignature(puniDataInfo Info, void* aBuf, void* table);
+BOOL Decompression(size_t iUnzip, size_t iLenFile, void* pAddressIn, void* pAddressOut, puniDataInfo Info);
+BOOL Compression(size_t iLenIn, size_t iLenOut, void* pAddressIn, void* pAddressOut, puniDataInfo Info);
 unsigned int CheckCrc32 (size_t iLenFile, void* pAddress, void* table);
 unsigned int CheckSum(size_t iNumByte, void* pAddress);
-BOOL Decompression(size_t iUnzip, size_t iLenFile, void* pAddressIn, void* pAddressOut);
-BOOL Compression(size_t iLenIn, size_t iLenOut, void* pAddressIn, void* pAddressOut);
 
 #endif // __UPAP_H__

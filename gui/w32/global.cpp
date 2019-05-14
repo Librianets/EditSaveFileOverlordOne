@@ -28,8 +28,8 @@ wchar_t sgWnd[MAXCLASSNAME] 		= L"Редактор сохранений игры
 
 wchar_t sGlobalMsg[MAXPATHLEN]		= L"TEST TEST TEST";
 
-unsigned char aGlobalBuffer[0x10000];
-unsigned char aBufferDecomp[0x10000];
+unsigned char aGlobalBuffer[MAXSIZEFILE];
+unsigned char aBufferDecomp[MAXSIZEFILE];
 
 void ClearVal(void)
 {

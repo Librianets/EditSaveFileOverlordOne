@@ -15,11 +15,11 @@
 #include <zlib.h>			// ZLIB
 //////////		project include down	//////////
 
-#define MAXCLASSNAME		0x0040 	// 64
-#define MAXCOUNTERPOINTER 	0x0040 	// 64
-#define MAXPATHLEN 			0x0200 	// 512
-
-#define MAXMSGLEN			0x0040	// 64
+#define MAXCLASSNAME		0x0040 		// 64
+#define MAXCOUNTERPOINTER 	0x0040 		// 64
+#define MAXPATHLEN 			0x0200 		// 512
+#define MAXSIZEFILE			0x00100000 	// 1 048 576
+#define MAXMSGLEN			0x0040		// 64
 
 #define DLG_ABOUT 			0x1000
 #define MSG_SELECTOPENFILE	0x1001
@@ -113,13 +113,14 @@ extern wchar_t sCheckCrc32[MAXMSGLEN];
 extern wchar_t sDecompress[MAXMSGLEN];
 extern wchar_t sCheckSum[MAXMSGLEN];
 
-extern unsigned char aGlobalBuffer[0x10000];
-extern unsigned char aBufferDecomp[0x10000];
+extern unsigned char aGlobalBuffer[MAXSIZEFILE];
+extern unsigned char aBufferDecomp[MAXSIZEFILE];
 
 extern OPENFILENAME ofn;
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
+
 #include "console.hpp"		// project
 #include "resource.hpp"		// project
 #include "winmain.hpp"		// project

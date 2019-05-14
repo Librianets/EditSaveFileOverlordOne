@@ -75,7 +75,6 @@ BOOL SelectFile(void)
 	
 	memset(&szFileName, 0, sizeof(szFileName));
 	memset(&szFileTitle, 0, sizeof(szFileTitle));
-	//memset(&fileopen, 0, sizeof(fileopen));
 
 	ofn.lStructSize			= sizeof(OPENFILENAME);
 	ofn.hwndOwner			= gapp.wnd;
