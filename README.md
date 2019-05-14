@@ -1,21 +1,28 @@
-Программа распаковки и упаковки сохранений игры Overlord - Raising Hell.
+Программа распаковки/упаковки, а также редактирования сохранений игры Overlord - Raising Hell.
 
-На данный момент реализована только возможность распаковать и упаковать файлы.
+Проект имеет консольную версию ограниченную в функционале и GUI находяющуся в разработке под win32.
+Проверка проводиться под версию игры 0.4. 
+Прим. Вероятно будет работать и под более ранние версии, позже по окончанию проект будет тест.
 
-Идет дальнейшее расширение функционала:
+Консольная версия имеет функционал:
+- распаковка файлов сохранений игры Overlord - Raising Hell
+- упаковка файлов сохранений игры Overlord - Raising Hell
+
+GUI версия на данный момент имеет следующий функционал:
+- распаковка файлов сохранений игры Overlord - Raising Hell
+- упаковка файлов сохранений игры Overlord - Raising Hell
+
+На стадии реализации:
 - точечное редактирование минионов от количества до обмундирования
 - изменение количества золота
 - добавление игровых элементов (оружие, броня, тотемы на хп, ману и т.д.)
-- создание графической оболочки редактора
+- по окончанию проекта мультиязычность
+- возможно будет реализована добавить/убрать ачивку или сменить локацию
+
+По особому запросу возможен перенос на *unix системы
 
 
-
-
-Compressed/uncompressed save data
-Game: Overlord - Raising Hell
-Version program: 0.1 (by Librianets)
-Version game check: 0.4
-
+Справка по консольной версии:
 progname.exe option -i input -o output 
 
 -i name 	: name file input
@@ -27,10 +34,6 @@ progname.exe option -i input -o output
 Sample: progname.exe -D -i SaveInfo.osi.tzf -o SaveInfo_uncompress.osi.tzf
 Sample: progname.exe -C -i SaveInfo_uncompress.osi.tzf -o SaveInfo.osi.tzf
 
-Implemented:
-- compressed save data
-- uncompressed save data
 
-Awaiting implementation:
-- editing in semi-automatic parameters of the passing game parameters (Items, upgrades, money, minions etc.)
-- availability gui (win32)
+Справка по версии c GUI:
+/*в стадии разработки*/
