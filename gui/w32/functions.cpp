@@ -1,11 +1,6 @@
 #include "global.hpp"
 
-HDC			hDC;
-HDC			hDC2;
-HBITMAP		hBm;
-BITMAP		bm;
-
-void Createwnd (HWND hwnd)
+void CreateWnd (HWND hwnd)
 {
 hBm = LoadBitmap(gapp.inst, MAKEINTRESOURCE(IDB_LOGO));
 GetObject(hBm, sizeof(BITMAP), &bm);
@@ -15,7 +10,7 @@ hDC2 = CreateCompatibleDC(hDC);
 ReleaseDC(hwnd, hDC);
 }
 
-void Paintwnd (HWND hwnd)
+void PaintWnd (HWND hwnd)
 {
 PAINTSTRUCT ps;
 hDC = BeginPaint(hwnd, &ps);
@@ -39,25 +34,25 @@ BOOL MainRegClass (WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTA
 	classex.lpszClassName = szClassName;
 	classex.hIconSm = NULL;
 	
-	if (!RegisterClassEx(&classex)){error(gclassnot, exit_app);}
+	if (!RegisterClassEx(&classex)){Error(ERROR_GCLASSNOT, ERROR_EXIT_APP);}
 	
 return TRUE;
 }
 
 void CreateMainWindow (void) 
 {
-	MainRegClass(WndC_main, gapp.WndProc, gapp._class, gapp.inst);
+	MainRegClass(WndCMain, gapp.WndProc, gapp._class, gapp.inst);
 	
 	gapp.wnd = CreateWindowEx(0, gapp._class, gapp._wnd, \
 	WS_CAPTION | WS_POPUPWINDOW | WS_MINIMIZEBOX, \
 	pwnd.x, pwnd.y, szwnd.x, szwnd.y, NULL, NULL, gapp.inst, NULL);
 
-	if (gapp.wnd == NULL){error(gwndnot, exit_app);}
+	if (gapp.wnd == NULL){Error(ERROR_GWNDNOT, ERROR_EXIT_APP);}
 	ShowWindow(gapp.wnd, SW_SHOW);
 	UpdateWindow(gapp.wnd);
 }
 
-void position_dia(HWND hwnd, HWND dia)
+void SetPosDlg(HWND hwnd, HWND dia)
 {
 RECT t_poswnd;
 RECT t_posdia;
@@ -72,17 +67,15 @@ t_xy_dia.x = t_poswnd.left;
 t_xy_dia.y = t_poswnd.top;
 }
 
-void checkfile(void)
+BOOL SelectFile(void)
 {
-	OPENFILENAME ofn;
-	
 	wchar_t szFileName[MAXPATHLEN];
 	wchar_t szFileTitle[MAXPATHLEN];
 	wchar_t lpstrTitle[MAXPATHLEN] = L"Выберите файл. По умолчанию он в папке мои документы --> overlord";
 	
 	memset(&szFileName, 0, sizeof(szFileName));
 	memset(&szFileTitle, 0, sizeof(szFileTitle));
-	memset(&fileopen, 0, sizeof(fileopen));
+	//memset(&fileopen, 0, sizeof(fileopen));
 
 	ofn.lStructSize			= sizeof(OPENFILENAME);
 	ofn.hwndOwner			= gapp.wnd;
@@ -99,23 +92,60 @@ void checkfile(void)
 	ofn.lpstrDefExt			= NULL;
 	ofn.Flags				= OFN_EXPLORER;
 	ofn.FlagsEx				= OFN_EX_NOPLACESBAR;
-	if (GetOpenFileName(&ofn) != 0) {wcscpy(fileopen, ofn.lpstrFile);PostMessage(gapp.wnd, MSGOPENFILE, 0, 0);} else {error(filecheck, notexitapp);}
-}
-
-void openfile(void)
-{
 	
+	if (GetOpenFileName(&ofn) != 0) 
+	{
+		log(L"Выбран файл: %ls", ofn.lpstrFile);
+		CloseHandle(hFileOpen);
+		hFileOpen = CreateFile(ofn.lpstrFile, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
+		if (hFileOpen == 0){Error(ERROR_OPENFILE, ERROR_NOTEXITAPP);return FALSE;}
+		PostMessage(gapp.wnd, MSG_SELECTOPENFILE, 0, 0);
+		return TRUE;
+	}
+		else {Error(ERROR_FILECHECK, ERROR_NOTEXITAPP);return FALSE;}
 }
 
-void dialoginit(int numdlg)
+
+BOOL ReadFile(void)
+{
+	DWORD lSizeFile = SizeFile(hFileOpen);
+	if (lSizeFile == INVALID_FILE_SIZE) {Error(ERROR_FILESIZE, ERROR_NOTEXITAPP); return FALSE;} //переделать
+	log(L"sizefile=%i", lSizeFile);
+	DWORD lNumberReadByte = 0;
+	memset(aGlobalBuffer, 0, 0x10000);
+	if (ReadFile(hFileOpen, aGlobalBuffer, lSizeFile, &lNumberReadByte, NULL) == 0) {Error(ERROR_OPENFILE, ERROR_NOTEXITAPP);return FALSE;}
+	if (lSizeFile != lNumberReadByte){Error(ERROR_OPENFILE, ERROR_NOTEXITAPP);return FALSE;}
+	log(L"lNumberReadByte=%i", lNumberReadByte);
+	uniDInfo.data.iLenFile = lNumberReadByte;
+	log(L"iLenFile=%i", uniDInfo.data.iLenFile);
+	PostMessage(gapp.wnd, MSG_READFILE, 0, 0);
+}
+
+
+DWORD SizeFile(HANDLE hFileOpen)
+{
+	DWORD LowWord;
+	return LowWord = GetFileSize(hFileOpen, NULL);
+}
+
+BOOL IdentificationFile (void)
+{	int i;
+	
+	
+	
+	if (i) return TRUE;
+	return FALSE;
+}
+
+void DlgInit(int numdlg)
 {
 	switch (numdlg)
 	{
 		case DLG_ABOUT:
 		{
-		dapp[0].hWnd = CreateDialog(gapp.inst, MAKEINTRESOURCE(IDDLG_ABOUT), gapp.wnd, dapp[0].WndProc);
-		position_dia(gapp.wnd, dapp[0].hWnd);
-		SetWindowPos(dapp[0].hWnd, HWND_TOP, t_xy_dia.x, t_xy_dia.y, 0, 0, SWP_SHOWWINDOW|SWP_NOSIZE );
+		dlgapp[0].hWnd = CreateDialog(gapp.inst, MAKEINTRESOURCE(IDDLG_ABOUT), gapp.wnd, dlgapp[0].WndProc);
+		SetPosDlg(gapp.wnd, dlgapp[0].hWnd);
+		SetWindowPos(dlgapp[0].hWnd, HWND_TOP, t_xy_dia.x, t_xy_dia.y, 0, 0, SWP_SHOWWINDOW|SWP_NOSIZE );
 		}
 	}
 }

@@ -1,14 +1,21 @@
 #project name = overlord game unpack and pack = OG_UPAP
 
-idir = ./console/include/
-libdir = ./console/lib/
-srcdir = ./console/win32/
-buildir = ./console/build/
-temp = ./console/temp/
-save = ./console/save/
+compile = i686-w64-mingw32
+CC = $(compile)-gcc
+ar = $(compile)-ar
+ranlib = $(compile)-ranlib
+wres = $(compile)-windres
+strip = $(compile)-strip.exe
+
+idir = ./include/
+libdir = ./lib/
+srcdir = ./win32/
+buildir = ./build/
+temp = ./temp/
+save = ./save/
 exe = OG_UPAP.exe 
 
-l = $(libdir)libz.a
+l = -lz -L$(libdir)
 I = -I$(idir) -I./
 D =
 

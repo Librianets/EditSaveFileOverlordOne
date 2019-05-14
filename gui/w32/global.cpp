@@ -1,45 +1,49 @@
 #include "global.hpp"
 
-RECT rectmainwnd;
+RECT RECTmainwnd;
 
 HWND hDlgAbout;
 HWND hDlgConsole;
 HACCEL hAccel;
 HWND hLogo;
+HANDLE hFileOpen;
 
-WNDCLASSEX WndC_main;
+HDC			hDC;
+HDC			hDC2;
+HBITMAP		hBm;
+BITMAP		bm;
+
+WNDCLASSEX WndCMain;
 
 AppData gapp;
-Data dapp[MAXCOUNTERPOINTER];
+Data dlgapp[MAXCOUNTERPOINTER];
 sizeall scwnd, szwnd, pwnd, t_xy_dia;
 
-wchar_t s_gclass[MAXCLASSNAME] = L"Class main window";
-wchar_t s_gwnd[MAXCLASSNAME] = L"Редактор сохранений игры Overlord";
+OPENFILENAME ofn;
 
-wchar_t sError[MAXMSGLEN] 		= L"Ошибка";
-wchar_t sWarning[MAXMSGLEN] 	= L"Предупреждение";
-wchar_t s_gwndnot[MAXMSGLEN] 	= L"Не удалось создать главное окно";
-wchar_t s_gclassnot[MAXMSGLEN] 	= L"Не удалось зарегистрировать класс окна";
-wchar_t s_gaccelnot[MAXMSGLEN] 	= L"Проблемы с таблицей акселератов";
-wchar_t s_filecheck[MAXMSGLEN] 	= L"Проблемы с файлом. Повторите попытку";
-wchar_t s_console[MAXMSGLEN] 	= L"Не удалось создать консоль";
-wchar_t globalmsg[MAXPATHLEN]	= L"TEST TEST TEST";
+wchar_t sgClass[MAXCLASSNAME] 		= L"Class main window";
+wchar_t sgWnd[MAXCLASSNAME] 		= L"Редактор сохранений игры Overlord";
 
-wchar_t fileopen[MAXPATHLEN];
 
-void clearval(void)
+
+wchar_t sGlobalMsg[MAXPATHLEN]		= L"TEST TEST TEST";
+
+unsigned char aGlobalBuffer[0x10000];
+unsigned char aBufferDecomp[0x10000];
+
+void ClearVal(void)
 {
 
 }
 
-void initiationval(HINSTANCE hInstance)
+void InitiationVal(HINSTANCE hInstance)
 {
 
 gapp.inst = NULL;
 gapp.wnd = NULL;
 gapp.menu = NULL;
-gapp._class = s_gclass;
-gapp._wnd = s_gwnd;
+gapp._class = sgClass;
+gapp._wnd = sgWnd;
 gapp.inst = hInstance;
 gapp.WndProc = *MainWndProc;
 
@@ -50,19 +54,20 @@ szwnd.y = (1024/2); //512
 pwnd.x = (scwnd.x-szwnd.x)/2; //(1920-640)/2=640
 pwnd.y = (scwnd.y-szwnd.y)/2; //(1080-512)/2=284
 
-rectmainwnd.left = pwnd.x; //640
-rectmainwnd.right = pwnd.x + szwnd.x; //1280
-rectmainwnd.top = pwnd.y; //
-rectmainwnd.bottom = pwnd.y + szwnd.y;
+RECTmainwnd.left = pwnd.x; //640
+RECTmainwnd.right = pwnd.x + szwnd.x; //1280
+RECTmainwnd.top = pwnd.y; //
+RECTmainwnd.bottom = pwnd.y + szwnd.y;
 
-AdjustWindowRectEx(&rectmainwnd, WS_CAPTION | WS_POPUPWINDOW | WS_MINIMIZEBOX, TRUE, 0);
-szwnd.x = rectmainwnd.right-rectmainwnd.left;
-szwnd.y = rectmainwnd.bottom-rectmainwnd.top;
+AdjustWindowRectEx(&RECTmainwnd, WS_CAPTION | WS_POPUPWINDOW | WS_MINIMIZEBOX, TRUE, 0);
+szwnd.x = RECTmainwnd.right-RECTmainwnd.left;
+szwnd.y = RECTmainwnd.bottom-RECTmainwnd.top;
 
-dapp[0].hWnd = hDlgAbout;
-dapp[0].WndProc = AboutWndProc;
+dlgapp[0].hWnd = hDlgAbout;
+dlgapp[0].WndProc = AboutWndProc;
 
-dapp[1].hWnd = hDlgConsole;
-dapp[1].WndProc = ConsoleWndProc;
+dlgapp[1].hWnd = hDlgConsole;
+dlgapp[1].WndProc = ConsoleWndProc;
+
 
 }

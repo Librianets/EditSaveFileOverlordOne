@@ -1,10 +1,10 @@
-#ifndef __CONSOLE_HPP__
-#define __CONSOLE_HPP__
+#ifndef __ERROR_CONSOLE_HPP__
+#define __ERROR_CONSOLE_HPP__
 
-void initconsole(void);
+void InitConsole(void);
 void log(const wchar_t *fmt, ...);
-void writedlgconsole(void);
-void dlgconsoleshow(void);
-void dlgconsolehide(void);
+void WriteDlgConsole(void);
+void DlgConsoleShow(void);
+void DlgConsoleHide(void);
 
-#endif //__CONSOLE_HPP__
+#endif //__ERROR_CONSOLE_HPP__

@@ -1,13 +1,15 @@
 #include "global.hpp"
 
-void runmsg(void)
+MSG msg;
+
+void RunMsg(void)
 {
 	hAccel = LoadAccelerators(gapp.inst, MAKEINTRESOURCE(IDA_ACCEL)); 
-    if (hAccel == NULL) {error(gaccelnot, exit_app);}
+ if (hAccel == NULL) {Error(ERROR_ACCELNOT, ERROR_EXIT_APP);}
 	
 	while(GetMessage(&msg, NULL, 0, 0))
 	{
-		if (IsDialogMessage(dapp[0].hWnd, &msg) == TRUE)
+		if (IsDialogMessage(dlgapp[0].hWnd, &msg) == TRUE)
 		{
 		}
 		else
@@ -18,9 +20,10 @@ void runmsg(void)
 	}
 }
 
-void destroy_all (void)
+void DestroyAll (void)
 {
 CloseWindow(gapp.wnd);
+CloseHandle(hFileOpen);
 UnregisterClass(gapp._class, gapp.inst);
 PostQuitMessage(WM_NULL);
 }

@@ -307,12 +307,19 @@ int check_crc32(unsigned char *address, unsigned long int outlen)
 		for (int i = 0x0; i < (data_info.info.lenfile-0x10); i++)
 		{
 		edi = *address;
+		//printf("%i: edi=%x, ", i, edi);
 		esi = eax;
+		//printf("esi=%x, ", esi);
 		esi = esi & 0xFF;
+		//printf("esi=%x, ", esi);
 		esi = esi ^ edi;
+		//printf("esi=%x, ", esi);
 		esi-=1;
+		//printf("esi=%x, ", esi);
 		eax = eax >> 8;
+		//printf("eax=%x, ", eax);
 		eax = eax ^ table[esi];
+		//printf("eax=%x\n", eax);
 		*address++;
 		}
 		if (eax == data_info.info.crc32_i) {check_crc32_currect = 1;} 

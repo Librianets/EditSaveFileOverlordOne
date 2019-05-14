@@ -13,7 +13,7 @@ bui_d 		= $(build)debug/
 res 		= $(wg)res/
 
 I 			= -I$(include) -I$(res)
-l 			= -lres -L$(lib) -static-libgcc -static-libstdc++
+l 			= -lres -lz -L$(lib)
 # -lkernel32 -luser32 -lgdi32 -lcomdlg32
 opt 		= -mwindows -fno-exceptions -municode
 #-municode
@@ -33,10 +33,8 @@ ifdef log_mode
 opt += -Dlog_mode
 endif
 
-all_ESD: start dir rm windres
-all_ESD_test2: $(includeobject)
-all_ESD_test: exe strip deltemp end
-	
+all_ESD: start dir rm windres $(includeobject) 
+all_ESD_2: exe strip deltemp end
 
 end:
 	@echo -e ""
@@ -54,7 +52,7 @@ exe:
 
 $(includeobject):
 	@echo -e "$*.cpp -->> $*.o"
-	@$(CC) $(lang) -c $(w32)$*.cpp -o $(temp)$*.o $(I) $(l) $(opt)
+	@$(CC) $(lang) -c $(w32)$*.cpp -o $(temp)$*.o $(I) $(opt)
 
 ar:
 	@echo -e "ar"
@@ -87,4 +85,7 @@ rm: deltemp
 
 deltemp:
 	@rm -f $(temp)*.*
-	@rm -f $(lib)*.a	
+	@rm -f $(lib)libres.a
+
+clean: rm
+	@echo -e ""
