@@ -2,11 +2,6 @@
 
 int WINAPI wWinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpszCmdParam, int nCmdShow)
 {
-	
-
-	
-
-	
 	InitiationVal(hInstance);
 	CreateMainWindow();
 	InitConsole();

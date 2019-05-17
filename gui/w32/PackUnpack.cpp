@@ -2,6 +2,49 @@
 
 uniDataInfo uniDInfo;
 
+unsigned int iFlagDefSave;
+unsigned int iFlagDefSaveLang;
+unsigned int iFlagSaveCount;
+
+BOOL DefineTypeFile (void* aBuf, size_t len)
+{
+	iFlagDefSave = 0;
+	iFlagDefSaveLang = 0;
+	
+	unsigned char *Buf = (unsigned char*) aBuf;
+	unsigned char iSaveinfo [0x4] = {0x4F, 0x53, 0x49, 0x00};
+	unsigned char iSaveSlot [0x4] = {0x4F, 0x53, 0x47, 0x00};
+	unsigned char iReserved [0x4] = {0x00, 0x00, 0x00, 0x01};
+	//unsigned char *piReserved = (unsigned char*) iReserved;
+	log(L"memcmp = %i", memcmp( &Buf[0x0], &iReserved[0x0], 4));
+	log(L"x = %x", Buf[0x0]);
+	log(L"x = %x", Buf[0x1]);
+	log(L"x = %x", Buf[0x2]);
+	log(L"x = %x", Buf[0x3]);
+	log(L"iReserved memcmp = %i", memcmp( &Buf[0x0], &iReserved[0x0], 4));
+	if (memcmp( &Buf[0x0], &iReserved[0x0], 4) != 0) return FALSE;
+	if (memcmp( &Buf[0x4], &iSaveinfo[0x0], 4) == 0) iFlagDefSave = SAVEINFO;
+	if (memcmp( &Buf[0x4], &iSaveSlot[0x0], 4) == 0) iFlagDefSave = SAVESLOT;
+	log(L"iSaveSlot memcmp = %i", memcmp( &Buf[0x4], &iSaveSlot[0x0], 4));
+	log(L"iSaveinfo memcmp = %i", memcmp( &Buf[0x4], &iSaveinfo[0x0], 4));
+	log(L"x = %x", Buf[0x4]);
+	log(L"x = %x", Buf[0x5]);
+	log(L"x = %x", Buf[0x6]);
+	log(L"x = %x", Buf[0x7]);
+	if (iFlagDefSave == SAVEINFO) 
+	{
+		log(L"len = %i", len);
+		log(L"Buf = %x", Buf[len-2]);
+		if (Buf[len-2] == (0xD0 | 0xD1))
+		{
+			iFlagDefSaveLang = LANGRU;
+			log(L"iFlagDefSaveLang = %x", iFlagDefSaveLang); 
+		}
+	}
+	
+	return TRUE;
+}
+
 BOOL CheckFileSignature(puniDataInfo Info, void* aBuf, void* table)
 {
 	unsigned char *Buf = (unsigned char*) aBuf;
@@ -20,7 +63,7 @@ BOOL CheckFileSignature(puniDataInfo Info, void* aBuf, void* table)
 	) {log(L"File check ok");} else {Error(ERROR_CHECKCONST, ERROR_NOTEXITAPP);return FALSE;}
 	
 	memcpy (&Info->data.iCrc32, &Buf[Info->data.iLenFile-0x8], 4);
-	memcpy (&Info->data.iChecksum, &Buf[Info->data.iLenFile-0xE], 4);
+	memcpy (&Info->data.iChecksum, &Buf[Info->data.iLenFile-0x14], 4);
 	memcpy (&Info->data.iUnzip, &Buf[0], 4);
 	
 	log(L"Info->iUnzip=%i", 	Info->data.iUnzip);
@@ -30,7 +73,7 @@ BOOL CheckFileSignature(puniDataInfo Info, void* aBuf, void* table)
 	
 	if (CheckCrc32((Info->data.iLenFile-(0x4+0x4+0x8)), &Buf[0x0], table) != Info->data.iCrc32) {Error(ERROR_CHECKCRC32, ERROR_NOTEXITAPP); return FALSE;}
 	
-	PostMessage(gapp.wnd, MSG_CHECKFILE, 0, 0);
+	return TRUE;
 }
 
 BOOL Compression(size_t iLenIn, size_t iLenOut, void* pAddressIn, void* pAddressOut, puniDataInfo Info)
@@ -79,7 +122,8 @@ BOOL Compression(size_t iLenIn, size_t iLenOut, void* pAddressIn, void* pAddress
 	
 	deflateEnd(&stream_dec);
 	
-	PostMessage(gapp.wnd, MSG_COMP, 0, 0);
+	Info->data.iLenFile = (stream_dec.total_out+0x6+0x4+0x4+0x8+0x4);
+	return TRUE;
 }
 
 BOOL Decompression(size_t iLenIn, size_t iLenOut, void* pAddressIn, void* pAddressOut, puniDataInfo Info)
@@ -113,7 +157,7 @@ BOOL Decompression(size_t iLenIn, size_t iLenOut, void* pAddressIn, void* pAddre
 	inflateEnd(&stream_dec);
 	
 	if (CheckSum(Info->data.iUnzip, pAddressOut) != Info->data.iChecksum){Error(ERROR_CHECKSUM, ERROR_NOTEXITAPP); return FALSE;}
-	PostMessage(gapp.wnd, MSG_DECOMP, 0, 0);
+	return TRUE;
 }
 
 unsigned int CheckCrc32 (size_t iLenFile, void* pAddress, void* table)

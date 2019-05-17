@@ -13,6 +13,12 @@
 #include <wctype.h>			// Language C
 #include <winuser.h>		// WINAPI
 #include <zlib.h>			// ZLIB
+
+#include <iostream>
+#include <vector>
+//#include <iterator>
+using std::vector;
+
 //////////		project include down	//////////
 
 #define MAXCLASSNAME		0x0040 		// 64
@@ -27,96 +33,27 @@
 #define MSG_CHECKFILE		0x1003
 #define MSG_DECOMP			0x1004
 #define MSG_COMP			0x1005
+#define MSG_WRITEFILE		0x1006
+#define MSG_SAVEINFO		0x1007
+#define MSG_SAVESLOT		0x1008
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 void ClearVal(void);
 void InitiationVal(HINSTANCE hInstance);
 
-
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
-typedef struct 
-{
-	HWND hWnd;
-	DLGPROC WndProc;
-} Data;
-
-typedef struct 
-{
-	HINSTANCE inst;
-	HWND wnd;
-	HMENU menu;
-	wchar_t *_wnd;
-	wchar_t *_class;
-	WNDPROC WndProc;
-} AppData;
-
-typedef struct 
-{
-	unsigned int x;
-	unsigned int y;
-} sizeall;
-
-typedef union
-{//--HN
-	wchar_t sValue[128];
-	unsigned short usiValue;
-	unsigned int uiValue;
-	unsigned long ulValue;
-	unsigned long long ullValue;
-	float fValue;
-} typeval;
-
-
-
-
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-extern RECT RECTmainwnd;
-extern AppData gapp;
-extern Data dlgapp[MAXCOUNTERPOINTER];
-extern sizeall scwnd, szwnd, pwnd, t_xy_dia;
-extern HMENU hMenu;
-extern HWND notmodaldialog;
-extern HACCEL hAccel;
 extern HWND hDlgAbout;
 extern HWND hDlgConsole;
-extern HWND hLogo;
-extern HANDLE hFileOpen;
-
-extern WNDCLASSEX WndCMain;
-
-extern HDC			hDC;
-extern HDC			hDC2;
-extern HBITMAP		hBm;
-extern BITMAP		bm;
-
 extern wchar_t sgClass[MAXCLASSNAME];
 extern wchar_t sgWnd[MAXCLASSNAME];
-extern wchar_t fileopen[MAXPATHLEN];
-extern wchar_t sError[MAXMSGLEN];
-extern wchar_t sWarning[MAXMSGLEN];
-extern wchar_t sWndNot[MAXMSGLEN];
-extern wchar_t sClassNot[MAXMSGLEN];
-extern wchar_t sAccaelNot[MAXMSGLEN];
-extern wchar_t sFileSelect[MAXMSGLEN];
-extern wchar_t sConsole[MAXMSGLEN];
-extern wchar_t sGlobalMsg[MAXPATHLEN];
-extern wchar_t sOpenFile[MAXMSGLEN];
-extern wchar_t sFileSize[MAXMSGLEN];
-
-extern wchar_t sFailCheckConst[MAXMSGLEN];
-extern wchar_t sCheckCrc32[MAXMSGLEN];
-extern wchar_t sDecompress[MAXMSGLEN];
-extern wchar_t sCheckSum[MAXMSGLEN];
-
 extern unsigned char aGlobalBuffer[MAXSIZEFILE];
-extern unsigned char aBufferDecomp[MAXSIZEFILE];
-
-extern OPENFILENAME ofn;
+extern unsigned char aBufferOne[MAXSIZEFILE];
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -129,5 +66,6 @@ extern OPENFILENAME ofn;
 #include "mainfuncs.hpp"	// project
 #include "functions.hpp"	// project
 #include "PackUnpack.hpp"	// project
+#include "SaveInfo.hpp"	// project
 
 #endif //__GLOBAL_HPP__

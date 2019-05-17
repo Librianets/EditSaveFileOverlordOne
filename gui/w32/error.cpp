@@ -1,7 +1,5 @@
 #include "global.hpp"
 
-
-
 wchar_t sError[MAXMSGLEN] 			= L"Ошибка";
 wchar_t sWarning[MAXMSGLEN]			= L"Предупреждение";
 wchar_t sWndNot[MAXMSGLEN] 			= L"Не удалось создать главное окно";
@@ -16,6 +14,8 @@ wchar_t sCheckCrc32[MAXMSGLEN] 		= L"Crc32 не совпадают";
 wchar_t sDecompress[MAXMSGLEN] 		= L"Распаковка провалилась";
 wchar_t sCheckSum[MAXMSGLEN] 		= L"Суммы не совпадают";
 wchar_t sCompress[MAXMSGLEN] 		= L"Упаковка провалилась";
+wchar_t sOpenSave[MAXMSGLEN] 		= L"Не удалось сохранить";
+wchar_t sNotErrorCorrect[MAXMSGLEN] = L"Не известная ошибка";
 
 void Error (int msg, int flag_exit)
 {//--HN
@@ -34,6 +34,8 @@ void Error (int msg, int flag_exit)
 	case ERROR_DECOMPRESS: 		MessageBox(NULL, sDecompress, sWarning, MB_OK); break;
 	case ERROR_CHECKSUM: 		MessageBox(NULL, sCheckSum, sWarning, MB_OK); break;
 	case ERROR_COMPRESS: 		MessageBox(NULL, sCompress, sWarning, MB_OK); break;
+	case ERROR_OPENSAVEFILE: 	MessageBox(NULL, sOpenSave, sWarning, MB_OK); break;
+	default: 					MessageBox(NULL, sNotErrorCorrect, sError, MB_OK); break;
 	}
 	
 	if (flag_exit == ERROR_EXIT_APP){PostQuitMessage(WM_DESTROY);}

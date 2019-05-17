@@ -1,6 +1,7 @@
 #include "global.hpp"
 
 MSG msg;
+HACCEL hAccel;
 
 void RunMsg(void)
 {
@@ -22,8 +23,8 @@ void RunMsg(void)
 
 void DestroyAll (void)
 {
-CloseWindow(gapp.wnd);
 CloseHandle(hFileOpen);
+DestroyWindow(gapp.wnd);
 UnregisterClass(gapp._class, gapp.inst);
 PostQuitMessage(WM_NULL);
 }

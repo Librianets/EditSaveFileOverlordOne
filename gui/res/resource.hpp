@@ -40,6 +40,7 @@
 #define	IDI_CONSOLECOMLINE		0x1009
 #define	IDI_GETLINECONSOLE		0x1010
 #define	IDI_CLOZEFILE			0x1011
+#define	IDI_SAVEFILE			0x1012
 
 ////////////////////////////////////////
 
@@ -58,10 +59,10 @@
 //szwnd.x = (1280/2); //640
 //szwnd.y = (1024/2); //512
 
-#define CX_ERROR_CONSOLE_DLG			0
-#define CY_ERROR_CONSOLE_DLG			143 // (512-(200+25)/2
-#define X_ERROR_CONSOLE_DLG 			300 //300*2=600 1920/2=960
-#define Y_ERROR_CONSOLE_DLG			100 //200*2=400 1280/2=640
+#define CX_CONSOLE_DLG			0
+#define CY_CONSOLE_DLG			143 // (512-(200+25)/2
+#define X_CONSOLE_DLG 			300 //300*2=600 1920/2=960
+#define Y_CONSOLE_DLG			100 //200*2=400 1280/2=640
 
 #define CX_ABOUT_DLG			0
 #define CY_ABOUT_DLG			0

@@ -13,9 +13,9 @@ bui_d 		= $(build)debug/
 res 		= $(wg)res/
 
 I 			= -I$(include) -I$(res)
-l 			= -lres -lz -L$(lib)
+l 			= -lres -lz -lstdc++ -lwinpthread  -L$(lib) 
 # -lkernel32 -luser32 -lgdi32 -lcomdlg32
-opt 		= -mwindows -fno-exceptions -municode
+opt 		= -mwindows -fno-exceptions -municode -static-libgcc -static-libstdc++
 #-municode
 # -D_UNICODE -DUNICODE
 lang 		= -x c++

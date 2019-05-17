@@ -6,7 +6,7 @@ dlgapp[1].hWnd = CreateDialog(gapp.inst, MAKEINTRESOURCE(IDDLG_ERROR_CONSOLE), g
 HMENU hMenuERROR_CONSOLE = LoadMenu(gapp.inst, MAKEINTRESOURCE(IDM_MENUERROR_CONSOLE));
 SetMenu(dlgapp[1].hWnd, hMenuERROR_CONSOLE);
 SetPosDlg(gapp.wnd, dlgapp[1].hWnd);
-SetWindowPos(dlgapp[1].hWnd, HWND_TOP, t_xy_dia.x,(t_xy_dia.y+(-25+Y_ERROR_CONSOLE_DLG)*2), 0, 0, SWP_NOSIZE );
+SetWindowPos(dlgapp[1].hWnd, HWND_TOP, t_xy_dia.x,(t_xy_dia.y+(-25+Y_CONSOLE_DLG)*2), 0, 0, SWP_NOSIZE );
 ShowWindow(dlgapp[1].hWnd, SW_HIDE);
 log(L"Project: ESD overlord.\n");
 wchar_t sTeststringERROR_CONSOLE[15] = L"TEST ТЕСТ";
@@ -31,7 +31,7 @@ void WriteDlgConsole(void)
 void DlgConsoleShow(void)
 {
 	SetPosDlg(gapp.wnd, dlgapp[1].hWnd);
-	SetWindowPos(dlgapp[1].hWnd, HWND_TOP, t_xy_dia.x,(t_xy_dia.y+(-25+Y_ERROR_CONSOLE_DLG)*2), 0, 0, SWP_NOSIZE );
+	SetWindowPos(dlgapp[1].hWnd, HWND_TOP, t_xy_dia.x,(t_xy_dia.y+(-25+Y_CONSOLE_DLG)*2), 0, 0, SWP_NOSIZE );
 	ShowWindow(dlgapp[1].hWnd, SW_SHOW);
 }
 
