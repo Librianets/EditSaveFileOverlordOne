@@ -7,17 +7,7 @@
 #define SAVEINFO	0x666
 #define LANGRU		0x333
 
-#define	ERRORSAVECOUNT	0x0011
-#define	SAVECOUNT1		0x0001
-#define	SAVECOUNT2		0x0002
-#define	SAVECOUNT3		0x0003
-#define	SAVECOUNT4		0x0004
-#define	SAVECOUNT5		0x0005
-#define	SAVECOUNT6		0x0006
-#define	SAVECOUNT7		0x0007
-#define	SAVECOUNT8		0x0008
-#define	SAVECOUNT9		0x0009
-#define	SAVECOUNT10		0x0010
+
 
 typedef union
 {
