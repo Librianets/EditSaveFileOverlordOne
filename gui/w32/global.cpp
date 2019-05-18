@@ -10,6 +10,7 @@ unsigned char aBufferOne[MAXSIZEFILE];
 HWND hDlgAbout;
 HWND hDlgConsole;
 
+
 void ClearVal(void){}
 
 void InitiationVal(HINSTANCE hInstance)

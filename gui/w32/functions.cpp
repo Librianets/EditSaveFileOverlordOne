@@ -66,9 +66,6 @@ return TRUE;
 
 }//namespace LIA
 
-
-//	HBUTTON.reserve(count);
-
 void CreateWndSaveInfo (HWND hwnd)
 {
 HWNDSAVEINFO[20] = CreateWindowEx(0, L"BUTTON", L"Сохранения", BS_GROUPBOX | WS_CHILD | WS_VISIBLE | BS_CENTER, 5, 7, 310, 500, hwnd, NULL, gapp.inst, NULL);

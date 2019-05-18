@@ -52,6 +52,7 @@ extern HWND hDlgAbout;
 extern HWND hDlgConsole;
 extern wchar_t sgClass[MAXCLASSNAME];
 extern wchar_t sgWnd[MAXCLASSNAME];
+extern wchar_t sGlobalMsg[MAXPATHLEN];
 extern unsigned char aGlobalBuffer[MAXSIZEFILE];
 extern unsigned char aBufferOne[MAXSIZEFILE];
 

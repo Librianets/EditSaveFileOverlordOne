@@ -16,9 +16,10 @@
 #define ERROR_CHECKSUM 			0x0012
 #define ERROR_COMPRESS 			0x0013
 #define ERROR_OPENSAVEFILE 		0x0014
+#define ERROR_SAVECOUNT 		0x0015
 
 void Error (int msg, int flag_exit);
-
+/*
 extern wchar_t sError[MAXMSGLEN];
 extern wchar_t sWarning[MAXMSGLEN];
 extern wchar_t sWndNot[MAXMSGLEN];
@@ -33,6 +34,6 @@ extern wchar_t sFailCheckConst[MAXMSGLEN];
 extern wchar_t sCheckCrc32[MAXMSGLEN];
 extern wchar_t sDecompress[MAXMSGLEN];
 extern wchar_t sCheckSum[MAXMSGLEN];
-extern wchar_t sNotErrorCorrect[MAXMSGLEN];
+extern wchar_t sNotErrorCorrect[MAXMSGLEN];*/
 
 #endif //__ERROR_HPP__

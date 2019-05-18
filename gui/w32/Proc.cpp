@@ -6,7 +6,12 @@ LRESULT WINAPI MainWndProc (HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		case WM_CREATE: 		CreateWnd(hWnd); 	break;
 		case WM_PAINT: 			PaintWnd(hWnd); 	break;
-		case MSG_SAVEINFO: 		CreateWndSaveInfo(hWnd); 	break;
+		case MSG_SAVEINFO:
+		{
+			CreateWndSaveInfo(hWnd);
+			DefineSaveInfo(&aBufferOne[0x0], &SaveInfoStructOne, uniDInfo.data.iUnzip);
+			break;
+		}
 		
 		case WM_MOVE: 	break;
 		case WM_MOVING: break;

@@ -16,6 +16,7 @@ wchar_t sCheckSum[MAXMSGLEN] 		= L"Суммы не совпадают";
 wchar_t sCompress[MAXMSGLEN] 		= L"Упаковка провалилась";
 wchar_t sOpenSave[MAXMSGLEN] 		= L"Не удалось сохранить";
 wchar_t sNotErrorCorrect[MAXMSGLEN] = L"Не известная ошибка";
+wchar_t sSaveCount[MAXMSGLEN] 		= L"Не удалось установить количество сохранений";
 
 void Error (int msg, int flag_exit)
 {//--HN
@@ -35,6 +36,7 @@ void Error (int msg, int flag_exit)
 	case ERROR_CHECKSUM: 		MessageBox(NULL, sCheckSum, sWarning, MB_OK); break;
 	case ERROR_COMPRESS: 		MessageBox(NULL, sCompress, sWarning, MB_OK); break;
 	case ERROR_OPENSAVEFILE: 	MessageBox(NULL, sOpenSave, sWarning, MB_OK); break;
+	case ERROR_SAVECOUNT: 		MessageBox(NULL, sSaveCount, sWarning, MB_OK); break;
 	default: 					MessageBox(NULL, sNotErrorCorrect, sError, MB_OK); break;
 	}
 	
