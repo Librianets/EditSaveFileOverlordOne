@@ -1,5 +1,5 @@
 #include "global.hpp"
-
+/*
 using offset = unsigned int;
 
 static offset head = 0xE;
@@ -448,4 +448,4 @@ void InitVectorSI(unsigned char *Buf, lpSaveInfoStruct Info, unsigned char num)
 		}break;
 	}
 	
-}
+}*/

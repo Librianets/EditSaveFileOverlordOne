@@ -1,22 +1,15 @@
 #include "global.hpp"
+//#include <GdiPlus.h>
+//using namespace Gdiplus;
 
 int WINAPI wWinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpszCmdParam, int nCmdShow)
 {
 	InitiationVal(hInstance);
 	CreateMainWindow();
 	InitConsole();
-	/*
-	log(L"sizeof short %i", sizeof(short));
-	log(L"sizeof short int %i", sizeof(short int));
-	log(L"sizeof int %i", sizeof(int));
-	log(L"sizeof long int %i", sizeof(long int));
-	log(L"sizeof long long int %i", sizeof(long long int));
-	log(L"sizeof float %i", sizeof(float));
-	log(L"sizeof double %i", sizeof(double));
-	log(L"sizeof long long %i", sizeof(long long));
-	log(L"sizeof char %i", sizeof(char));
-	log(L"sizeof wchar_t %i", sizeof(wchar_t));
-*/
+	
+
+	
 	RunMsg();
 return 0;	
 }

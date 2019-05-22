@@ -5,10 +5,13 @@ wchar_t sgWnd[MAXCLASSNAME] 		= L"Редактор сохранений игры
 wchar_t sGlobalMsg[MAXPATHLEN]		= L"TEST TEST TEST";
 
 unsigned char aGlobalBuffer[MAXSIZEFILE];
-unsigned char aBufferOne[MAXSIZEFILE];
+//unsigned char aBufferOne[MAXSIZEFILE];
+
+
 
 HWND hDlgAbout;
 HWND hDlgConsole;
+
 
 
 void ClearVal(void){}

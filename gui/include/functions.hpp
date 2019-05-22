@@ -29,7 +29,7 @@ extern HDC			hDC2;
 extern HBITMAP		hBm;
 extern BITMAP		bm;
 
-extern OPENFILENAME ofn;
+//extern OPENFILENAME ofn;
 
 extern WNDCLASSEX WndCMain;
 extern RECT RECTmainwnd;
@@ -41,11 +41,6 @@ extern sizeall scwnd, szwnd, pwnd, t_xy_dia;
 extern vector<HWND> HWNDSAVEINFO;
 
 BOOL MainRegClass (WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTANCE hinstance);
-DWORD SizeFile(HANDLE hFileOpen);
-BOOL ReadFile (void);
-BOOL SelectFile (void);
-BOOL SaveFileEnd (void);
-
 void SetPosDlg (HWND hwnd, HWND dia);
 void CreateWnd (HWND hwnd);
 void PaintWnd (HWND hwnd);
@@ -54,10 +49,53 @@ void DlgInit (int numdlg);
 void CreateWndSaveInfo (HWND hwnd);
 void CloseWndSaveInfo ();
 
-namespace LIA
-{ 
-	BOOL OpenFile(void);
-	BOOL SaveFile(void);
+extern class CGameSaveControl CGameSaveControlOne;
+extern class CUnpackPack CUnpackPackOne;
+
+namespace OVERLORD
+{
+	int OpenFile(void);
 }
+
+
+class CGameSaveControl
+{
+public:
+	CGameSaveControl()
+	{
+	memset(&szFileName, 0, sizeof(szFileName));
+	memset(&szFileTitle, 0, sizeof(szFileTitle));
+	memset(&ofn, 0, sizeof(ofn));
+	}
+	
+	~CGameSaveControl()
+	{
+		aBufferRead.~vector();
+		memset(&szFileName, 0, sizeof(szFileName));
+		memset(&szFileTitle, 0, sizeof(szFileTitle));
+		memset(&ofn, 0, sizeof(ofn));
+	}
+	
+	int SelectFile(void); // 0 true
+	int ReadSaveFile(void);
+	vector <unsigned char> *lpGetBuffer(void);
+	unsigned long int GetiNumberReadByte(void);
+	
+private:
+
+#if WIN32PROJECT
+#if WINAPIPROJECT
+	OPENFILENAME ofn;
+#else
+
+#endif
+#endif
+
+	wchar_t szFileName[MAXPATHLEN];
+	wchar_t szFileTitle[MAXPATHLEN];
+	vector <unsigned char> aBufferRead;
+	unsigned long int iNumberReadByte;
+
+};
 
 #endif // __FUNCTIONS_HPP__

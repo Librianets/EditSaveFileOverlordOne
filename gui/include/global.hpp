@@ -54,7 +54,7 @@ extern wchar_t sgClass[MAXCLASSNAME];
 extern wchar_t sgWnd[MAXCLASSNAME];
 extern wchar_t sGlobalMsg[MAXPATHLEN];
 extern unsigned char aGlobalBuffer[MAXSIZEFILE];
-extern unsigned char aBufferOne[MAXSIZEFILE];
+//extern unsigned char aBufferOne[MAXSIZEFILE];
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -66,7 +66,7 @@ extern unsigned char aBufferOne[MAXSIZEFILE];
 #include "proc.hpp"			// project
 #include "mainfuncs.hpp"	// project
 #include "functions.hpp"	// project
-#include "PackUnpack.hpp"	// project
-#include "SaveInfo.hpp"	// project
+#include "packunpack.hpp"	// project
+#include "saveinfo.hpp"	// project
 
 #endif //__GLOBAL_HPP__

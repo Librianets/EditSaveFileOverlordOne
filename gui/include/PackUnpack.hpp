@@ -7,24 +7,6 @@
 #define SAVEINFO	0x666
 #define LANGRU		0x333
 
-
-
-typedef union
-{
-	unsigned char i[30];
-	struct
-	{
-		unsigned int iUnzip;				//4
-		unsigned short int iSignature;		//6
-		unsigned int iCrc32;				//10
-		unsigned int iChecksum;				//14
-		unsigned int iLenFile;				//18
-		unsigned int iConst1;				//22
-		unsigned int iConst2;				//26
-		unsigned int iReserved;				//30
-	} data;
-} uniDataInfo, *puniDataInfo;
-
 typedef union
 {
 unsigned char i[8];
@@ -36,18 +18,68 @@ long long rax;
 	} edx_eax;
 } RegisterVal64, *pRegisterVal64;
 
-extern unsigned int aTableCrc32[];
-extern unsigned int iFlagDefSave;
-extern unsigned int iFlagDefSaveLang;
-extern unsigned int iFlagSaveCount;
-extern uniDataInfo uniDInfo;
+typedef union
+{
+unsigned char i[30];
+struct
+{
+	unsigned int iUnzip;				//4
+	unsigned short int iSignature;		//6
+	unsigned int iCrc32;				//10
+	unsigned int iChecksum;				//14
+	unsigned int iLenFile;				//18
+	unsigned int iConst1;				//22
+	unsigned int iConst2;				//26
+	unsigned int iReserved;				//30
+} data;
+} UnionDataInfo, *pUnionDataInfo;
 
-BOOL CheckFileSignature(puniDataInfo Info, void* aBuf, void* table);
-BOOL Decompression(size_t iUnzip, size_t iLenFile, void* pAddressIn, void* pAddressOut, puniDataInfo Info);
-BOOL Compression(size_t iLenIn, size_t iLenOut, void* pAddressIn, void* pAddressOut, puniDataInfo Info);
-BOOL DefineTypeFile (void* aBuf, size_t len);
+extern const unsigned int aConstTableCrc32 [0x100];
 
-unsigned int CheckCrc32 (size_t iLenFile, void* pAddress, void* table);
-unsigned int CheckSum(size_t iNumByte, void* pAddress);
+class CUnpackPack
+{
+public:
+	CUnpackPack()
+	{
+	memset(&UnionDataInfoOne, 0, sizeof(UnionDataInfo));
+	iFlagDefSave = 0;
+	iFlagDefSaveLang = 0;
+	}
+	
+	~CUnpackPack()
+	{
+		aBufferOne.~vector();
+		aBufferTemp.~vector();
+		memset(&UnionDataInfoOne, 0, sizeof(UnionDataInfo));
+	}
+
+	// public value
+	unsigned int iFlagDefSave;
+	unsigned int iFlagDefSaveLang;
+	
+	// function
+	// При декомпресии UnionDataInfo заполняется автоматически.
+	// При компрессии параметры берутся из UnionDataInfo, требуется корректировка в случае изменения параметров явно.
+	
+	int Compression(); //  Компрессия из aBufferTemp в aBufferOne. Вызыватся явно.
+	int Decompression(); // Декомпрессия из aBufferOne в aBufferTemp. Вызыватся явно.
+	int CheckFileSignature(void); // проверка файла на соответствие файлу сохранения. Запускает DefineTypeFile.
+	int DefineTypeFile(); // определяет тип сейв файла. Вызывается явно после декомпрессии.
+
+	
+	//Get, Set
+	vector <unsigned char> *lpGetBuffer(int numBuf); // 1 - aBufferOne, 2 - aBufferTemp
+	pUnionDataInfo lpGetDataInfo();
+
+
+private:
+	vector <unsigned char> aBufferOne;
+	vector <unsigned char> aBufferTemp;
+	UnionDataInfo UnionDataInfoOne;
+	
+	// function
+	int CheckCrc32(size_t iLenFile, vector <unsigned char> aBuf); // проверка crc32 по алгоритму разработчика. Явно не вызывается.
+	int CheckSum(size_t iNumByte, vector <unsigned char> aBuf); // проверка sum по алгоритму разработчика. Явно не вызывается.
+};
 
 #endif // __UPAP_H__

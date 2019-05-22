@@ -1,17 +1,19 @@
 #include "global.hpp"
 
+
 LRESULT WINAPI MainWndProc (HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
 		case WM_CREATE: 		CreateWnd(hWnd); 	break;
 		case WM_PAINT: 			PaintWnd(hWnd); 	break;
-		case MSG_SAVEINFO:
+		/*case MSG_SAVEINFO:
 		{
+			CloseWndSaveInfo();
 			CreateWndSaveInfo(hWnd);
 			DefineSaveInfo(&aBufferOne[0x0], &SaveInfoStructOne, uniDInfo.data.iUnzip);
 			break;
-		}
+		}*/
 		
 		case WM_MOVE: 	break;
 		case WM_MOVING: break;
@@ -37,13 +39,14 @@ LRESULT WINAPI MainWndProc (HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				case IDDLG_ABOUT: 		DlgInit(DLG_ABOUT); 			break;
 				case IDI_CONSOLE_SHOW: 	DlgConsoleShow(); 				break;
 				case IDI_CONSOLE_HIDE: 	DlgConsoleHide(); 				break;
-				case IDI_OPENFILE: 		LIA::OpenFile(); 				break;
-				case IDI_SAVEFILE: 		LIA::SaveFile(); 				break;
-				case IDI_CLOZEFILE:	
+				case IDI_OPENFILE:		OVERLORD::OpenFile();			break;
+				
+				case IDI_SAVEFILE: 		/*LIA::SaveFile(); 	*/			break;
+				/*case IDI_CLOZEFILE:	
 				{
 					CloseWndSaveInfo();
 					CloseHandle(hFileOpen);
-				}break;
+				}break;*/ 
 				case IDI_EXIT: 			PostQuitMessage(WM_DESTROY); 	break;
 
 				default: return (DefWindowProc(hWnd, msg, wParam, lParam));

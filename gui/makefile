@@ -15,7 +15,8 @@ res 		= $(wg)res/
 I 			= -I$(include) -I$(res)
 l 			= -lres -lz -lstdc++ -lwinpthread  -L$(lib) 
 # -lkernel32 -luser32 -lgdi32 -lcomdlg32
-opt 		= -mwindows -fno-exceptions -municode -static-libgcc -static-libstdc++
+opt 		= -DWINAPIPROJECT -DWIN32PROJECT -mwindows -fno-exceptions -municode -static-libgcc -static-libstdc++ $(debug)
+debug = -g -ggdb
 #-municode
 # -D_UNICODE -DUNICODE
 lang 		= -x c++
@@ -34,7 +35,8 @@ opt += -Dlog_mode
 endif
 
 all_ESD: start dir rm windres $(includeobject) 
-all_ESD_2: exe strip deltemp end
+#all_ESD_2: exe strip deltemp end
+all_ESD_2: exe deltemp end
 
 end:
 	@echo -e ""
