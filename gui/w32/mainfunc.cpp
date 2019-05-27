@@ -5,8 +5,8 @@ HACCEL hAccel;
 
 void RunMsg(void)
 {
-	hAccel = LoadAccelerators(gapp.inst, MAKEINTRESOURCE(IDA_ACCEL)); 
- if (hAccel == NULL) {Error(ERROR_ACCELNOT, ERROR_EXIT_APP);}
+	hAccel = LoadAccelerators(CGG.gapp.inst, MAKEINTRESOURCE(IDA_ACCEL)); 
+	if (hAccel == NULL) {Log.Error(ERROR_ACCELNOT, APPEXIT);}
 	
 	BOOL bMsgVal = 0x0;
 
@@ -18,15 +18,8 @@ void RunMsg(void)
 			case -1: break;
 			default:
 			{
-				if (IsDialogMessage(dlgapp[0].hWnd, &msg) == TRUE)
-				{
-				}
-				else
-				{
 				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-				}
-		
+				DispatchMessage(&msg);		
 			}break;
 		}
 	}
@@ -35,7 +28,14 @@ void RunMsg(void)
 void DestroyAll (void)
 {
 CGameSaveControlOne.~CGameSaveControl();
-DestroyWindow(gapp.wnd);
-UnregisterClass(gapp._class, gapp.inst);
+CUnpackPackOne.~CUnpackPack();
+CSaveInfoOne.~CSaveInfo();
+CSaveInfoWndControlOne.~CSaveInfoWndControl();
+CGG.~CGlobal();
+Log.~CLogging();
+
+DestroyWindow(CGG.gapp.hwnd);
+UnregisterClass(CGG.gapp.gclass, CGG.gapp.inst);
+
 PostQuitMessage(WM_NULL);
 }

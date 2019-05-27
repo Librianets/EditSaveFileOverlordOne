@@ -47,6 +47,18 @@ const unsigned int aConstTableCrc32 [0x100] =
 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D, 0x00960244	
 };
 
+CUnpackPack::CUnpackPack()
+{
+	ClearClass();
+}
+	
+CUnpackPack::~CUnpackPack()
+{
+	ClearClass();
+	aBufferOne.~vector();
+	aBufferTemp.~vector();
+}
+
 vector <unsigned char> *CUnpackPack::lpGetBuffer(int numBuf)
 {
 	switch (numBuf)
@@ -61,7 +73,15 @@ pUnionDataInfo CUnpackPack::lpGetDataInfo()
 	return &UnionDataInfoOne;
 }
 
-int CUnpackPack::CheckCrc32 (size_t iLenFile, vector <unsigned char> aBuf)
+int CUnpackPack::ClearClass()
+{
+	if (aBufferOne.capacity() > 1) {aBufferOne.clear();}
+	memset(&UnionDataInfoOne, 0, sizeof(UnionDataInfo));
+	iFlagDefSave = 0;
+	iFlagDefSaveLang = 0;
+}
+
+unsigned int CUnpackPack::CheckCrc32 (size_t iLenFile, vector <unsigned char> aBuf)
 {
 	unsigned char edi = 0;
 	unsigned int eax = 0xFFFFFFFF;
@@ -80,7 +100,7 @@ int CUnpackPack::CheckCrc32 (size_t iLenFile, vector <unsigned char> aBuf)
 	return eax;
 }
 
-int CUnpackPack::CheckSum(size_t iNumByte, vector <unsigned char> aBuf)
+unsigned int CUnpackPack::CheckSum(size_t iNumByte, vector <unsigned char> aBuf)
 {
 	RegisterVal64 ecx, edi, buf;
 	
@@ -208,7 +228,7 @@ int CUnpackPack::DefineTypeFile ()
 			iFlagDefSaveLang = LANGRU;
 		} else {return ERROR_FAILCHECKLANG;}
 	}
-	
+	if (iFlagDefSave == 0) return ERROR_FAILCHECKCONST;
 	return SUCCESS;
 }
 
@@ -240,52 +260,55 @@ int CUnpackPack::CheckFileSignature(void)
 
 int CUnpackPack::Compression()
 {
-/*	unsigned char *In = (unsigned char*) pAddressIn;
-	unsigned char *Out = (unsigned char*) pAddressOut;
+	if (aBufferTemp.capacity() > 1) {aBufferTemp.clear();}
+	aBufferTemp.reserve(UnionDataInfoOne.data.iUnzip+0x1A*2);
+	aBufferTemp.resize(UnionDataInfoOne.data.iUnzip+0x1A*2);
+	UnionDataInfoOne.data.iConst1 		= 0xDEADBEEF;
+	UnionDataInfoOne.data.iConst2 		= 0xFEEDDEAF;
+	UnionDataInfoOne.data.iReserved 	= 0x00000002;
+	UnionDataInfoOne.data.iSignature 	= 0x5E78;
 	
 	z_stream stream_dec;
 	memset(&stream_dec, 0, sizeof(stream_dec));
-	stream_dec.next_in = NULL;
-	stream_dec.next_out = NULL;
+	stream_dec.next_in = &aBufferOne[0x0]; //4R+2S
+	stream_dec.next_out = &aBufferTemp[0x6];
 	stream_dec.zalloc = Z_NULL;
 	stream_dec.zfree = Z_NULL;
 	stream_dec.opaque = Z_NULL;
-	stream_dec.avail_in = iLenIn;
-	stream_dec.avail_out = iLenOut;	
+	stream_dec.avail_in = UnionDataInfoOne.data.iUnzip;
+	stream_dec.avail_out = (UnionDataInfoOne.data.iUnzip+0x1A*2);
 	int iWindowBits = -15;
-	memset(Out, 0, iLenOut);
-	
-	stream_dec.next_in = In;
-	stream_dec.next_out = &(Out)[0x6];
-	
-	if (deflateInit2(&stream_dec, Z_OVERLORD_SPEED, Z_DEFLATED, iWindowBits, 8, Z_DEFAULT_STRATEGY) != Z_OK) {Error(ERROR_COMPRESS, ERROR_NOTEXITAPP); return FALSE;}	
+		
+	if (deflateInit2(&stream_dec, Z_OVERLORD_SPEED, Z_DEFLATED, iWindowBits, 8, Z_DEFAULT_STRATEGY) != Z_OK) {deflateEnd(&stream_dec); return ERROR_COMPRESS;} else {}
 	deflateReset(&stream_dec);
 	
-	if (deflate(&stream_dec, Z_FINISH) != Z_STREAM_END) {Error(ERROR_COMPRESS, ERROR_NOTEXITAPP); return FALSE;}	
-	log(L"deflate msg = %s", stream_dec.msg);		
-	log(L"deflate total_in = %i", stream_dec.total_in);	
-	log(L"deflate total_out = %i", stream_dec.total_out);
-	memcpy( &(Out)[0x0], &stream_dec.total_in, 4);
-	memcpy( &(Out)[0x4], &Info->data.iSignature, 2);
+	if (deflate(&stream_dec, Z_FINISH) != Z_STREAM_END) 
+	{deflateEnd(&stream_dec); return ERROR_COMPRESS;} else {}
 	
-	Info->data.iChecksum = CheckSum(iLenIn, In);
-	if (Info->data.iChecksum <= 0){Error(ERROR_CHECKSUM, ERROR_NOTEXITAPP); return FALSE;}
-	memcpy( &(Out)[stream_dec.total_out+0x6], &Info->data.iChecksum, 4);
+	memcpy(&aBufferTemp[0x0], &UnionDataInfoOne.i[0x0], 4);
+	memcpy(&aBufferTemp[0x4], &UnionDataInfoOne.i[0x1C], 2);
+
+	UnionDataInfoOne.data.iChecksum = CheckSum(stream_dec.total_in, aBufferOne);
+	memcpy(&aBufferTemp[stream_dec.total_out+0x6], &UnionDataInfoOne.i[0x8], 4);
 	
-	Info->data.iCrc32 = CheckCrc32( (stream_dec.total_out+0x6+0x4), Out);
+	UnionDataInfoOne.data.iCrc32 = CheckCrc32((stream_dec.total_out+0xA), aBufferTemp);
 	
-	if (Info->data.iCrc32 <= 0) {Error(ERROR_CHECKCRC32, ERROR_NOTEXITAPP); return FALSE;}
-	memcpy( &(Out)[stream_dec.total_out+0x6+0x4], 				&Info->data.iConst1, 4);
-	memcpy( &(Out)[stream_dec.total_out+0x6+0x4+0x4], 			&Info->data.iConst2, 4);
-	memcpy( &(Out)[stream_dec.total_out+0x6+0x4+0x4+0x4], 		&Info->data.iCrc32, 4);
-	memcpy( &(Out)[stream_dec.total_out+0x6+0x4+0x4+0x4+0x4], 	&Info->data.iReserved, 4);
-	
-	log(L"deflate totalout = %i", (stream_dec.total_out+0x6+0x4+0x4+0x8+0x4));
+	memcpy(&aBufferTemp[stream_dec.total_out+0xA], &UnionDataInfoOne.i[0x10], 4);
+	memcpy(&aBufferTemp[stream_dec.total_out+0xE], &UnionDataInfoOne.i[0x14], 4);
+	memcpy(&aBufferTemp[stream_dec.total_out+0x12], &UnionDataInfoOne.i[0x4], 4);
+	memcpy(&aBufferTemp[stream_dec.total_out+0x16], &UnionDataInfoOne.i[0x18], 4);
+
+	UnionDataInfoOne.data.iLenFile = (stream_dec.total_out+0x6+0x4+0x4+0x8+0x4);
 	
 	deflateEnd(&stream_dec);
+
+	aBufferOne.clear();
+	aBufferOne.resize(UnionDataInfoOne.data.iLenFile);
 	
-	Info->data.iLenFile = (stream_dec.total_out+0x6+0x4+0x4+0x8+0x4);
-	return TRUE;*/
+	aBufferOne = aBufferTemp;
+	aBufferTemp.clear();
+	
+	return SUCCESS;
 }
 
 int CUnpackPack::Decompression()

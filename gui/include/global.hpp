@@ -1,7 +1,12 @@
 #ifndef __GLOBAL_HPP__
 #define __GLOBAL_HPP__
 
-//////////		global include			//////////
+//////////////////////////////////////////////////
+//////////			global include		//////////
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//////////		project include down	//////////
+//////////////////////////////////////////////////
 
 #include <windows.h> 		// WINDOWS
 #include <stdio.h> 			// Language C
@@ -11,15 +16,17 @@
 #include <stdlib.h>			// Language C
 #include <string.h>			// Language C
 #include <wctype.h>			// Language C
+#include <iostream>			// Language C++
+#include <vector>			// Language C++
+#include <iterator>			// Language C++
 #include <winuser.h>		// WINAPI
 #include <zlib.h>			// ZLIB
 
-#include <iostream>
-#include <vector>
-//#include <iterator>
 using std::vector;
 
-//////////		project include down	//////////
+//////////////////////////////////////////////////
+#define FAILURE				-0x0001 // флаг провала выполнения функции // вместо BOOL
+#define SUCCESS				0x0000 // флаг успешного выполнения функции // вместо BOOL
 
 #define MAXCLASSNAME		0x0040 		// 64
 #define MAXCOUNTERPOINTER 	0x0040 		// 64
@@ -28,45 +35,26 @@ using std::vector;
 #define MAXMSGLEN			0x0040		// 64
 
 #define DLG_ABOUT 			0x1000
-#define MSG_SELECTOPENFILE	0x1001
-#define MSG_READFILE		0x1002
-#define MSG_CHECKFILE		0x1003
-#define MSG_DECOMP			0x1004
-#define MSG_COMP			0x1005
-#define MSG_WRITEFILE		0x1006
-#define MSG_SAVEINFO		0x1007
-#define MSG_SAVESLOT		0x1008
+
+#define MSG_SELECTOPENFILE	0x2001
+#define MSG_READFILE		0x2002
+#define MSG_CHECKFILE		0x2003
+#define MSG_DECOMP			0x2004
+#define MSG_COMP			0x2005
+#define MSG_WRITEFILE		0x2006
+#define MSG_SAVEINFO		0x2007
+#define MSG_SAVESLOT		0x2008
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
-void ClearVal(void);
-void InitiationVal(HINSTANCE hInstance);
-
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-extern HWND hDlgAbout;
-extern HWND hDlgConsole;
-extern wchar_t sgClass[MAXCLASSNAME];
-extern wchar_t sgWnd[MAXCLASSNAME];
-extern wchar_t sGlobalMsg[MAXPATHLEN];
-extern unsigned char aGlobalBuffer[MAXSIZEFILE];
-//extern unsigned char aBufferOne[MAXSIZEFILE];
-
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-
-#include "console.hpp"		// project
+#include "global.hpp"		// project
 #include "resource.hpp"		// project
 #include "winmain.hpp"		// project
-#include "error.hpp"		// project
 #include "proc.hpp"			// project
 #include "mainfuncs.hpp"	// project
 #include "functions.hpp"	// project
 #include "packunpack.hpp"	// project
-#include "saveinfo.hpp"	// project
+#include "saveinfo.hpp"		// project
+#include "logging.hpp"		// project
 
 #endif //__GLOBAL_HPP__

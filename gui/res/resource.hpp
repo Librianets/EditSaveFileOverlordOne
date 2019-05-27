@@ -19,13 +19,13 @@
 
 ///////////////// MENU /////////////////
 #define	IDM_MENU				0x0010
-#define	IDM_MENUERROR_CONSOLE			0x0011
+#define	IDM_MENU_CONSOLE		0x0011
 ////////////////////////////////////////
 
 
 ///////////////// DIALOGS /////////////////
 #define	IDDLG_ABOUT				0x0100
-#define	IDDLG_ERROR_CONSOLE			0x0101
+#define	IDDLG_CONSOLE			0x0101
 ////////////////////////////////////////
 
 ///////////////// MENUITEM /////////////////
@@ -35,9 +35,9 @@
 #define IDI_OPENFILE			0x1004
 #define	IDI_CONSOLE_SHOW		0x1005
 #define	IDI_CONSOLE_HIDE		0x1006
-#define	IDI_CONSOLE_LB			0x1007
+#define	IDI_CONSOLE_EDIT			0x1007
 #define	IDI_CONSOLE_CLEAR		0x1008
-#define	IDI_CONSOLECOMLINE		0x1009
+#define	IDI_CONSOLELINE		0x1009
 #define	IDI_GETLINECONSOLE		0x1010
 #define	IDI_CLOZEFILE			0x1011
 #define	IDI_SAVEFILE			0x1012

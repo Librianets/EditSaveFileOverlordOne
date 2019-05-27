@@ -20,17 +20,18 @@ long long rax;
 
 typedef union
 {
-unsigned char i[30];
+unsigned char i[32];
 struct
 {
-	unsigned int iUnzip;				//4
-	unsigned short int iSignature;		//6
-	unsigned int iCrc32;				//10
-	unsigned int iChecksum;				//14
-	unsigned int iLenFile;				//18
-	unsigned int iConst1;				//22
-	unsigned int iConst2;				//26
-	unsigned int iReserved;				//30
+	unsigned int iUnzip;				//4 0123
+	unsigned int iCrc32;				//10	4567
+	unsigned int iChecksum;				//14	891011
+	unsigned int iLenFile;				//18	12131415
+	unsigned int iConst1;				//22	16171819
+	unsigned int iConst2;				//26	20212223
+	unsigned int iReserved;				//30	24252627
+	unsigned short int iSignature;		//6		2829
+	unsigned short int RESERVED;		//Выравнивание
 } data;
 } UnionDataInfo, *pUnionDataInfo;
 
@@ -39,19 +40,8 @@ extern const unsigned int aConstTableCrc32 [0x100];
 class CUnpackPack
 {
 public:
-	CUnpackPack()
-	{
-	memset(&UnionDataInfoOne, 0, sizeof(UnionDataInfo));
-	iFlagDefSave = 0;
-	iFlagDefSaveLang = 0;
-	}
-	
-	~CUnpackPack()
-	{
-		aBufferOne.~vector();
-		aBufferTemp.~vector();
-		memset(&UnionDataInfoOne, 0, sizeof(UnionDataInfo));
-	}
+	CUnpackPack();
+	~CUnpackPack();
 
 	// public value
 	unsigned int iFlagDefSave;
@@ -65,8 +55,8 @@ public:
 	int Decompression(); // Декомпрессия из aBufferOne в aBufferTemp. Вызыватся явно.
 	int CheckFileSignature(void); // проверка файла на соответствие файлу сохранения. Запускает DefineTypeFile.
 	int DefineTypeFile(); // определяет тип сейв файла. Вызывается явно после декомпрессии.
+	int ClearClass(); // исключительно для повышения управляемости
 
-	
 	//Get, Set
 	vector <unsigned char> *lpGetBuffer(int numBuf); // 1 - aBufferOne, 2 - aBufferTemp
 	pUnionDataInfo lpGetDataInfo();
@@ -78,8 +68,8 @@ private:
 	UnionDataInfo UnionDataInfoOne;
 	
 	// function
-	int CheckCrc32(size_t iLenFile, vector <unsigned char> aBuf); // проверка crc32 по алгоритму разработчика. Явно не вызывается.
-	int CheckSum(size_t iNumByte, vector <unsigned char> aBuf); // проверка sum по алгоритму разработчика. Явно не вызывается.
+	unsigned int CheckCrc32(size_t iLenFile, vector <unsigned char> aBuf); // проверка crc32 по алгоритму разработчика. Явно не вызывается.
+	unsigned int CheckSum(size_t iNumByte, vector <unsigned char> aBuf); // проверка sum по алгоритму разработчика. Явно не вызывается.
 };
 
 #endif // __UPAP_H__

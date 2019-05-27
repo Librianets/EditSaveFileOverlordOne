@@ -1,15 +1,18 @@
 #include "global.hpp"
-//#include <GdiPlus.h>
-//using namespace Gdiplus;
+
 
 int WINAPI wWinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpszCmdParam, int nCmdShow)
 {
-	InitiationVal(hInstance);
+	CGG.Init(hInstance);
 	CreateMainWindow();
-	InitConsole();
-	
+	Log.hInstanceapp = CGG.gapp.inst;
+	Log.hWndapp = CGG.gapp.hwnd;
+	Log.InitConsole();
 
-	
+	Log.Log(L"Project: ESD overlord. \r\n");
+	wchar_t sTeststring[15] = L"TEST ТЕСТ";
+	Log.Log(L"TEST ТЕСТ. i=%i, c=%c, f=%f, s=%ls, wc=%ls \r\n", 5, 't', 5.5, L"ТЕСТ TEST", sTeststring);
+
 	RunMsg();
 return 0;	
 }
