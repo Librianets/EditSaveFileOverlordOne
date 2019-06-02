@@ -17,12 +17,13 @@ CLogging::~CLogging()
 	ClearClass();
 }
 
-void CLogging::Error (int iMSG, int iExit)
+void CLogging::ErrorMsg(int iMSG)
 {	
+	int iExit = 0;
 	switch (iMSG)
 	{
-	case ERROR_GWNDNOT: 		MessageBox(NULL, sWndNot, sError, MB_OK); break;
-	case ERROR_GCLASSNOT: 		MessageBox(NULL, sClassNot, sError, MB_OK); break;
+	case ERROR_GWNDNOT: 		{MessageBox(NULL, sWndNot, sError, MB_OK); iExit = APPEXIT;} break;
+	case ERROR_GCLASSNOT: 		{MessageBox(NULL, sClassNot, sError, MB_OK); iExit = APPEXIT;} break;
 	case ERROR_ACCELNOT: 		MessageBox(NULL, sAccaelNot, sError, MB_OK); break;
 	case ERROR_FILECHECK: 		MessageBox(NULL, sFileSelect, sWarning, MB_OK); break;
 	case ERROR_CONSOLE: 		MessageBox(NULL, sConsole, sWarning, MB_OK); break; 
@@ -35,18 +36,14 @@ void CLogging::Error (int iMSG, int iExit)
 	case ERROR_COMPRESS: 		MessageBox(NULL, sCompress, sWarning, MB_OK); break;
 	case ERROR_OPENSAVEFILE: 	MessageBox(NULL, sOpenSave, sWarning, MB_OK); break;
 	case ERROR_SAVECOUNT: 		MessageBox(NULL, sSaveCount, sWarning, MB_OK); break;
+	case FAILURE: 				break;
 	default: 					MessageBox(NULL, sNotErrorCorrect, sError, MB_OK); break;
 	}
 	
 	if (iExit == APPEXIT){PostQuitMessage(WM_DESTROY);}
 }
-
-void CLogging::Debug(void)
-{
-	
-}
-
-void CLogging::Log(const wchar_t *fmt, ...)
+/*
+void CLogging::Debug(const wchar_t *fmt, ...)
 {
 #ifdef DEBUG
 	va_list list;
@@ -54,16 +51,30 @@ void CLogging::Log(const wchar_t *fmt, ...)
 	va_start(list, fmt);
 	vswprintf(sGlobalMsg, sizeof(sGlobalMsg), fmt, list);
 	va_end(list);
-
-#if WIN32PROJECT
-#if WINAPIPROJECT
+	
+#ifdef WINAPIPROJECT
 	WriteDlgConsole(hWndConsole);
 #else
 
-#endif //WIN32PROJECT
+#endif //WINAPIPROJECT
+#endif //WINAPIPROJECT
+}
+*/
+void CLogging::Log(const wchar_t *fmt, ...)
+{
+
+	va_list list;
+	DWORD tmp;
+	va_start(list, fmt);
+	vswprintf(sGlobalMsg, sizeof(sGlobalMsg), fmt, list);
+	va_end(list);
+	
+#ifdef WINAPIPROJECT
+	WriteDlgConsole(hWndConsole);
+#else
+
 #endif //WINAPIPROJECT
 
-#endif //DEBUG
 }
 
 void CLogging::WriteDlgConsole(HWND hwnd)
@@ -73,13 +84,13 @@ void CLogging::WriteDlgConsole(HWND hwnd)
 
 void CLogging::InitConsole(void)
 {
-#if WIN32PROJECT
-#if WINAPIPROJECT
+#ifdef WINAPIPROJECT
 hWndConsole = CreateDialog(hInstanceapp, MAKEINTRESOURCE(IDDLG_CONSOLE), hWndapp, WndProc);
+if (hWndConsole == NULL) ErrorMsg(ERROR_CONSOLE);
 hMenuConsole = LoadMenu(hInstanceapp, MAKEINTRESOURCE(IDM_MENU_CONSOLE));
 SetMenu(hWndConsole, hMenuConsole);
 SetPosDlg(hWndapp, hWndConsole);
-SetWindowPos(hWndConsole, HWND_TOP, t_xy_dia.x,(t_xy_dia.y+(-25+Y_CONSOLE_DLG)*2), 0, 0, SWP_NOSIZE );
+SetWindowPos(hWndConsole, HWND_TOP, CGG.t_xy_dia.x,(CGG.t_xy_dia.y+(-25+Y_CONSOLE_DLG)*2), 0, 0, SWP_NOSIZE );
 ShowWindow(hWndConsole, SW_HIDE);
 
 Log(L"Project: ESD overlord. \r\n");
@@ -87,53 +98,44 @@ Log(L"TEST ТЕСТ. i=%i, c=%c, f=%f, s=%ls, wc=%ls \r\n", 5, 't', 5.5, L"ТЕ�
 #else
 
 #endif
-#endif
 }
 
 void CLogging::ConsoleShow(void)
 {
-#if WIN32PROJECT
-#if WINAPIPROJECT
+#ifdef WINAPIPROJECT
 	SetPosDlg(hWndapp, hWndConsole);
-	SetWindowPos(hWndConsole, HWND_TOP, t_xy_dia.x,(t_xy_dia.y+(-25+Y_CONSOLE_DLG)*2), 0, 0, SWP_NOSIZE );
+	SetWindowPos(hWndConsole, HWND_TOP, CGG.t_xy_dia.x,(CGG.t_xy_dia.y+(-25+Y_CONSOLE_DLG)*2), 0, 0, SWP_NOSIZE );
 	ShowWindow(hWndConsole, SW_SHOW);
 #else
 
-#endif
 #endif
 }
 
 void CLogging::ConsoleHide(void)
 {
-#if WIN32PROJECT
-#if WINAPIPROJECT
+#ifdef WINAPIPROJECT
 	ShowWindow(hWndConsole, SW_HIDE);
 #else
 
-#endif
 #endif
 }
 
 void CLogging::ConsoleClear(void)
 {
-#if WIN32PROJECT
-#if WINAPIPROJECT
+#ifdef WINAPIPROJECT
 	SendDlgItemMessage(hWndConsole, IDI_CONSOLE_EDIT, WM_SETTEXT, 0, (LPARAM)L"");
 #else
 
-#endif
 #endif
 }
 
 void CLogging::ConsoleGetLine(void)
 {
-#if WIN32PROJECT
-#if WINAPIPROJECT
+#ifdef WINAPIPROJECT
 	wchar_t sTempLine[70];
 	GetDlgItemText(hWndConsole, IDI_CONSOLELINE, sTempLine, sizeof(sTempLine));
 	Log(L"%ls", sTempLine);
 #else
 
-#endif
 #endif
 }

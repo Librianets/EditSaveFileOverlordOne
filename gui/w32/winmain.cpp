@@ -1,6 +1,5 @@
 #include "global.hpp"
 
-
 int WINAPI wWinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpszCmdParam, int nCmdShow)
 {
 	CGG.Init(hInstance);
@@ -8,16 +7,19 @@ int WINAPI wWinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpszCmd
 	Log.hInstanceapp = CGG.gapp.inst;
 	Log.hWndapp = CGG.gapp.hwnd;
 	Log.InitConsole();
-
-	Log.Log(L"Project: ESD overlord. \r\n");
-	wchar_t sTeststring[15] = L"TEST ТЕСТ";
-	Log.Log(L"TEST ТЕСТ. i=%i, c=%c, f=%f, s=%ls, wc=%ls \r\n", 5, 't', 5.5, L"ТЕСТ TEST", sTeststring);
-
 	RunMsg();
-return 0;	
+return msg.wParam;
 }
 
 /*
+by BYTE
+c char
+dw DWORD
+fn Функция
+lpsz
+
+
+
 s		string					строка	sClientName
 sz		zero-terminated string	строка, ограниченная нулевым символом	szClientName
 n, i	int						целочисленная переменная	nSize, iSize

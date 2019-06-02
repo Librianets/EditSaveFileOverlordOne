@@ -13,11 +13,11 @@ bui_d 		= $(build)debug/
 res 		= $(wg)res/
 
 I 			= -I$(include) -I$(res)
-l 			= -lres -lz -lstdc++ -lwinpthread  -L$(lib) 
+l 			= -lres -lz -lstdc++ -lwinpthread  -lcomdlg32 -L$(lib) 
 # -lkernel32 -luser32 -lgdi32 -lcomdlg32
-opt 		= -DWINAPIPROJECT -DWIN32PROJECT -DDEBUG -mwindows -fno-exceptions -municode $(debug)
-# -static-libgcc -static-libstdc++ 
-debug = -g -ggdb
+opt 		= -DWINAPIPROJECT -DLOGGING -mwindows -fno-exceptions -municode $(debug)
+# -static-libgcc -static-libstdc++ -DWIN32PROJECT -DDEBUG ComCtl32.dll
+debug = -g -ggdb -DDEBUG
 #-municode
 # -D_UNICODE -DUNICODE
 lang 		= -x c++

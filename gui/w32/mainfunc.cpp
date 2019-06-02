@@ -6,7 +6,7 @@ HACCEL hAccel;
 void RunMsg(void)
 {
 	hAccel = LoadAccelerators(CGG.gapp.inst, MAKEINTRESOURCE(IDA_ACCEL)); 
-	if (hAccel == NULL) {Log.Error(ERROR_ACCELNOT, APPEXIT);}
+	if (hAccel == NULL) {Log.ErrorMsg(ERROR_ACCELNOT);}
 	
 	BOOL bMsgVal = 0x0;
 

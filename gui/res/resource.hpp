@@ -35,12 +35,26 @@
 #define IDI_OPENFILE			0x1004
 #define	IDI_CONSOLE_SHOW		0x1005
 #define	IDI_CONSOLE_HIDE		0x1006
-#define	IDI_CONSOLE_EDIT			0x1007
+#define	IDI_CONSOLE_EDIT		0x1007
 #define	IDI_CONSOLE_CLEAR		0x1008
-#define	IDI_CONSOLELINE		0x1009
+#define	IDI_CONSOLELINE			0x1009
 #define	IDI_GETLINECONSOLE		0x1010
 #define	IDI_CLOZEFILE			0x1011
 #define	IDI_SAVEFILE			0x1012
+
+////////////////////////////////////////
+///////////////// Button /////////////////
+#define	ID_BUTTON0				0x2000
+#define	ID_BUTTON1				0x2001
+#define	ID_BUTTON2				0x2002
+#define	ID_BUTTON3				0x2003
+#define	ID_BUTTON4				0x2004
+#define	ID_BUTTON5				0x2005
+#define	ID_BUTTON6				0x2006
+#define	ID_BUTTON7				0x2007
+#define	ID_BUTTON8				0x2008
+#define	ID_BUTTON9				0x2009
+
 
 ////////////////////////////////////////
 
@@ -56,8 +70,8 @@
 
 
 /////////	POSITION	/////////
-//szwnd.x = (1280/2); //640
-//szwnd.y = (1024/2); //512
+//CGG.szwnd.x = (1280/2); //640
+//CGG.szwnd.y = (1024/2); //512
 
 #define CX_CONSOLE_DLG			0
 #define CY_CONSOLE_DLG			143 // (512-(200+25)/2

@@ -1,4 +1,3 @@
 console/temp/*.o
-console/build/*.exe
 gui/temp/*.o
-gui/build/*.exe
+idadebug/*.*

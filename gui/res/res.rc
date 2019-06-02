@@ -4,6 +4,7 @@
 ID_APP_ICON		ICON		"overlord.ico"
 IDB_LOGO		BITMAP		"logo.bmp"
 IDB_LOGO2		BITMAP		"logo2.bmp"
+manifest		RT_MANIFEST	"manifest.xml"
 
 IDA_ACCEL			ACCELERATORS
 {
@@ -100,6 +101,7 @@ FONT 10, "MS Sans Serif", 0, 0, 0x1
 {
 CONTROL "\n Редактор сохранений. \n Игра: Overlord. \n Версии: 0.4 \n ", -1, "STATIC", WS_EX_TRANSPARENT | SS_CENTER, 0, 0, 100, 50
 CONTROL "IDB_LOGO2", -1, "STATIC", SS_BITMAP, 100, 0, -1, -1
+
 CONTROL "\n Автор: Librianets", -1, "STATIC", WS_EX_TRANSPARENT | SS_CENTER, 0, 50, 200, 20
 CONTROL "\n Реализовано:\n \
 \t 1. Распаковка, запаковка\n \
