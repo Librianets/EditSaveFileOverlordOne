@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "global.hpp"		// project
 
 class CGameSaveControl CGameSaveControlOne;
 class CUnpackPack CUnpackPackOne;
@@ -92,14 +92,14 @@ int OVERLORD::OpenFile(void)
 	iTempValue = CGameSaveControlOne.SelectGameFile();
 	if (iTempValue != SUCCESS ) {Log.ErrorMsg(iTempValue); 
 	#ifdef LOGGING
-	Log.Log(L"SelectGameFile %x", iTempValue ); 
+	Log.Log(L"SelectGameFile -%X", abs(iTempValue) ); 
 	#endif
 	return FAILURE;}
 	
 	iTempValue = CGameSaveControlOne.ReadGameFile();
 	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
 	#ifdef LOGGING
-	Log.Log(L"ReadGameFile %x", iTempValue ); 
+	Log.Log(L"ReadGameFile -%X", abs(iTempValue) ); 
 	#endif
 	return FAILURE;}
 				
@@ -114,21 +114,21 @@ int OVERLORD::OpenFile(void)
 	iTempValue = CUnpackPackOne.CheckFileSignature();
 	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
 	#ifdef LOGGING
-	Log.Log(L"CheckFileSignature %x", iTempValue );
+	Log.Log(L"CheckFileSignature -%X", abs(iTempValue) );
 	#endif
 	return FAILURE;}
 	
 	iTempValue = CUnpackPackOne.Decompression();
 	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
 	#ifdef LOGGING
-	Log.Log(L"Decompression %x", iTempValue );
+	Log.Log(L"Decompression -%X", abs(iTempValue) );
 	#endif
 	return FAILURE;}
 	
 	iTempValue = CUnpackPackOne.DefineTypeFile();
 	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
 	#ifdef LOGGING
-		Log.Log(L"DefineTypeFile %x", iTempValue );
+		Log.Log(L"DefineTypeFile -%X", abs(iTempValue) );
 	#endif
 	return FAILURE;}
 	
@@ -160,14 +160,23 @@ int OVERLORD::SaveFile(void)
 	iTempValue = CGameSaveControlOne.SelectSaveGameFile();
 	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
 	#ifdef LOGGING
-	Log.Log(L"SelectSaveGameFile %x", iTempValue );
+	Log.Log(L"SelectSaveGameFile -%X", abs(iTempValue) );
 	#endif
 	return FAILURE;}
-		
+	
+	iTempValue = CSaveInfoOne.AssemblySI();
+	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
+	#ifdef LOGGING
+	Log.Log(L"AssemblySI -%X", abs(iTempValue) );
+	#endif
+	return FAILURE;}
+	
+	
+	/*
 	iTempValue = CUnpackPackOne.Compression();
 	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
 	#ifdef LOGGING
-	Log.Log(L"Compression %x", iTempValue );
+	Log.Log(L"Compression -%X", abs(iTempValue) );
 	#endif
 	return FAILURE;}
 	
@@ -178,14 +187,15 @@ int OVERLORD::SaveFile(void)
 	*(CGameSaveControlOne.lpGetBuffer()) = *(CUnpackPackOne.lpGetBuffer(1));
 	CGameSaveControlOne.iNumberReadByte = CUnpackPackOne.lpGetDataInfo()->data.iLenFile;
 	if (CGameSaveControlOne.iNumberReadByte < 50) return FAILURE;
+	
 	iTempValue = CGameSaveControlOne.WriteGameFile();
 	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
 	#ifdef LOGGING
-	Log.Log(L"WriteGameFile %x", iTempValue );
+	Log.Log(L"WriteGameFile -%X", abs(iTempValue) );
 	#endif
-	 return FAILURE;}
+	return FAILURE;}
 	
-	CGameSaveControlOne.ClearClass();
+	CGameSaveControlOne.ClearClass();*/
 	return SUCCESS;
 }
 
@@ -315,13 +325,15 @@ int CGameSaveControl::SelectSaveGameFile(void)
 	ofn.nFilterIndex		= 1;
 	ofn.lpstrDefExt			= NULL;
 	
-	if( GetSaveFileName(&ofn) != 0 ) {return SUCCESS;} else {Log.ErrorMsg(ERROR_OPENFILE);return FAILURE;}
+	if( GetSaveFileName(&ofn) != 0 ) {return SUCCESS;} else {return ERROR_OPENSAVEFILE;}
 #else
 #endif
 }
 
 int CGameSaveControl::WriteGameFile(void)
 {
+	//Log.Log(L"ofn", ofn.);
+	Log.Log(L"szFileTitle", szFileTitle);
 	if (szFileTitle == 0) return ERROR_NOTFILESELECT;
 	FILE *pFile;
 	pFile = _wfopen (szFileTitle, L"wb");
@@ -331,6 +343,7 @@ int CGameSaveControl::WriteGameFile(void)
 	if ( (iNumberReadByte > MAXSIZEFILE) | (iNumberReadByte <= 0) ) {fclose(pFile); return ERROR_LIMITMAXSIZE;}
 	if( iNumberReadByte != fwrite(&aBufferRead[0x0], sizeof(char), iNumberReadByte, pFile) ) {fclose(pFile); return ERROR_FILESIZE;}
 	fclose(pFile);
+	
 	return SUCCESS;
 }
 

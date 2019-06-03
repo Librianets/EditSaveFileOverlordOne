@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "global.hpp"		// project
 
 int WINAPI wWinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpszCmdParam, int nCmdShow)
 {

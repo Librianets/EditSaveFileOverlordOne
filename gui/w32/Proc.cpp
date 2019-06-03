@@ -1,5 +1,4 @@
-#include "global.hpp"
-
+#include "global.hpp"		// project
 
 LRESULT WINAPI MainWndProc (HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -12,13 +11,26 @@ LRESULT WINAPI MainWndProc (HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		
 		case WM_PAINT:
 		{
-			Log.Log(L"\r\n  MainWndProc WM_PAINT");
+			//Log.Log(L"\r\n MainWndProc WM_PAINT");
 			PaintWnd(hWnd, CGG.HdcPaint); 
 		}break;
 		
 		case WM_CTLCOLORBTN:
 		{
 		}break;
+		
+		
+		case WM_CTLCOLORSTATIC:
+        {
+            /*if((HWND)lParam == hTest)
+            {
+                HDC hdctest = (HDC)wParam;
+                SetBkMode(hdctest, TRANSPARENT);
+                SetTextColor(hdctest, RGB(255, 0, 0));
+                return (LRESULT)GetStockObject(NULL_BRUSH);
+            }*/
+        }
+        break;
 		
 		case WM_ERASEBKGND:
 		{
@@ -124,7 +136,6 @@ LRESULT WINAPI GroupBoxWndProcOne(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
 	PAINTSTRUCT ps;	HGDIOBJ hSOOne;	HDC hWndGBOne;
 	switch (msg)
 	{
-		
 		case WM_CREATE:
 		{
 
@@ -150,7 +161,6 @@ LRESULT WINAPI GroupBoxWndProcOne(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
 			&CSaveInfoWndControlOne.aCBSI[i].rectText, DT_LEFT, NULL);
 		}
 
-			
 		hSOOne = SelectObject(hWndGBOne, GetStockObject(NULL_BRUSH));
 		Rectangle(hWndGBOne, 0, 0, \
 		CSaveInfoWndControlOne.aWndSI[0].rectWnd.right, \
@@ -205,7 +215,6 @@ LRESULT WINAPI GroupBoxWndProcOne(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
 					}
 				}break;
 			}
-			
 		}break;
 		
 		case WM_COMMAND:
@@ -269,7 +278,6 @@ LRESULT WINAPI GroupBoxWndProcTwo(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
 					
 				}break;
 			}
-			
 		}break;
 		
 		case WM_COMMAND:

@@ -11,16 +11,22 @@ build 		= $(wg)build/
 bui_r 		= $(build)release/
 bui_d 		= $(build)debug/
 res 		= $(wg)res/
+libcore 	= $(wg)libcore/
 
-I 			= -I$(include) -I$(res)
-l 			= -lres -lz -lstdc++ -lwinpthread  -lcomdlg32 -L$(lib) 
-# -lkernel32 -luser32 -lgdi32 -lcomdlg32
-opt 		= -DWINAPIPROJECT -DLOGGING -mwindows -fno-exceptions -municode $(debug)
+I 			= -I$(include) -I$(res) -I$(libcore)
+l 			= -lres -lpacker -lz -lstdc++ -lwinpthread -lcomdlg32 -luser32 -lgdi32 -L$(lib) -L$(libcore) 
+# -lkernel32  -lcomdlg32
+opt 		= -DWINAPIPROJECT -DLOGGING -mwindows -fno-exceptions -municode
+optlib 		= -municode
 # -static-libgcc -static-libstdc++ -DWIN32PROJECT -DDEBUG ComCtl32.dll
-debug = -g -ggdb -DDEBUG
+debug 		= -g -ggdb -DDEBUG
 #-municode
 # -D_UNICODE -DUNICODE
 lang 		= -x c++
+
+packname = packunpack
+packlibname = libpacker.a
+
 
 ######
 punt =,
@@ -35,9 +41,17 @@ ifdef log_mode
 opt += -Dlog_mode
 endif
 
-all_ESD: start dir rm windres $(includeobject) 
+all_ESD: start dir rm $(includeobject) 
 #all_ESD_2: exe strip deltemp end
 all_ESD_2: exe strip deltemp end
+
+rebuildlib: libdel windres packlib
+	@echo -e "rebuildlib"
+	@rm -f $(libcore)*.o
+	
+libdel:
+	@rm -f $(libcore)*.a
+	@rm -f $(libcore)*.o
 
 end:
 	@echo -e ""
@@ -51,21 +65,23 @@ start:
 
 exe:
 	@echo -e "$(includeobject_2) -->> $(exe)"
-	@$(CC) $(temp){$(includeobject_2)} -o $(bui_d)$(exe) $(I) $(l) $(opt)
+	@$(CC) $(temp){$(includeobject_2)} -o $(bui_d)$(exe) $(I) $(l) $(opt) $(debug)
 
 $(includeobject):
 	@echo -e "$*.cpp -->> $*.o"
-	@$(CC) $(lang) -c $(w32)$*.cpp -o $(temp)$*.o $(I) $(opt)
+	@$(CC) $(lang) -c $(w32)$*.cpp -o $(temp)$*.o $(I) $(opt) $(debug)
 
-ar:
-	@echo -e "ar"
-
-ranlib:
-	@echo -e "ranlib"
+packlib:
+	@echo -e "$*.cpp -->> $*.o"
+	@$(CC) $(lang) -c $(libcore)$(packname).cpp -o $(libcore)$(packname).o $(I) $(opt)
+	@echo -e "ar packlib"
+	$(ar) cr $(libcore)$(packlibname) $(libcore)$(packname).o
+	@echo -e "ranlib packlib"
+	$(ranlib) $(libcore)$(packlibname)
 
 windres:
 	@echo -e "res.rc --> libres.a"
-	@$(wres) --input=$(res)res.rc --output=$(lib)libres.a $(I)
+	@$(wres) --input=$(res)res.rc --output=$(libcore)libres.a $(I)
 
 strip:
 	@echo -e "${YELLOW}strip $(exe)$(ECHO_C)"
@@ -89,7 +105,6 @@ rm: deltemp
 
 deltemp:
 	@rm -f $(temp)*.*
-	@rm -f $(lib)libres.a
 
 clean: rm
 	@echo -e ""

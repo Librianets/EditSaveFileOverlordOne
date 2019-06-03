@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "global.hpp"		// project
 
 class CLogging Log;
 
@@ -42,27 +42,9 @@ void CLogging::ErrorMsg(int iMSG)
 	
 	if (iExit == APPEXIT){PostQuitMessage(WM_DESTROY);}
 }
-/*
-void CLogging::Debug(const wchar_t *fmt, ...)
-{
-#ifdef DEBUG
-	va_list list;
-	DWORD tmp;
-	va_start(list, fmt);
-	vswprintf(sGlobalMsg, sizeof(sGlobalMsg), fmt, list);
-	va_end(list);
-	
-#ifdef WINAPIPROJECT
-	WriteDlgConsole(hWndConsole);
-#else
 
-#endif //WINAPIPROJECT
-#endif //WINAPIPROJECT
-}
-*/
 void CLogging::Log(const wchar_t *fmt, ...)
 {
-
 	va_list list;
 	DWORD tmp;
 	va_start(list, fmt);
@@ -94,7 +76,7 @@ SetWindowPos(hWndConsole, HWND_TOP, CGG.t_xy_dia.x,(CGG.t_xy_dia.y+(-25+Y_CONSOL
 ShowWindow(hWndConsole, SW_HIDE);
 
 Log(L"Project: ESD overlord. \r\n");
-Log(L"TEST ТЕСТ. i=%i, c=%c, f=%f, s=%ls, wc=%ls \r\n", 5, 't', 5.5, L"ТЕСТ TEST", sGlobalMsg);
+Log(L"TEST ТЕСТ. i=%i, c=%c, f=%f, s=%ls \r\n", 5, 't', 5.5, L"ТЕСТ TEST");
 #else
 
 #endif

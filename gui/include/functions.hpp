@@ -94,8 +94,8 @@ class CGameSaveControl
 public:
 	
 	// public val
-	unsigned long int iNumberReadByte;
-	
+	unsigned long int iNumberReadByte;wchar_t szFileTitle[MAXPATHLEN];
+	wchar_t szFileName[MAXPATHLEN];
 	// public funcs
 	CGameSaveControl();
 	~CGameSaveControl();
@@ -118,8 +118,8 @@ private:
 
 #endif
 
-	wchar_t szFileName[MAXPATHLEN];
-	wchar_t szFileTitle[MAXPATHLEN];
+	
+	
 	vector <unsigned char> aBufferRead;
 
 };

@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "global.hpp"		// project
 
 MSG msg;
 HACCEL hAccel;

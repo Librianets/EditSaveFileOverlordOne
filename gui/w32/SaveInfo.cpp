@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "global.hpp"		// project
 
 vector <unsigned char> *CSaveInfo::lpGetBuffer(void)
 {
@@ -26,8 +26,11 @@ void CSaveInfo::ClearClass(void)
 			SaveInfoStructOne.data.aDataSave[i].clear();
 			SaveInfoStructOne.data.aDataSave[i].resize(0);
 		}
+		SaveInfoStructOne.count.iCount[i] = 0x0;
+		SaveInfoStructOne.header.count = 0x0;
+		SaveInfoStructOne.header.numbersize = 0x0;
 	}
-	memset(&SaveInfoStructOne, 0, sizeof(SaveInfoStruct));
+	
 }
 
 void CSaveInfo::StringConvert(void)
@@ -65,7 +68,7 @@ int CSaveInfo::DisassemblySI(void)
 {
 	memcpy (&SaveInfoStructOne.header.count, &aBufferTemp[0xA], 4);
 #ifdef DEBUG
-Log.Log(L"\r\nInfo->header.count = %i", SaveInfoStructOne.header.count); Log.Log(L"\r\n0xB = %x, 0xC = %x", aBufferTemp[0xB], aBufferTemp[0xC]);
+Log.Log(L"\r\nInfo->header.count = %i", SaveInfoStructOne.header.count); Log.Log(L"\r\n0xB = %X, 0xC = %X", aBufferTemp[0xB], aBufferTemp[0xC]);
 #endif
 	switch (aBufferTemp[0xB])
 	{
@@ -91,7 +94,7 @@ Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = %i", SaveInfoStru
 			SaveInfoStructOne.listfile.iOffset[SAVECOUNT2] = aBufferTemp[0xF] + iSave[iFlagSaveCount];
 			
 			SaveInfoStructOne.count.iCount[SAVECOUNT1] = SaveInfoStructOne.listfile.iOffset[SAVECOUNT2] - SaveInfoStructOne.listfile.iOffset[SAVECOUNT1];
-			SaveInfoStructOne.count.iCount[SAVECOUNT2] = SaveInfoStructOne.header.numbersize - iSave[iFlagSaveCount] - SaveInfoStructOne.listfile.iOffset[SAVECOUNT2];
+			SaveInfoStructOne.count.iCount[SAVECOUNT2] = SaveInfoStructOne.header.numbersize - SaveInfoStructOne.listfile.iOffset[SAVECOUNT2];
 #ifdef DEBUG
 	Log.Log(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
 	for (int l = 0; l <= iFlagSaveCount; l++)
@@ -362,8 +365,8 @@ Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = %i", SaveInfoStru
 	Log.Log(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
 	for (int l = 0x0; l <= iFlagSaveCount; l++)
 	{
-		Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %x", l, SaveInfoStructOne.listfile.iOffset[l]);
-		Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%i] = %x", l, SaveInfoStructOne.count.iCount[l]);
+		Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %X", l, SaveInfoStructOne.listfile.iOffset[l]);
+		Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%i] = %X", l, SaveInfoStructOne.count.iCount[l]);
 	}
 #endif
 			for (int l = 0; l <= iFlagSaveCount; l++)
@@ -386,6 +389,69 @@ Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = %i", SaveInfoStru
 return SUCCESS;
 }
 
+int CSaveInfo::AssemblySI(void)
+{
+	if (aBufferTemp.capacity() > 1) {aBufferTemp.clear();} else {return FAILURE;}
+	SaveInfoStructOne.header.numbersize = 0x0;
+	int iPos = 0x0;
+	for (int i = 0; i < 10; i++)
+	{
+		SaveInfoStructOne.header.numbersize += SaveInfoStructOne.data.aDataSave[i].size();
+		Log.Log(L"\r\n aDataSave[%i].size = %X (%i)", i, SaveInfoStructOne.data.aDataSave[i].size(), SaveInfoStructOne.data.aDataSave[i].size());
+	}
+	aBufferTemp.resize(SaveInfoStructOne.header.numbersize + iSave[iFlagSaveCount]);
+	
+	memcpy(&aBufferTemp[iPos], &SaveInfoStructOne.header.reserved, 4); iPos += 0x4;
+	memcpy(&aBufferTemp[iPos], &SaveInfoStructOne.header.const02, 4); iPos += 0x4;
+	memcpy(&aBufferTemp[iPos], &SaveInfoStructOne.header.const01, 2); iPos += 0x2;
+	switch (iFlagSaveCount)
+	{
+		case SAVECOUNT1:
+		{
+			memcpy(&aBufferTemp[iPos], &SaveInfoStructOne.listfile.iConst2[0], 4); iPos += 0x4;
+		}break;
+		
+		case SAVECOUNT2:
+		{
+			memcpy(&aBufferTemp[iPos], &SaveInfoStructOne.listfile.iConst2[1], 4); iPos += 0x4;
+			short int temp = (short int) (SaveInfoStructOne.count.iCount[0] << 8 | 0x01);
+			memcpy(&aBufferTemp[iPos], &temp, 2); iPos += 0x2;
+		}break;
+		
+		
+		default: return ERRORSAVECOUNT;	
+	}
+
+	SaveInfoStructOne.header.numbersize += iPos;
+	
+	
+	for(int i = 0; i < 10; i++)
+	{
+		memcpy(&aBufferTemp[iPos], &SaveInfoStructOne.data.aDataSave[i][0x0], (size_t)SaveInfoStructOne.data.aDataSave[i].size());
+		iPos += SaveInfoStructOne.data.aDataSave[i].size();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	#ifdef DEBUG
+	Log.Log(L"\r\n SaveInfoStructOne.header.numbersize = %i", SaveInfoStructOne.header.numbersize);
+	for(int i = 0; i < SaveInfoStructOne.header.numbersize; i++)
+	{
+		if (i == 0) {Log.Log(L"\r\n");} else {}
+		Log.Log(L"%02X, ", aBufferTemp[i] );
+	}
+	#endif
+
+	
+	return SUCCESS;	
+}
+
+
 int CSaveInfo::InitVectorSI(int num)
 {
 	if (iFlagSaveCount == ERROR_SAVECOUNT) {return ERROR_SAVECOUNT;}
@@ -393,20 +459,24 @@ int CSaveInfo::InitVectorSI(int num)
 	
 	SaveInfoStructOne.data.aDataSave[num].reserve( SaveInfoStructOne.count.iCount[num] );
 	SaveInfoStructOne.data.aDataSave[num].clear();
+	SaveInfoStructOne.data.aDataSave[num].resize( SaveInfoStructOne.count.iCount[num] );
+
 	memcpy(&SaveInfoStructOne.data.aDataSave[num][0x0], &aBufferTemp[SaveInfoStructOne.listfile.iOffset[num]], SaveInfoStructOne.count.iCount[num]);
-	
+		
 	CSaveInfoWndControlOne.SetWndLong(num);
 	
 #ifdef DEBUG
+	Log.Log(L"\r\n size data = %X ", SaveInfoStructOne.data.aDataSave[num].size() );
 	Log.Log(L"\r\nInitVectorSI, num = %i", num);
 	Log.Log(L"\r\nposition = %i", position);
 	Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%i] = %i", num, SaveInfoStructOne.count.iCount[num]);
-	Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%i] = %i(0x%x)", num, SaveInfoStructOne.count.iCount[num], SaveInfoStructOne.count.iCount[num]);
+	Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%i] = %i(0x%X)", num, SaveInfoStructOne.count.iCount[num], SaveInfoStructOne.count.iCount[num]);
 	for(int l = 0; l < SaveInfoStructOne.count.iCount[num]; l++)
 	{
 		if (l == 0) {Log.Log(L"\r\n");} else {}
 		Log.Log(L"%x, ", SaveInfoStructOne.data.aDataSave[num][l] );
 	}
+	
 #endif
 
 return SUCCESS;
