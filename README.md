@@ -36,6 +36,7 @@ Sample: progname.exe -C -i SaveInfo_uncompress.osi.tzf -o SaveInfo.osi.tzf
 
 
 Справка по версии c GUI:
+
 /*в стадии разработки*/
 
 Сборка осуществляется с использованием rules.sh (makefile на прямую не вызываются)
