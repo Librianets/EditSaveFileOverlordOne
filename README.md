@@ -23,19 +23,16 @@ GUI версия на данный момент имеет следующий ф
 
 Перенос на *unix системы состоится после окончания разработки
 
+
 Справка по консольной версии:
 
 progname.exe option -i input -o output 
 
--i name 	: name file input
-
--o name 	: name file output
-
--C 			: compressed
-
--D 			: uncompressed
-
--f 			: help
+- i name 	: name file input
+- o name 	: name file output
+- C 			: compressed
+- D 			: uncompressed
+- f 			: help
 
 Sample: progname.exe -D -i SaveInfo.osi.tzf -o SaveInfo_uncompress.osi.tzf
 
@@ -52,18 +49,13 @@ Sample: progname.exe -C -i SaveInfo_uncompress.osi.tzf -o SaveInfo.osi.tzf
 
 Параметры:
 
-	-g opt			Cборка gui версии (требуются дополнительные ключи)
-	
-	-c				Cборка console версии
-	
-	-h				Справка
+	- g opt			Cборка gui версии (требуются дополнительные ключи)
+	- c				Cборка console версии
+	- h				Справка
 
 Опции gui:
 
-	l -		сборка libcore
-	
-	e -		сборка проекта
-	
-	a -		сборка всего (без модулей)
-	
-	m -		модули 							// не используется на данный момент
+	- l			сборка libcore
+	- e			сборка проекта
+	- a			сборка всего (без модулей)
+	- m			модули 							// не используется на данный момент
