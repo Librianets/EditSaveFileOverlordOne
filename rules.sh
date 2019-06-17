@@ -12,9 +12,10 @@ function print_help()
     echo "  -c                Cборка console версии"
     echo "  -h                Справка"
     echo "  Параметры gui:"
-    echo "  l"
-    echo "  e"
-    echo "  a"
+    echo "  l - сборка libcore"
+    echo "  e - сборка проекта"
+    echo "  a - сборка всего (без модулей)"
+    echo "  m - модули"
     echo
 }
 
@@ -40,6 +41,11 @@ if [[ $1 = "a" ]]
 then
 	gui_f l
 	gui_f e
+fi
+
+if [[ $1 = "m" ]]
+then
+	make -f globalmake module --eval=gui=1
 fi
 
 return 0

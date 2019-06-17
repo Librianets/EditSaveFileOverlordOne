@@ -1,72 +1,96 @@
 #ifndef __LOGGING_HPP__
 #define __LOGGING_HPP__
 
-#define APPEXIT 				-0x2000 // флаг аварийного завершения программы
-#define NOTAPPEXIT 				-0x1000 // флаг продолжения работы программы
+extern class CDebugInfo 	Cdbg;
+extern class CAppLogging 	CALog;
+extern class CAppConsole 	CACon;
 
-#define ERROR_GWNDNOT 			-0x0002
-#define ERROR_GCLASSNOT 		-0x0003
-#define ERROR_ACCELNOT 			-0x0004
-#define ERROR_FILECHECK 		-0x0005
-#define ERROR_CONSOLE 			-0x0006
-#define ERROR_OPENFILE 			-0x0007
-#define ERROR_FILESIZE 			-0x0008
+#ifdef DEBUGMODE
+#define debug(fmt, ...) 			Cdbg.Debug(fmt, __VA_ARGS__)
+#else
+#define debug(fmt, ...)
+#endif
 
-#define ERROR_OPENSAVEFILE 		-0x000E
-#define ERROR_SAVECOUNT 		-0x000F
-#define ERROR_LIMITMAXSIZE 		-0x0010
-#define ERROR_NOTFILESELECT 	-0x0011 //16
+#ifdef LOGGING
+#define info(fmt, ...) 				Cdbg.Info(fmt, __VA_ARGS__); CACon.WriteDlgConsole(Cdbg.lpGetGlobalMsg()); //Cdbg.lpGetGlobalMsg
+// как бы обойти нестыковку по параметрам
+#else
+#define info(fmt, ...)
+#endif
 
-extern class CLogging Log;
+#ifdef WINAPIMSG
+#define errormsg(iMSG, iCategory)	CALog.ErrorMsg(iMSG, iCategory)
+#else
+#define errormsg(iMSG, iCategory)
+#endif
 
-class CLogging
+#define MAXMSGLEN			0x0040		// 64
+
+#define APP 		0x00	//сообщения приложения
+#define PACKLIB 	0x02	//библиотека распаковки, упаковки
+
+typedef struct
 {
-public:
-	CLogging();
-	~CLogging();
+	short int iPos;
+	short int iMsgNum;
+	wchar_t aMessageError [MAXMSGLEN];
+} TMessageErrorTxt;
+
+class CAppLogging
+{
+	public:
+	CAppLogging()
+	{
+		
+	}
+	~CAppLogging()
+	{
+		ClearClass();
+	}
+	void ClearClass(void)
+	{
+		
+	}
 	
-	// public val
-	HWND hWndConsole;
-	HMENU hMenuConsole;
-	HINSTANCE hInstanceapp;
-	HWND hWndapp;
+	void ErrorMsg(int iMSG, int iCategory);
 	
-	// public funcs
-	void ClearClass(void);
-	void ErrorMsg(int iMSG);
-	void Log(const wchar_t *fmt, ...);
-	void WriteDlgConsole(HWND hwnd);
+	private:
+	
+};
+
+class CAppConsole
+{
+	public:
+	CAppConsole()
+	{
+		
+	}
+	~CAppConsole()
+	{
+		ClearClass();
+	}
+	void ClearClass(void)
+	{
+		
+	}
+	
+	void WriteDlgConsole(wchar_t *aBufMsg);
 	void InitConsole(void);
 	void ConsoleShow(void);
 	void ConsoleHide(void);
 	void ConsoleClear(void);
 	void ConsoleGetLine(void);
 	
-private:
-	DLGPROC WndProc;
+	public:
+	HWND hWndConsole;
+	HMENU hMenuConsole;
+	HINSTANCE hInstanceapp;
+	HWND hWndapp;
 	
-	wchar_t sGlobalMsg[MAXPATHLEN]		= L"TEST TEST TEST";
-	
-	wchar_t sError[MAXMSGLEN] 			= L"Ошибка";
-	wchar_t sWarning[MAXMSGLEN]			= L"Предупреждение";
-	
-	wchar_t sWndNot[MAXMSGLEN] 			= L"Не удалось создать главное окно";
-	wchar_t sClassNot[MAXMSGLEN] 		= L"Не удалось зарегистрировать класс окна";
-	wchar_t sAccaelNot[MAXMSGLEN] 		= L"Проблемы с таблицей акселератов";
-	wchar_t sFileSelect[MAXMSGLEN] 		= L"Проблемы с файлом. Повторите попытку";
-	wchar_t sConsole[MAXMSGLEN] 		= L"Не удалось создать консоль";
-	wchar_t sOpenFile[MAXMSGLEN] 		= L"Не удалось открыть файл";
-	wchar_t sFileSize[MAXMSGLEN] 		= L"Не удалось установить размер файла";
-	wchar_t sFailCheckConst[MAXMSGLEN] 	= L"Файл не прошел проверку сигнатур";
-	wchar_t sCheckCrc32[MAXMSGLEN] 		= L"Crc32 не совпадают";
-	wchar_t sDecompress[MAXMSGLEN] 		= L"Распаковка провалилась";
-	wchar_t sCheckSum[MAXMSGLEN] 		= L"Суммы не совпадают";
-	wchar_t sCompress[MAXMSGLEN] 		= L"Упаковка провалилась";
-	wchar_t sOpenSave[MAXMSGLEN] 		= L"Не удалось сохранить";
-	wchar_t sNotErrorCorrect[MAXMSGLEN] = L"Не известная ошибка";
-	wchar_t sSaveCount[MAXMSGLEN] 		= L"Не удалось установить количество сохранений";
+	private:
+
 };
 
-//#define log(fmt) Log.Log(fmt)//#define error(iMSG, iExit) Log.Error(iMSG, iExit)
+BOOL CALLBACK ConsoleWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #endif //__LOGGING_HPP__

@@ -1,6 +1,3 @@
-#define Author_0 Librianets
-#define Author_sample_0 Luigi Auriemma
-
 #include <stdio.h> // C
 #include <stdlib.h> // C
 #include <stdint.h> // C
@@ -28,7 +25,6 @@
 #define checksum 6
 
 #define Z_LIA_SPEED	2
-
 
 void check_main(int argc, char *argv[num_arg]);
 int error(int val);

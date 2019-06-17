@@ -5,6 +5,7 @@ class CUnpackPack CUnpackPackOne;
 class CSaveInfo CSaveInfoOne;
 class CSaveInfoWndControl CSaveInfoWndControlOne;
 class CGlobal CGG;
+//class CLogging Log;
 
 ///////////////
 
@@ -26,9 +27,10 @@ CGlobal::~CGlobal()
 	
 }
 
-void CGlobal::Init(HINSTANCE hInstance)
+int CGlobal::Init(HINSTANCE hInstance)
 {
 	gapp.inst = hInstance;
+	if (MainRegClass(WndCExMain, CGG.gapp.WndProc, CGG.gapp.gclass, CGG.gapp.inst) != SUCCESS) return ERROR_GCLASSNOT;
 }
 
 void CGlobal::ClearClass(void)
@@ -56,6 +58,11 @@ void CSaveInfoWndControl::ClearClass(void)
 
 int CSaveInfoWndControl::CreateWnd(void)
 {
+
+if (RegClassGroupBox(WndCExGroupBoxOne, GroupBoxWndProcOne, aWndSI[0].sClassName, CGG.gapp.inst) != SUCCESS) {errormsg(ERROR_GCLASSNOT, APP);} // переделать
+if (RegClassGroupBox(WndCExGroupBoxTwo, GroupBoxWndProcTwo, aWndSI[1].sClassName, CGG.gapp.inst) != SUCCESS) {errormsg(ERROR_GCLASSNOT, APP);} // переделать
+if (RegClassGroupBox(WndCExGroupBoxThree, GroupBoxWndProcThree, aWndSI[2].sClassName, CGG.gapp.inst) != SUCCESS) {errormsg(ERROR_GCLASSNOT, APP);} // переделать
+
 for(int i = 0; i < 3; i++)
 {
 hWndSI[i] = CreateWindowEx(0, aWndSI[i].sClassName, aWndSI[i].sText, WS_CHILD | WS_VISIBLE, aWndSI[i].rectWnd.left, \
@@ -72,10 +79,8 @@ int CSaveInfoWndControl::CloseWnd(void)
 	if (hWndSI[i] != NULL)
 	{
 		DestroyWindow(hWndSI[i]);
-		#ifdef DEBUG
-		if (i==0) {Log.Log(L"\r\n");}
-		Log.Log(L"DestroyWindow [%i] = %i, ", i, hWndSI[i]);
-		#endif
+		if (i==0) {info(L"\r\n", L"");}
+		info(L"DestroyWindow [%i] = %i, ", i, hWndSI[i]);
 	}
 	}
 
@@ -90,17 +95,13 @@ int OVERLORD::OpenFile(void)
 	int iTempValue = 0;
 	
 	iTempValue = CGameSaveControlOne.SelectGameFile();
-	if (iTempValue != SUCCESS ) {Log.ErrorMsg(iTempValue); 
-	#ifdef LOGGING
-	Log.Log(L"SelectGameFile -%X", abs(iTempValue) ); 
-	#endif
+	if (iTempValue != SUCCESS ) {errormsg(iTempValue, APP); 
+	info(L"SelectGameFile -%X", abs(iTempValue) ); 
 	return FAILURE;}
 	
 	iTempValue = CGameSaveControlOne.ReadGameFile();
-	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
-	#ifdef LOGGING
-	Log.Log(L"ReadGameFile -%X", abs(iTempValue) ); 
-	#endif
+	if (iTempValue != SUCCESS) {errormsg(iTempValue, APP);
+	info(L"ReadGameFile -%X", abs(iTempValue) ); 
 	return FAILURE;}
 				
 	if (CUnpackPackOne.lpGetBuffer(1)->capacity() > 1) {CUnpackPackOne.lpGetBuffer(1)->clear();}
@@ -112,24 +113,18 @@ int OVERLORD::OpenFile(void)
 	CGameSaveControlOne.ClearClass();	
 	
 	iTempValue = CUnpackPackOne.CheckFileSignature();
-	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
-	#ifdef LOGGING
-	Log.Log(L"CheckFileSignature -%X", abs(iTempValue) );
-	#endif
+	if (iTempValue != SUCCESS) {errormsg(iTempValue, PACKLIB);
+	info(L"CheckFileSignature -%X", abs(iTempValue) );
 	return FAILURE;}
 	
 	iTempValue = CUnpackPackOne.Decompression();
-	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
-	#ifdef LOGGING
-	Log.Log(L"Decompression -%X", abs(iTempValue) );
-	#endif
+	if (iTempValue != SUCCESS) {errormsg(iTempValue, PACKLIB);
+	info(L"Decompression -%X", abs(iTempValue) );
 	return FAILURE;}
 	
 	iTempValue = CUnpackPackOne.DefineTypeFile();
-	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
-	#ifdef LOGGING
-		Log.Log(L"DefineTypeFile -%X", abs(iTempValue) );
-	#endif
+	if (iTempValue != SUCCESS) {errormsg(iTempValue, PACKLIB);
+		info(L"DefineTypeFile -%X", abs(iTempValue) );
 	return FAILURE;}
 	
 	switch (CUnpackPackOne.iFlagDefSave)
@@ -158,25 +153,21 @@ int OVERLORD::SaveFile(void)
 	CGameSaveControlOne.ClearClass();
 	
 	iTempValue = CGameSaveControlOne.SelectSaveGameFile();
-	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
-	#ifdef LOGGING
-	Log.Log(L"SelectSaveGameFile -%X", abs(iTempValue) );
-	#endif
+	if (iTempValue != SUCCESS) {errormsg(iTempValue, APP);
+	info(L"SelectSaveGameFile -%X", abs(iTempValue) );
 	return FAILURE;}
 	
 	iTempValue = CSaveInfoOne.AssemblySI();
-	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
-	#ifdef LOGGING
-	Log.Log(L"AssemblySI -%X", abs(iTempValue) );
-	#endif
+	if (iTempValue != SUCCESS) {errormsg(iTempValue, APP);
+	info(L"AssemblySI -%X", abs(iTempValue) );
 	return FAILURE;}
 	
 	
 	/*
 	iTempValue = CUnpackPackOne.Compression();
-	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
+	if (iTempValue != SUCCESS) {errormsg(iTempValue);
 	#ifdef LOGGING
-	Log.Log(L"Compression -%X", abs(iTempValue) );
+	info(L"Compression -%X", abs(iTempValue) );
 	#endif
 	return FAILURE;}
 	
@@ -189,9 +180,9 @@ int OVERLORD::SaveFile(void)
 	if (CGameSaveControlOne.iNumberReadByte < 50) return FAILURE;
 	
 	iTempValue = CGameSaveControlOne.WriteGameFile();
-	if (iTempValue != SUCCESS) {Log.ErrorMsg(iTempValue);
+	if (iTempValue != SUCCESS) {errormsg(iTempValue);
 	#ifdef LOGGING
-	Log.Log(L"WriteGameFile -%X", abs(iTempValue) );
+	info(L"WriteGameFile -%X", abs(iTempValue) );
 	#endif
 	return FAILURE;}
 	
@@ -214,12 +205,12 @@ int OVERLORD::SaveInfo(void)
 	CSaveInfoOne.SaveInfoStructOne.header.numbersize = CUnpackPackOne.lpGetDataInfo()->data.iUnzip;
 	CSaveInfoOne.lpGetBuffer()->reserve(CSaveInfoOne.SaveInfoStructOne.header.numbersize);
 	*(CSaveInfoOne.lpGetBuffer()) = *(CUnpackPackOne.lpGetBuffer(1));
-#ifdef DEBUG
-Log.Log(L"\r\n lpGetDataInfo()->iUnzip = %i", CUnpackPackOne.lpGetDataInfo()->data.iUnzip);
-Log.Log(L"\r\n SaveInfoStructOne.header.numbersize = %i", CSaveInfoOne.SaveInfoStructOne.header.numbersize);
+	
+info(L"\r\n lpGetDataInfo()->iUnzip = %i", CUnpackPackOne.lpGetDataInfo()->data.iUnzip);
+info(L"\r\n SaveInfoStructOne.header.numbersize = %i", CSaveInfoOne.SaveInfoStructOne.header.numbersize);
 for(int l = 0; l < CUnpackPackOne.lpGetDataInfo()->data.iUnzip; l++)
-{if (l == 0) {Log.Log(L"\r\n");} else {} ; Log.Log(L"%x, ", (*(CSaveInfoOne.lpGetBuffer()))[l] );}
-#endif
+{if (l == 0) {info(L"\r\n", L"");} else {} ; info(L"%x, ", (*(CSaveInfoOne.lpGetBuffer()))[l] );}
+
 	CUnpackPackOne.ClearClass();
 	
 	CSaveInfoOne.DisassemblySI();
@@ -269,8 +260,6 @@ unsigned long int CGameSaveControl::GetiNumberReadByte(void)
 
 int CGameSaveControl::SelectGameFile(void)
 {
-#ifdef WINAPIPROJECT
-
 	wchar_t aTitleSaveWnd [MAXPATHLEN] = L"Выберите файл. По умолчанию он в папке мои документы --> overlord";
 
 	ofn.lStructSize			= sizeof(OPENFILENAME);
@@ -294,15 +283,10 @@ int CGameSaveControl::SelectGameFile(void)
 	ofn.lpstrDefExt			= NULL;
 	
 	if( GetOpenFileName(&ofn) != 0 ) {return SUCCESS;} else {return ERROR_OPENFILE;}
-	
-#else
-#endif
 }
 
 int CGameSaveControl::SelectSaveGameFile(void)
 {
-#ifdef WINAPIPROJECT
-
 	wchar_t aTitleSaveWnd [MAXPATHLEN] = L"Укажите имя файла сохранения и его место";
 
 	ofn.lStructSize			= sizeof(OPENFILENAME);
@@ -325,19 +309,17 @@ int CGameSaveControl::SelectSaveGameFile(void)
 	ofn.nFilterIndex		= 1;
 	ofn.lpstrDefExt			= NULL;
 	
-	if( GetSaveFileName(&ofn) != 0 ) {return SUCCESS;} else {return ERROR_OPENSAVEFILE;}
-#else
-#endif
+	if( GetSaveFileName(&ofn) != 0 ) {return SUCCESS;} else {return ERROR_SAVEFILE;}
 }
 
 int CGameSaveControl::WriteGameFile(void)
 {
-	//Log.Log(L"ofn", ofn.);
-	Log.Log(L"szFileTitle", szFileTitle);
-	if (szFileTitle == 0) return ERROR_NOTFILESELECT;
+	//info(L"ofn", ofn.);
+	info(L"szFileTitle", szFileTitle);
+	if (szFileTitle == 0) return ERROR_SAVEFILE;
 	FILE *pFile;
 	pFile = _wfopen (szFileTitle, L"wb");
-	if (pFile == NULL) {fclose(pFile); return ERROR_OPENSAVEFILE;}
+	if (pFile == NULL) {fclose(pFile); return ERROR_SAVEFILE;}
 	
 	fseek(pFile, 0, SEEK_SET);
 	if ( (iNumberReadByte > MAXSIZEFILE) | (iNumberReadByte <= 0) ) {fclose(pFile); return ERROR_LIMITMAXSIZE;}
@@ -349,7 +331,7 @@ int CGameSaveControl::WriteGameFile(void)
 
 int CGameSaveControl::ReadGameFile(void)
 {
-	if (szFileTitle == 0) return ERROR_NOTFILESELECT;
+	if (szFileTitle == 0) return ERROR_OPENFILE;
 	
 	FILE *pFile;
 	pFile = _wfopen (szFileTitle, L"rb");
@@ -373,7 +355,7 @@ int CGameSaveControl::ReadGameFile(void)
 	return SUCCESS;
 }
 
-HDC CreateWnd (HWND hwnd)
+HDC CGlobal::CreateWnd (HWND hwnd)
 {
 CGG.hBitmap = LoadBitmap(CGG.gapp.inst, MAKEINTRESOURCE(IDB_LOGO));
 GetObject(CGG.hBitmap, sizeof(BITMAP), &CGG.bitmap);
@@ -384,7 +366,7 @@ ReleaseDC(hwnd, hDC);
 return hDC2;
 }
 
-void PaintWnd (HWND hwnd, HDC hDC2)
+void CGlobal::PaintWnd (HWND hwnd, HDC hDC2)
 {
 HGDIOBJ hSOOne;
 PAINTSTRUCT ps;
@@ -397,7 +379,7 @@ DeleteObject(hSOOne);
 EndPaint(hwnd, &ps);
 }
 
-BOOL MainRegClass (WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTANCE hinstance)
+BOOL CGlobal::MainRegClass (WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTANCE hinstance)
 {
 	classex.cbSize = sizeof(classex);
 	classex.style = CS_HREDRAW | CS_VREDRAW ;
@@ -417,7 +399,7 @@ BOOL MainRegClass (WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTA
 return SUCCESS;
 }
 
-BOOL RegClassGroupBox(WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTANCE hinstance)
+BOOL CSaveInfoWndControl::RegClassGroupBox(WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTANCE hinstance)
 {
 	classex.cbSize = sizeof(classex);
 	classex.style = 0;
@@ -437,68 +419,143 @@ BOOL RegClassGroupBox(WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HIN
 return SUCCESS;
 }
 
-void CreateMainWindow (void) 
+
+
+
+HWND CGlobal::CreateMainWndApp (void) 
 {
 	RECT RECTmainwnd;
-	WNDCLASSEX WndCMain;
-	WNDCLASSEX WndCGroupBoxOne;
-	WNDCLASSEX WndCGroupBoxTwo;
-	WNDCLASSEX WndCGroupBoxThree;
-
-	if (MainRegClass(WndCMain, CGG.gapp.WndProc, CGG.gapp.gclass, CGG.gapp.inst) != SUCCESS) return Log.ErrorMsg(ERROR_GCLASSNOT);
-	
-	if (RegClassGroupBox(WndCGroupBoxOne, GroupBoxWndProcOne, CSaveInfoWndControlOne.aWndSI[0].sClassName, CGG.gapp.inst) != SUCCESS) return Log.ErrorMsg(ERROR_GCLASSNOT); // переделать
-	if (RegClassGroupBox(WndCGroupBoxTwo, GroupBoxWndProcTwo, CSaveInfoWndControlOne.aWndSI[1].sClassName, CGG.gapp.inst) != SUCCESS) return Log.ErrorMsg(ERROR_GCLASSNOT); // переделать
-	if (RegClassGroupBox(WndCGroupBoxThree, GroupBoxWndProcThree, CSaveInfoWndControlOne.aWndSI[2].sClassName, CGG.gapp.inst) != SUCCESS) return Log.ErrorMsg(ERROR_GCLASSNOT); // переделать
+	/*uxtheme.h*/
+	INITCOMMONCONTROLSEX icex;
+	icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
+	icex.dwICC = ICC_STANDARD_CLASSES | ICC_BAR_CLASSES | ICC_USEREX_CLASSES;
+	InitCommonControlsEx(&icex);
 	
 	//// Размер клиентской области ////
-	CGG.scwnd.x = GetSystemMetrics(SM_CXSCREEN); //1920
-	CGG.scwnd.y = GetSystemMetrics(SM_CYSCREEN); //1080
-	CGG.szwnd.x = (1280/2); //640 минимум
-	CGG.szwnd.y = (1024/2); //512 минимум
-	CGG.pwnd.x = (CGG.scwnd.x-CGG.szwnd.x)/2; //(1920-640)/2=640
-	CGG.pwnd.y = (CGG.scwnd.y-CGG.szwnd.y)/2; //(1080-512)/2=284
-	RECTmainwnd.left = CGG.pwnd.x; //
-	RECTmainwnd.right = CGG.pwnd.x + CGG.szwnd.x; //
-	RECTmainwnd.top = CGG.pwnd.y; //
-	RECTmainwnd.bottom = CGG.pwnd.y + CGG.szwnd.y;
+	POINT metric;
+	POINT stdsize;
+	POINT sizewndapp;
+	
+	metric.x = GetSystemMetrics(SM_CXSCREEN); //1920 
+	metric.y = GetSystemMetrics(SM_CYSCREEN); //1080
+	stdsize.x = iSizeWndX;
+	stdsize.y = iSizeWndY; //512 минимум
+	sizewndapp.x = (metric.x-stdsize.x)/2; //(1920-640)/2=640
+	sizewndapp.y = (metric.y-stdsize.y)/2; //(1080-512)/2=284
+	RECTmainwnd.left = sizewndapp.x; //
+	RECTmainwnd.right = sizewndapp.x + stdsize.x; //
+	RECTmainwnd.top = sizewndapp.y; //
+	RECTmainwnd.bottom = sizewndapp.y + stdsize.y;
 	AdjustWindowRectEx(&RECTmainwnd, WS_CAPTION | WS_POPUPWINDOW | WS_MINIMIZEBOX, TRUE, 0);
-	CGG.szwnd.x = RECTmainwnd.right-RECTmainwnd.left;
-	CGG.szwnd.y = RECTmainwnd.bottom-RECTmainwnd.top;
+	stdsize.x = RECTmainwnd.right-RECTmainwnd.left;
+	stdsize.y = RECTmainwnd.bottom-RECTmainwnd.top;
 	///////////////////////////////////////////////////////////////////
 	
-	CGG.gapp.hwnd = CreateWindowEx(0, CGG.gapp.gclass, CGG.gapp.gwnd, \
+	HWND hwnd;
+	hwnd = CreateWindowEx(0, CGG.gapp.gclass, CGG.gapp.gwnd, \
 	WS_CAPTION | WS_POPUPWINDOW | WS_MINIMIZEBOX, \
-	CGG.pwnd.x, CGG.pwnd.y, CGG.szwnd.x, CGG.szwnd.y, NULL, NULL, CGG.gapp.inst, NULL);
-
-	if (CGG.gapp.hwnd == NULL){Log.ErrorMsg(ERROR_GWNDNOT);}
-	ShowWindow(CGG.gapp.hwnd, SW_SHOW);
+	sizewndapp.x, sizewndapp.y, stdsize.x, stdsize.y, \
+	NULL, NULL, CGG.gapp.inst, NULL);
+	return hwnd;
 }
 
-void SetPosDlg(HWND hwnd, HWND dia)
+void CGlobal::ShowWnd(HWND hWnd)
 {
+	ShowWindow(hWnd, SW_SHOW);
+}
+
+int CGlobal::SetPosDlg(HWND hwnd, HWND dia, POINT *pt)
+{
+if (pt == NULL || hwnd == NULL || dia == NULL) return -0x1;
 RECT t_poswnd;
 RECT t_posdia;
 GetWindowRect(hwnd, &t_poswnd);
 GetWindowRect(dia, &t_posdia);
-CGG.t_xy_dia.x = t_posdia.right - t_posdia.left;
-CGG.t_xy_dia.y = t_posdia.bottom - t_posdia.top;
-t_poswnd.left += ((t_poswnd.right-t_poswnd.left-CGG.t_xy_dia.x)/2);
-t_poswnd.top += ((t_poswnd.bottom-t_poswnd.top-CGG.t_xy_dia.y)/2);
+pt->x = t_posdia.right - t_posdia.left;
+pt->y = t_posdia.bottom - t_posdia.top;
+t_poswnd.left += ((t_poswnd.right-t_poswnd.left-pt->x)/2);
+t_poswnd.top += ((t_poswnd.bottom-t_poswnd.top-pt->y)/2);
 
-CGG.t_xy_dia.x = t_poswnd.left;
-CGG.t_xy_dia.y = t_poswnd.top;
+pt->x = t_poswnd.left;
+pt->y = t_poswnd.top;
+return 0;
 }
 
-void DlgInit(int numdlg)
+void CGlobal::DlgInit(int numdlg)
 {
 	switch (numdlg)
 	{
 		case DLG_ABOUT:
 		{
 		CGG.dlgapp[0].hWnd = CreateDialog(CGG.gapp.inst, MAKEINTRESOURCE(IDDLG_ABOUT), CGG.gapp.hwnd, CGG.dlgapp[0].WndProc);
-		SetPosDlg(CGG.gapp.hwnd, CGG.dlgapp[0].hWnd);
-		SetWindowPos(CGG.dlgapp[0].hWnd, HWND_TOP, CGG.t_xy_dia.x, CGG.t_xy_dia.y, 0, 0, SWP_SHOWWINDOW|SWP_NOSIZE );
+		POINT dia_pos_temp;
+		CGG.SetPosDlg(CGG.gapp.hwnd, CGG.dlgapp[0].hWnd, &dia_pos_temp);
+		SetWindowPos(CGG.dlgapp[0].hWnd, HWND_TOP, dia_pos_temp.x, dia_pos_temp.y, 0, 0, SWP_SHOWWINDOW|SWP_NOSIZE );
 		}
 	}
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////// TEST TEST TEST TEST TEST TEST TEST TEST TEST ////////////////////
+
+
+LRESULT WINAPI TestWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	PAINTSTRUCT ps;	HGDIOBJ hSOOne;	HDC hWndGBOne;
+	
+	switch (msg)
+	{
+		
+		case WM_CREATE: { }break;
+		case WM_PAINT:	
+		{
+			HDC hDC = BeginPaint(hWnd, &ps);
+			Graphics g(hDC);
+			g.SetPageUnit(UnitPixel);
+			RectF bounds(0, 0, float(800.0), float(400.0));
+			Image bg(L"logologo.png");
+			g.DrawImage(&bg, bounds);
+			EndPaint(hWnd, &ps);
+		}break;
+		
+		case WM_CTLCOLORBTN: {} break;
+		case WM_CTLCOLORSTATIC: {} break;
+		case WM_ERASEBKGND: {} break;
+		case WM_TIMER: {} break;
+		
+		case WM_COMMAND:
+		{
+		if (HIWORD(wParam) == 0)
+		{
+			switch (LOWORD(wParam))
+			{
+				case IDI_EXIT: 				PostQuitMessage(WM_DESTROY); 	break;
+			}
+		}
+		}break;
+		
+		default: return (DefWindowProc(hWnd, msg, wParam, lParam));
+	}
+}
+
+BOOL TestClass (WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTANCE hinstance)
+{
+	classex.cbSize = sizeof(classex);
+	classex.style = CS_HREDRAW | CS_VREDRAW ;
+	classex.lpfnWndProc = Proc;
+	classex.cbClsExtra = 0;
+	classex.cbWndExtra = 0;
+	classex.hInstance = hinstance;
+	classex.hIcon = NULL;
+	classex.hCursor = NULL;
+	classex.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	classex.lpszMenuName = NULL;
+	classex.lpszClassName = szClassName;
+	classex.hIconSm = NULL;
+	
+	if (!RegisterClassEx(&classex)){return ERROR_GCLASSNOT;}
+	
+return SUCCESS;
 }

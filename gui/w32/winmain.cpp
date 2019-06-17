@@ -2,14 +2,34 @@
 
 int WINAPI wWinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpszCmdParam, int nCmdShow)
 {
-	CGG.Init(hInstance);
-	CreateMainWindow();
-	Log.hInstanceapp = CGG.gapp.inst;
-	Log.hWndapp = CGG.gapp.hwnd;
-	Log.InitConsole();
-	RunMsg();
-return msg.wParam;
+	int iStatus = 0;
+	
+	iStatus = CGG.Init(hInstance);
+	if (iStatus == ERROR_GCLASSNOT) errormsg(ERROR_GCLASSNOT, APP);
+	iStatus = 0;
+	
+	CGG.gapp.hwnd = CGG.CreateMainWndApp();
+	if (CGG.gapp.hwnd == NULL) errormsg(ERROR_GWNDNOT, APP);
+	
+	CGG.ShowWnd(CGG.gapp.hwnd);
+	
+	CACon.hInstanceapp = CGG.gapp.inst;
+	CACon.hWndapp = CGG.gapp.hwnd;
+	CACon.InitConsole();
+	
+	
+	WPARAM ParamReturn = RunMsg();
+	return ParamReturn;
 }
+
+//GdiplusStartupInput gdiplusStartupInput; 
+//ULONG_PTR gdiplusToken; 
+//GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+//WNDCLASSEX WndCTest;
+//TestClass(WndCTest, TestWndProc, L"testClass", hInstance);
+//HWND TESTS = CreateWindowEx(WS_EX_LAYERED, L"testClass", L"Textwind",  WS_POPUP | WS_DISABLED | WS_VISIBLE, 100, 100, 800, 400, NULL, NULL, hInstance, NULL);
+//SetLayeredWindowAttributes(TESTS, 0, 100, LWA_ALPHA );
+//GdiplusShutdown(gdiplusToken);
 
 /*
 by BYTE

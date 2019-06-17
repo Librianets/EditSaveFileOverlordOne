@@ -6,13 +6,13 @@ LRESULT WINAPI MainWndProc (HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		case WM_CREATE:
 		{
-			CGG.HdcPaint = CreateWnd(hWnd);
+			CGG.HdcPaint = CGG.CreateWnd(hWnd);
 		}break;
 		
 		case WM_PAINT:
 		{
-			//Log.Log(L"\r\n MainWndProc WM_PAINT");
-			PaintWnd(hWnd, CGG.HdcPaint); 
+			//info(L"\r\n MainWndProc WM_PAINT");
+			CGG.PaintWnd(hWnd, CGG.HdcPaint); 
 		}break;
 		
 		case WM_CTLCOLORBTN:
@@ -38,17 +38,13 @@ LRESULT WINAPI MainWndProc (HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		
 		case MSG_SAVEINFO:
 		{
-			#ifdef DEBUG
-			Log.Log(L"\r\n MSG_SAVEINFO");
-			#endif
+			info(L"\r\n", L" MSG_SAVEINFO");
 			OVERLORD::SaveInfo();
 		} break;
 		
 		case MSG_SAVESLOT: 		
 		{
-			#ifdef DEBUG
-			Log.Log(L"\r\n MSG_SAVESLOT");
-			#endif
+			info(L"\r\n", L" MSG_SAVESLOT");
 			OVERLORD::SaveSlot();
 		} break;
 		
@@ -71,9 +67,9 @@ LRESULT WINAPI MainWndProc (HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			switch (LOWORD(wParam))
 			{
-				case IDDLG_ABOUT: 		DlgInit(DLG_ABOUT); 			break;
-				case IDI_CONSOLE_SHOW: 	Log.ConsoleShow(); 				break;
-				case IDI_CONSOLE_HIDE: 	Log.ConsoleHide(); 				break;
+				case IDDLG_ABOUT: 		CGG.DlgInit(DLG_ABOUT); 		break;
+				case IDI_CONSOLE_SHOW: 	CACon.ConsoleShow(); 				break;
+				case IDI_CONSOLE_HIDE: 	CACon.ConsoleHide(); 				break;
 				case IDI_OPENFILE:		OVERLORD::OpenFile();			break;
 				case IDI_SAVEFILE: 		OVERLORD::SaveFile(); 			break;
 				case IDI_CLOZEFILE:		OVERLORD::CloseFile();			break;
@@ -104,30 +100,6 @@ BOOL CALLBACK AboutWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 		}
 	}
-return FALSE;
-}
-
-BOOL CALLBACK ConsoleWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	switch (msg)
-	{
-		case WM_INITDIALOG: return TRUE; break;
-		case WM_CLOSE: Log.ConsoleHide(); break;
-		case WM_COMMAND:
-		{
-		if (HIWORD(wParam) == 0)
-		{
-			switch (LOWORD(wParam))
-			{
-				case IDI_EXIT: 				PostQuitMessage(WM_DESTROY); 	break;
-				case IDI_CONSOLE_CLEAR: 	Log.ConsoleClear(); 			break;
-				case IDI_CONSOLE_HIDE: 		Log.ConsoleHide(); 				break;
-				case IDI_GETLINECONSOLE:	Log.ConsoleGetLine(); 			break;
-			}
-		}
-		}
-	}
-
 return FALSE;
 }
 

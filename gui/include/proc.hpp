@@ -3,7 +3,8 @@
 
 LRESULT WINAPI MainWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK AboutWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK ConsoleWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+
 LRESULT WINAPI GroupBoxWndProcOne(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT WINAPI GroupBoxWndProcTwo(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT WINAPI GroupBoxWndProcThree(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);

@@ -1,3 +1,6 @@
 console/temp/*.o
+gui/module/*.*
 gui/temp/*.o
+gui/garbage/*.*
+gui/w64/*.*
 idadebug/*.*

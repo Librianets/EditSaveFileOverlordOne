@@ -13,6 +13,7 @@
 #define	ID_APP_ICON				0x0000
 #define	IDB_LOGOMINI			0x0001
 #define	IDB_LOGO				0x0002
+#define	IDB_LOGO3				0x0004
 #define	IDA_ACCEL				0x0003	
 ////////////////////////////////////////
 

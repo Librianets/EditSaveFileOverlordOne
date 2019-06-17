@@ -1,17 +1,24 @@
 #ifndef __FUNCTIONS_HPP__
 #define __FUNCTIONS_HPP__
 
+#define ERROR_NOTCORRECT 		0x0000
+#define ERROR_GWNDNOT 			-0x0001
+#define ERROR_GCLASSNOT 		-0x0002
+#define ERROR_CREATECONSOLE 	-0x0004
+#define ERROR_OPENFILE 			-0x0005
+#define ERROR_FILESIZE 			-0x0006
+#define ERROR_SAVEFILE 			-0x0007
+#define ERROR_SAVECOUNT 		-0x0008
+#define ERROR_LIMITMAXSIZE 		-0x0009
+
+//#define ERROR_NOTFILESELECT 	-0x000A
+//#define ERROR_FILECHECK 		-0x0005
+
 extern class CGameSaveControl CGameSaveControlOne;
 extern class CUnpackPack CUnpackPackOne;
 extern class CSaveInfo CSaveInfoOne;
 extern class CSaveInfoWndControl CSaveInfoWndControlOne;
 extern class CGlobal CGG;
-
-void SetPosDlg (HWND hwnd, HWND dia);
-HDC CreateWnd (HWND hwnd);
-void PaintWnd (HWND hwnd, HDC hDC2);
-void CreateMainWindow (void);
-void DlgInit (int numdlg);
 
 namespace OVERLORD
 {
@@ -38,12 +45,6 @@ typedef struct
 	wchar_t *gwnd;
 	WNDPROC WndProc;
 } AppData;
-
-typedef struct 
-{
-	unsigned int x;
-	unsigned int y;
-} sizeall;
 
 typedef struct 
 {
@@ -76,16 +77,27 @@ public:
 	HDC 		HdcPaint;
 	BITMAP		bitmap;
 	HBITMAP		hBitmap;
-	sizeall scwnd, szwnd, pwnd, t_xy_dia;
 	
 	// public funcs
-	void Init(HINSTANCE hInstance);
+	int Init(HINSTANCE hInstance);
 	void ClearClass(void);
-
+	int SetPosDlg(HWND hwnd, HWND dia, POINT *pt);
+	HWND CreateMainWndApp(void);
+	void ShowWnd(HWND hWnd);
+	void DlgInit(int numdlg);
+	void PaintWnd (HWND hwnd, HDC hDC2);
+	HDC CreateWnd (HWND hwnd);
+	
+	
 private:
-
+int iSizeWndX = 1280/2; //min 640
+int iSizeWndY = 1024/2; //min 512
 wchar_t sg_WndClass[MAXCLASSNAME] 		= L"Class main window";
 wchar_t sg_Wnd[MAXCLASSNAME] 			= L"Редактор сохранений игры Overlord";
+
+WNDCLASSEX WndCExMain;
+
+BOOL MainRegClass (WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTANCE hinstance);
 
 };
 
@@ -105,20 +117,14 @@ public:
 	int SelectSaveGameFile(void);
 	int ReadGameFile(void);
 	int WriteGameFile(void);
-	
+
 	//Get, Set
 	vector <unsigned char> *lpGetBuffer(void);
 	unsigned long int GetiNumberReadByte(void);
 	
 private:
 
-#ifdef WINAPIPROJECT
 	OPENFILENAME ofn;
-#else
-
-#endif
-
-	
 	
 	vector <unsigned char> aBufferRead;
 
@@ -165,7 +171,12 @@ TWndSI aWndSI[5] =
 	//Get, Set
 	
 private:
+BOOL RegClassGroupBox(WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTANCE hinstance);
 short int ihwndCount = 5;
+
+WNDCLASSEX WndCExGroupBoxOne;
+WNDCLASSEX WndCExGroupBoxTwo;
+WNDCLASSEX WndCExGroupBoxThree;
 
 };
 

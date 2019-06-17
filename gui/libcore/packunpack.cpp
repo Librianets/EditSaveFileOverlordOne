@@ -1,4 +1,6 @@
 #include "packunpack.hpp"	// project
+namespace OESD // OVERLORD EDITSAVEDATA
+{
 
 const unsigned int aConstTableCrc32 [0x100] = 
 {
@@ -218,7 +220,7 @@ int CUnpackPack::DefineTypeFile ()
 	unsigned char iSaveSlot [0x4] = {0x4F, 0x53, 0x47, 0x00};
 	unsigned char iReserved [0x4] = {0x00, 0x00, 0x00, 0x01};
 
-	if (memcmp( &aBufferOne[0x0], &iReserved[0x0], 4) != 0) return ERROR_FAILCHECKCONST;
+	if (memcmp( &aBufferOne[0x0], &iReserved[0x0], 4) != 0) return E_LIBPACK_CHECKCONST;
 	if (memcmp( &aBufferOne[0x4], &iSaveinfo[0x0], 4) == 0) iFlagDefSave = SAVEINFO;
 	if (memcmp( &aBufferOne[0x4], &iSaveSlot[0x0], 4) == 0) iFlagDefSave = SAVESLOT;
 	if (iFlagDefSave == SAVEINFO) 
@@ -226,9 +228,9 @@ int CUnpackPack::DefineTypeFile ()
 		if (aBufferOne[UnionDataInfoOne.data.iUnzip-2] == (0xD0 | 0xD1))
 		{
 			iFlagDefSaveLang = LANGRU;
-		} else {return ERROR_FAILCHECKLANG;}
+		} else {} //return E_LIBPACK_CHECKLANG;
 	}
-	if (iFlagDefSave == 0) return ERROR_FAILCHECKCONST;
+	if (iFlagDefSave == 0) return E_LIBPACK_TYPEFILE;
 	return 0;
 }
 
@@ -247,13 +249,13 @@ int CUnpackPack::CheckFileSignature(void)
 	memcmp( &aBufferOne[Info->data.iLenFile-0xC], 	&Info->data.iConst2, 	4) 	== 0 &&
 	memcmp( &aBufferOne[Info->data.iLenFile-0x4], 	&Info->data.iReserved, 	4) 	== 0 &&
 	memcmp( &aBufferOne[0x4], 						&Info->data.iSignature, 2) == 0
-	) {} else {return ERROR_CHECKCONST;}
+	) {} else {return E_LIBPACK_CHECKCONST;}
 	
 	memcpy (&Info->data.iUnzip, 	&aBufferOne[0], 						4);
 	memcpy (&Info->data.iCrc32, 	&aBufferOne[Info->data.iLenFile-0x8], 	4);
 	memcpy (&Info->data.iChecksum, 	&aBufferOne[Info->data.iLenFile-0x14], 	4);
 
-	if (CheckCrc32( (Info->data.iLenFile-(0x4+0x4+0x8)), aBufferOne) != Info->data.iCrc32 ) return ERROR_CHECKCRC32;
+	if (CheckCrc32( (Info->data.iLenFile-(0x4+0x4+0x8)), aBufferOne) != Info->data.iCrc32 ) return E_LIBPACK_CHECKCRC32;
 	
 	return 0;
 }
@@ -279,11 +281,11 @@ int CUnpackPack::Compression()
 	stream_dec.avail_out = (UnionDataInfoOne.data.iUnzip+0x1A*2);
 	int iWindowBits = -15;
 		
-	if (deflateInit2(&stream_dec, Z_OVERLORD_SPEED, Z_DEFLATED, iWindowBits, 8, Z_DEFAULT_STRATEGY) != Z_OK) {deflateEnd(&stream_dec); return ERROR_COMPRESS;} else {}
+	if (deflateInit2(&stream_dec, Z_OVERLORD_SPEED, Z_DEFLATED, iWindowBits, 8, Z_DEFAULT_STRATEGY) != Z_OK) {deflateEnd(&stream_dec); return E_LIBPACK_COMPRESS;} else {}
 	deflateReset(&stream_dec);
 	
 	if (deflate(&stream_dec, Z_FINISH) != Z_STREAM_END) 
-	{deflateEnd(&stream_dec); return ERROR_COMPRESS;} else {}
+	{deflateEnd(&stream_dec); return E_LIBPACK_COMPRESS;} else {}
 	
 	memcpy(&aBufferTemp[0x0], &UnionDataInfoOne.i[0x0], 4);
 	memcpy(&aBufferTemp[0x4], &UnionDataInfoOne.i[0x1C], 2);
@@ -329,13 +331,13 @@ int CUnpackPack::Decompression()
 	
 	int iWindowBits = -15;
 	
-	if ( inflateInit2(&stream_dec, iWindowBits) != Z_OK ) return ERROR_DECOMPRESS;
+	if ( inflateInit2(&stream_dec, iWindowBits) != Z_OK ) return E_LIBPACK_DECOMPRESS;
 	inflateReset(&stream_dec);
 
-	if (inflate(&stream_dec, Z_NO_FLUSH) != Z_STREAM_END) return ERROR_DECOMPRESS;
+	if (inflate(&stream_dec, Z_NO_FLUSH) != Z_STREAM_END) return E_LIBPACK_DECOMPRESS;
 	inflateEnd(&stream_dec);
 	
-	if ( CheckSum(UnionDataInfoOne.data.iUnzip, aBufferTemp) != UnionDataInfoOne.data.iChecksum) return ERROR_CHECKSUM;
+	if ( CheckSum(UnionDataInfoOne.data.iUnzip, aBufferTemp) != UnionDataInfoOne.data.iChecksum) return E_LIBPACK_CHECKSUM;
 	
 	aBufferOne.clear();
 	aBufferOne.resize(UnionDataInfoOne.data.iUnzip);
@@ -348,3 +350,5 @@ int CUnpackPack::Decompression()
 	return 0;
 }
 
+
+} //namespace OESD // OVERLORD EDITSAVEDATA

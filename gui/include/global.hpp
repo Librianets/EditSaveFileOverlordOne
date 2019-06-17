@@ -1,6 +1,9 @@
 #ifndef __GLOBAL_HPP__
 #define __GLOBAL_HPP__
 
+#define APPEXIT 				-0x2000 // флаг завершения программы
+#define NOTAPPEXIT 				-0x1000 // флаг продолжения работы программы
+
 //////////////////////////////////////////////////
 //////////			global include		//////////
 //////////////////////////////////////////////////
@@ -9,6 +12,7 @@
 //////////////////////////////////////////////////
 
 #include <windows.h> 		// WINDOWS
+#include <commctrl.h>		// WINDOWS
 #include <stdio.h> 			// Language C
 #include <stdarg.h>			// Language C
 #include <unistd.h> 		// Language C
@@ -22,7 +26,15 @@
 #include <winuser.h>		// WINAPI
 #include <zlib.h>			// ZLIB
 
+#include <GdiPlus.h>		// GDI+
+#include <uxtheme.h>		// Стиль темы 
+
+#include "packunpack.hpp"	// project
+#include "debug.hpp"		// project
+
+using namespace Gdiplus;
 using std::vector;
+using OESD::CUnpackPack;
 
 //////////////////////////////////////////////////
 #define FAILURE				-0x0001 // флаг провала выполнения функции // вместо BOOL
@@ -32,7 +44,6 @@ using std::vector;
 #define MAXCOUNTERPOINTER 	0x0040 		// 64
 #define MAXPATHLEN 			0x0200 		// 512
 #define MAXSIZEFILE			0x00100000 	// 1 048 576
-#define MAXMSGLEN			0x0040		// 64
 
 #define DLG_ABOUT 			0x1000
 
@@ -53,7 +64,7 @@ using std::vector;
 #include "proc.hpp"			// project
 #include "mainfuncs.hpp"	// project
 #include "functions.hpp"	// project
-#include "packunpack.hpp"	// project
+
 #include "saveinfo.hpp"		// project
 #include "logging.hpp"		// project
 

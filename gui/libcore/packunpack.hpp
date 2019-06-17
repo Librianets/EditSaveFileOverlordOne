@@ -7,19 +7,22 @@
 #include <zlib.h>			// ZLIB LIB
 using std::vector;
 
+namespace OESD // OVERLORD EDITSAVEDATA
+{
+
 #define Z_OVERLORD_SPEED	2
 
-#define SAVESLOT	0x999
-#define SAVEINFO	0x666
-#define LANGRU		0x333
+#define SAVESLOT	0x22
+#define SAVEINFO	0x11
+#define LANGRU		0x44
 
-#define ERROR_CHECKSUM 			-0x000C
-#define ERROR_CHECKCONST 		-0x0009
-#define ERROR_CHECKCRC32 		-0x000A
-#define ERROR_DECOMPRESS 		-0x000B
-#define ERROR_COMPRESS 			-0x000D
-#define ERROR_FAILCHECKCONST	-0x0012 //17
-#define ERROR_FAILCHECKLANG		-0x0013 //18
+#define E_LIBPACK_CHECKSUM 			-0x01 // Суммы не совпадают
+#define E_LIBPACK_TYPEFILE 			-0x02 // Тип файла не установлен
+#define E_LIBPACK_CHECKCRC32 		-0x03 // crc32 не совпадает
+#define E_LIBPACK_DECOMPRESS 		-0x04 // Декомпрессия провалилась
+#define E_LIBPACK_COMPRESS 			-0x05 // Компрессия провалилась
+#define E_LIBPACK_CHECKCONST		-0x06 // Не найды константы в файле
+#define E_LIBPACK_CHECKLANG			-0x07
 
 typedef union
 {
@@ -37,7 +40,7 @@ typedef union
 unsigned char i[32];
 struct
 {
-	unsigned int iUnzip;				//4 0123
+	unsigned int iUnzip;				//4 	0123
 	unsigned int iCrc32;				//10	4567
 	unsigned int iChecksum;				//14	891011
 	unsigned int iLenFile;				//18	12131415
@@ -86,4 +89,6 @@ private:
 	unsigned int CheckSum(size_t iNumByte, vector <unsigned char> aBuf); // проверка sum по алгоритму разработчика. Явно не вызывается.
 };
 
+
+} //namespace OESD // OVERLORD EDITSAVEDATA
 #endif // __UPAP_H__

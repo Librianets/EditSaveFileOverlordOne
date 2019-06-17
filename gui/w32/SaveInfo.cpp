@@ -68,7 +68,7 @@ int CSaveInfo::DisassemblySI(void)
 {
 	memcpy (&SaveInfoStructOne.header.count, &aBufferTemp[0xA], 4);
 #ifdef DEBUG
-Log.Log(L"\r\nInfo->header.count = %i", SaveInfoStructOne.header.count); Log.Log(L"\r\n0xB = %X, 0xC = %X", aBufferTemp[0xB], aBufferTemp[0xC]);
+info(L"\r\nInfo->header.count = %i", SaveInfoStructOne.header.count); info(L"\r\n0xB = %X, 0xC = %X", aBufferTemp[0xB], aBufferTemp[0xC]);
 #endif
 	switch (aBufferTemp[0xB])
 	{
@@ -79,9 +79,9 @@ Log.Log(L"\r\nInfo->header.count = %i", SaveInfoStructOne.header.count); Log.Log
 			SaveInfoStructOne.count.iCount[SAVECOUNT1] = ( SaveInfoStructOne.header.numbersize - iSave[iFlagSaveCount] );
 			SaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = iSave[iFlagSaveCount];
 #ifdef DEBUG
-Log.Log(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
-Log.Log(L"\r\nSaveInfoStructOne.count.iCount[SAVECOUNT1] = %i", SaveInfoStructOne.count.iCount[SAVECOUNT1]);
-Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = %i", SaveInfoStructOne.listfile.iOffset[SAVECOUNT1]);
+info(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
+info(L"\r\nSaveInfoStructOne.count.iCount[SAVECOUNT1] = %i", SaveInfoStructOne.count.iCount[SAVECOUNT1]);
+info(L"\r\nSaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = %i", SaveInfoStructOne.listfile.iOffset[SAVECOUNT1]);
 #endif
 			InitVectorSI(SAVECOUNT1);
 		}break;
@@ -96,11 +96,11 @@ Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = %i", SaveInfoStru
 			SaveInfoStructOne.count.iCount[SAVECOUNT1] = SaveInfoStructOne.listfile.iOffset[SAVECOUNT2] - SaveInfoStructOne.listfile.iOffset[SAVECOUNT1];
 			SaveInfoStructOne.count.iCount[SAVECOUNT2] = SaveInfoStructOne.header.numbersize - SaveInfoStructOne.listfile.iOffset[SAVECOUNT2];
 #ifdef DEBUG
-	Log.Log(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
+	info(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
 	for (int l = 0; l <= iFlagSaveCount; l++)
 	{
-		Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
-		Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
+		info(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
+		info(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
 	}
 #endif
 			InitVectorSI(SAVECOUNT1);
@@ -124,11 +124,11 @@ Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = %i", SaveInfoStru
 			SaveInfoStructOne.count.iCount[SAVECOUNT3] = SaveInfoStructOne.header.numbersize - SaveInfoStructOne.listfile.iOffset[SAVECOUNT3];
 			
 #ifdef DEBUG
-	Log.Log(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
+	info(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
 	for (int l = 0; l <= iFlagSaveCount; l++)
 	{
-		Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
-		Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
+		info(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
+		info(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
 	}
 #endif 
 			for (int l = 0; l <= iFlagSaveCount; l++)
@@ -152,11 +152,11 @@ Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = %i", SaveInfoStru
 			SaveInfoStructOne.count.iCount[SAVECOUNT4] = SaveInfoStructOne.header.numbersize - SaveInfoStructOne.listfile.iOffset[SAVECOUNT4];
 			
 #ifdef DEBUG
-	Log.Log(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
+	info(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
 	for (int l = 0; l <= iFlagSaveCount; l++)
 	{
-		Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
-		Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
+		info(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
+		info(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
 	}
 #endif
 			for (int l = 0; l <= iFlagSaveCount; l++)
@@ -182,11 +182,11 @@ Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = %i", SaveInfoStru
 			SaveInfoStructOne.count.iCount[SAVECOUNT5] = SaveInfoStructOne.header.numbersize - SaveInfoStructOne.listfile.iOffset[SAVECOUNT5];
 			
 #ifdef DEBUG
-	Log.Log(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
+	info(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
 	for (int l = 0; l <= iFlagSaveCount; l++)
 	{
-		Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
-		Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
+		info(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
+		info(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
 	}
 #endif
 			for (int l = 0; l <= iFlagSaveCount; l++)
@@ -214,11 +214,11 @@ Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = %i", SaveInfoStru
 			SaveInfoStructOne.count.iCount[SAVECOUNT6] = SaveInfoStructOne.header.numbersize - SaveInfoStructOne.listfile.iOffset[SAVECOUNT6];
 			
 #ifdef DEBUG
-	Log.Log(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
+	info(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
 	for (int l = 0; l <= iFlagSaveCount; l++)
 	{
-		Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
-		Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
+		info(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
+		info(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
 	}
 #endif
 			for (int l = 0; l <= iFlagSaveCount; l++)
@@ -248,11 +248,11 @@ Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = %i", SaveInfoStru
 			SaveInfoStructOne.count.iCount[SAVECOUNT7] = SaveInfoStructOne.header.numbersize - SaveInfoStructOne.listfile.iOffset[SAVECOUNT7];
 			
 #ifdef DEBUG
-	Log.Log(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
+	info(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
 	for (int l = 0; l <= iFlagSaveCount; l++)
 	{
-		Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
-		Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
+		info(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
+		info(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
 	}
 #endif
 			for (int l = 0; l <= iFlagSaveCount; l++)
@@ -284,11 +284,11 @@ Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = %i", SaveInfoStru
 			SaveInfoStructOne.count.iCount[SAVECOUNT8] = SaveInfoStructOne.header.numbersize - SaveInfoStructOne.listfile.iOffset[SAVECOUNT8];
 			
 #ifdef DEBUG
-	Log.Log(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
+	info(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
 	for (int l = 0; l <= iFlagSaveCount; l++)
 	{
-		Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
-		Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
+		info(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
+		info(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
 	}
 #endif
 			for (int l = 0; l <= iFlagSaveCount; l++)
@@ -322,11 +322,11 @@ Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = %i", SaveInfoStru
 			SaveInfoStructOne.count.iCount[SAVECOUNT9] = SaveInfoStructOne.header.numbersize - SaveInfoStructOne.listfile.iOffset[SAVECOUNT9];
 			
 #ifdef DEBUG
-	Log.Log(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
+	info(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
 	for (int l = 0; l <= iFlagSaveCount; l++)
 	{
-		Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
-		Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
+		info(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %i", l, SaveInfoStructOne.listfile.iOffset[l]);
+		info(L"\r\nSaveInfoStructOne.count.iCount[%x] = %i", l, SaveInfoStructOne.count.iCount[l]);
 	}
 #endif
 			for (int l = 0; l <= iFlagSaveCount; l++)
@@ -362,11 +362,11 @@ Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[SAVECOUNT1] = %i", SaveInfoStru
 			SaveInfoStructOne.count.iCount[SAVECOUNT10] = SaveInfoStructOne.header.numbersize - SaveInfoStructOne.listfile.iOffset[SAVECOUNT10];
 			
 #ifdef DEBUG
-	Log.Log(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
+	info(L"\r\niFlagSaveCount = %i", iFlagSaveCount);
 	for (int l = 0x0; l <= iFlagSaveCount; l++)
 	{
-		Log.Log(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %X", l, SaveInfoStructOne.listfile.iOffset[l]);
-		Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%i] = %X", l, SaveInfoStructOne.count.iCount[l]);
+		info(L"\r\nSaveInfoStructOne.listfile.iOffset[%i] = %X", l, SaveInfoStructOne.listfile.iOffset[l]);
+		info(L"\r\nSaveInfoStructOne.count.iCount[%i] = %X", l, SaveInfoStructOne.count.iCount[l]);
 	}
 #endif
 			for (int l = 0; l <= iFlagSaveCount; l++)
@@ -397,7 +397,7 @@ int CSaveInfo::AssemblySI(void)
 	for (int i = 0; i < 10; i++)
 	{
 		SaveInfoStructOne.header.numbersize += SaveInfoStructOne.data.aDataSave[i].size();
-		Log.Log(L"\r\n aDataSave[%i].size = %X (%i)", i, SaveInfoStructOne.data.aDataSave[i].size(), SaveInfoStructOne.data.aDataSave[i].size());
+		info(L"\r\n aDataSave[%i].size = %X (%i)", i, SaveInfoStructOne.data.aDataSave[i].size(), SaveInfoStructOne.data.aDataSave[i].size());
 	}
 	aBufferTemp.resize(SaveInfoStructOne.header.numbersize + iSave[iFlagSaveCount]);
 	
@@ -439,18 +439,17 @@ int CSaveInfo::AssemblySI(void)
 	
 	
 	#ifdef DEBUG
-	Log.Log(L"\r\n SaveInfoStructOne.header.numbersize = %i", SaveInfoStructOne.header.numbersize);
+	info(L"\r\n SaveInfoStructOne.header.numbersize = %i", SaveInfoStructOne.header.numbersize);
 	for(int i = 0; i < SaveInfoStructOne.header.numbersize; i++)
 	{
-		if (i == 0) {Log.Log(L"\r\n");} else {}
-		Log.Log(L"%02X, ", aBufferTemp[i] );
+		if (i == 0) {info(L"\r\n", L"");} else {}
+		info(L"%02X, ", aBufferTemp[i] );
 	}
 	#endif
 
 	
 	return SUCCESS;	
 }
-
 
 int CSaveInfo::InitVectorSI(int num)
 {
@@ -466,15 +465,15 @@ int CSaveInfo::InitVectorSI(int num)
 	CSaveInfoWndControlOne.SetWndLong(num);
 	
 #ifdef DEBUG
-	Log.Log(L"\r\n size data = %X ", SaveInfoStructOne.data.aDataSave[num].size() );
-	Log.Log(L"\r\nInitVectorSI, num = %i", num);
-	Log.Log(L"\r\nposition = %i", position);
-	Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%i] = %i", num, SaveInfoStructOne.count.iCount[num]);
-	Log.Log(L"\r\nSaveInfoStructOne.count.iCount[%i] = %i(0x%X)", num, SaveInfoStructOne.count.iCount[num], SaveInfoStructOne.count.iCount[num]);
+	info(L"\r\n size data = %X ", SaveInfoStructOne.data.aDataSave[num].size() );
+	info(L"\r\nInitVectorSI, num = %i", num);
+	info(L"\r\nposition = %i", position);
+	info(L"\r\nSaveInfoStructOne.count.iCount[%i] = %i", num, SaveInfoStructOne.count.iCount[num]);
+	info(L"\r\nSaveInfoStructOne.count.iCount[%i] = %i(0x%X)", num, SaveInfoStructOne.count.iCount[num], SaveInfoStructOne.count.iCount[num]);
 	for(int l = 0; l < SaveInfoStructOne.count.iCount[num]; l++)
 	{
-		if (l == 0) {Log.Log(L"\r\n");} else {}
-		Log.Log(L"%x, ", SaveInfoStructOne.data.aDataSave[num][l] );
+		if (l == 0) {info(L"\r\n", L"");} else {}
+		info(L"%x, ", SaveInfoStructOne.data.aDataSave[num][l] );
 	}
 	
 #endif
