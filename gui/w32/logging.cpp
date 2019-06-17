@@ -96,8 +96,7 @@ if (iExit == 1) {PostQuitMessage(WM_DESTROY);}
 
 void CAppConsole::WriteDlgConsole(wchar_t *aBufMsg)
 {
-	wchar_t aBufMsg2;
-	SendDlgItemMessage(hWndConsole, IDI_CONSOLE_EDIT, EM_REPLACESEL, 0, (LPARAM)aBufMsg2);
+	SendDlgItemMessage(hWndConsole, IDI_CONSOLE_EDIT, EM_REPLACESEL, 0, (LPARAM)aBufMsg);
 }
 
 void CAppConsole::InitConsole(void)
@@ -107,8 +106,8 @@ void CAppConsole::InitConsole(void)
 	hMenuConsole = LoadMenu(hInstanceapp, MAKEINTRESOURCE(IDM_MENU_CONSOLE));
 	SetMenu(hWndConsole, hMenuConsole);
 
-	info(L"\r\n", L"Project: ESD overlord");
-	info(L"\r\n TEST ТЕСТ. i=%i, c=%c, f=%f, s=%ls \r\n", 5, 't', 5.5, L"ТЕСТ TEST");
+	info(L"Project: ESD overlord", L"");
+	info(L"\r\nTEST ТЕСТ. i=%i, c=%c, f=%f, s=%ls \r\n", 5, 't', 5.5, L"ТЕСТ TEST");
 }
 
 void CAppConsole::ConsoleShow(void)

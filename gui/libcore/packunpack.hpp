@@ -22,7 +22,7 @@ namespace OESD // OVERLORD EDITSAVEDATA
 #define E_LIBPACK_DECOMPRESS 		-0x04 // Декомпрессия провалилась
 #define E_LIBPACK_COMPRESS 			-0x05 // Компрессия провалилась
 #define E_LIBPACK_CHECKCONST		-0x06 // Не найды константы в файле
-#define E_LIBPACK_CHECKLANG			-0x07
+#define E_LIBPACK_CHECKLANG			-0x07 // Переработать ansi or unicode
 
 typedef union
 {
@@ -68,16 +68,15 @@ public:
 	// При декомпресии UnionDataInfo заполняется автоматически.
 	// При компрессии параметры берутся из UnionDataInfo, требуется корректировка в случае изменения параметров явно.
 	
-	int Compression(); // Компрессия из aBufferTemp в aBufferOne. Вызыватся явно.
-	int Decompression(); // Декомпрессия из aBufferOne в aBufferTemp. Вызыватся явно.
-	int CheckFileSignature(void); // проверка файла на соответствие файлу сохранения. Запускает DefineTypeFile.
-	int DefineTypeFile(); // определяет тип сейв файла. Вызывается явно после декомпрессии.
-	int ClearClass(); // исключительно для повышения управляемости
+	int Compression(); 				// Компрессия из aBufferTemp в aBufferOne. Вызыватся явно.
+	int Decompression(); 			// Декомпрессия из aBufferOne в aBufferTemp. Вызыватся явно.
+	int CheckFileSignature(void); 	// проверка файла на соответствие файлу сохранения. Запускает DefineTypeFile.
+	int DefineTypeFile(); 			// определяет тип сейв файла. Вызывается явно после декомпрессии.
+	int ClearClass(); 				// исключительно для повышения управляемости
 
 	//Get, Set
 	vector <unsigned char> *lpGetBuffer(int numBuf); // 1 - aBufferOne, 2 - aBufferTemp
 	pUnionDataInfo lpGetDataInfo();
-
 
 private:
 	vector <unsigned char> aBufferOne;
@@ -85,10 +84,9 @@ private:
 	UnionDataInfo UnionDataInfoOne;
 	
 	// function
-	unsigned int CheckCrc32(size_t iLenFile, vector <unsigned char> aBuf); // проверка crc32 по алгоритму разработчика. Явно не вызывается.
-	unsigned int CheckSum(size_t iNumByte, vector <unsigned char> aBuf); // проверка sum по алгоритму разработчика. Явно не вызывается.
+	unsigned int CheckCrc32(size_t iLenFile, vector <unsigned char> aBuf); 	// проверка crc32 по алгоритму разработчика. Явно не вызывается.
+	unsigned int CheckSum(size_t iNumByte, vector <unsigned char> aBuf); 	// проверка sum по алгоритму разработчика. Явно не вызывается.
 };
-
 
 } //namespace OESD // OVERLORD EDITSAVEDATA
 #endif // __UPAP_H__

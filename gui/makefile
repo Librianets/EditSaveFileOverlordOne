@@ -1,6 +1,3 @@
-# Привести наконец в порядок... после либкоры 0.3
-
-
 #project name = overlord game editor save data = OG_ESD
 exe 		= OG_ESD.exe 
 
@@ -15,34 +12,27 @@ bui_r 		= $(build)release/
 bui_d 		= $(build)debug/
 res 		= $(wg)res/
 libcore 	= $(wg)libcore/
+sys 		= /usr/i686-w64-mingw32/sys-root/mingw/
 
-sys = /usr/i686-w64-mingw32/sys-root/mingw/
+library		= -l:libz.a -lstdc++ -lcomctl32 -lkernel32 -lcomdlg32 -luser32 -lgdi32 -lgdiplus -lUxTheme -l:libwinpthread.a 
+projectlib 	= -l:libdebug.a -l:libpacker.a -l:libres.a
+projectopt	= -DDEBUGMODE -DLOGGING -DWINAPIMSG -DWINAPIPROJECT -DWINAPICONSOLE -DDWIN32PROJECT
+win32opt	= -mwindows -municode 
+# -D_UNICODE -DUNICODE
 
 I 			= -I$(include) -I$(res) -I$(libcore) 
-#-I$(sys)include/gtk-3.0/ \
-#-I$(sys)include/glib-2.0/ -I$(sys)lib/glib-2.0/include/ -I$(sys)lib/ -I$(sys)include/ -I$(sys)include/pango-1.0/ \
-#-I$(sys)include/cairo/ -I$(sys)include/gdk-pixbuf-2.0/ -I$(sys)include/atk-1.0/
+L 			= $(projectlib) $(library) -L$(lib) -L$(libcore)
 
-l 			= $(projectlib) -lz -lstdc++ -lcomctl32 -lcomdlg32 -luser32 -lgdi32 -lgdiplus -lUxTheme $(sys)/lib/libwinpthread.a -L$(lib) -L$(libcore)
-#-lgtk-3 -lgdk-3 \ -lwinpthread
-# -L/usr/i686-w64-mingw32/sys-root/mingw/lib/
-# -lkernel32  -lcomdlg32
-opt 		= -fno-exceptions -static -static-libgcc -static-libstdc++ $(optproject) $(optwin32)
-optwin32	= -mwindows -municode 
-optproject	= -DDEBUGMODE -DLOGGING -DWINAPIMSG -DWINAPIPROJECT -DWINAPICONSOLE
+opt 		= -fno-exceptions -static -static-libgcc -static-libstdc++ $(projectopt) $(win32opt)
 
-projectlib 	= -l:libdebug.a -l:libpacker.a -l:libres.a
-# -static-libgcc -static-libstdc++ -DWIN32PROJECT -DDEBUG ComCtl32.dll
 debug 		= -g -ggdb
-#-municode
-# -D_UNICODE -DUNICODE
 lang 		= -x c++
 
-packname = packunpack
-debugname = debug
-packlibname = libpacker.a
-debuglibname = libdebug.a
-
+# libcore 0.2
+packname 		= packunpack
+debugname 		= debug
+packlibname 	= libpacker.a
+debuglibname 	= libdebug.a
 
 ######
 punt =,
@@ -53,14 +43,9 @@ includefile 	= $(notdir $(wildcard $(w32)*.cpp))
 includeobject 	= $(patsubst %.cpp, %.o, $(includefile))
 includeobject_2 = $(subst $(space),$(punt),$(strip $(includeobject)))
 
-ifdef log_mode
-opt += -Dlog_mode
-endif
-
-all_ESD: start dir rm $(includeobject) 
-#all_ESD_2: exe strip deltemp end
-all_ESD_2: exe strip deltemp end
-
+build_project_fast: start dir rm $(includeobject) 
+build_project: exe strip deltemp end
+	
 rebuildlib: libdel windres packlib debuglib
 	@echo -e "rebuildlib"
 	@rm -f $(libcore)*.o
@@ -81,7 +66,7 @@ start:
 
 exe:
 	@echo -e "$(includeobject_2) -->> $(exe)"
-	@$(CC) $(temp){$(includeobject_2)} -o $(bui_d)$(exe) $(I) $(l) $(opt) $(debug)
+	$(CC) $(temp){$(includeobject_2)} -o $(bui_d)$(exe) $(I) $(L) $(opt) $(debug)
 
 $(includeobject):
 	@echo -e "$*.cpp -->> $*.o"
@@ -132,6 +117,12 @@ deltemp:
 
 clean: rm
 	@echo -e ""
+
+
+
+
+###########################################################################################
+############# Тестовая зона... модули на gtk+ не рациональны.
 
 module:
 	i686-w64-mingw32-gcc $(wg)module/GTK.cpp -o $(wg)module/gtk.exe \

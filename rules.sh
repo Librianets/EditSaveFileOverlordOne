@@ -28,8 +28,8 @@ function gui_f()
 {
 if [[ $1 = "e" ]]
 then
-    make -f globalmake all_ESD --eval=gui=1 -j 8
-	make -f globalmake all_ESD_2 --eval=gui=1
+    make -f globalmake build_project_fast --eval=gui=1 -j 8
+	make -f globalmake build_project --eval=gui=1
 fi
 
 if [[ $1 = "l" ]]
