@@ -5,8 +5,8 @@
 
 ID_APP_ICON		ICON		"overlord.ico"
 IDB_LOGO		BITMAP		"logo.bmp"
-IDB_LOGO2		BITMAP		"logo2.bmp"
-IDB_LOGO3		BITMAP		"LogoGlobal.bmp"
+//IDB_LOGO2		BITMAP		"logo2.bmp"
+//IDB_LOGO3		BITMAP		"LogoGlobal.bmp"
 
 
 IDA_ACCEL			ACCELERATORS
