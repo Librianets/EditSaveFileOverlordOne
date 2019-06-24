@@ -1,18 +1,18 @@
 #ifndef __LOGGING_HPP__
 #define __LOGGING_HPP__
 
-extern class CDebugInfo 	Cdbg;
-extern class CAppLogging 	CALog;
-extern class CAppConsole 	CACon;
+extern class CDebugInfo		Cdbg;
+extern class CAppLogging	CALog;
+extern class CAppConsole	CACon;
 
 #ifdef DEBUGMODE
-#define debug(fmt, ...) 			Cdbg.Debug(fmt, __VA_ARGS__)
+#define debug(fmt, ...)				Cdbg.Debug(fmt, __VA_ARGS__);CACon.WriteDlgConsole(Cdbg.lpGetGlobalMsg());
 #else
 #define debug(fmt, ...)
 #endif
 
 #ifdef LOGGING
-#define info(fmt, ...) 				Cdbg.Info(fmt, __VA_ARGS__); CACon.WriteDlgConsole(Cdbg.lpGetGlobalMsg()); //Cdbg.lpGetGlobalMsg
+#define info(fmt, ...)				Cdbg.Info(fmt, __VA_ARGS__);CACon.WriteDlgConsole(Cdbg.lpGetGlobalMsg());
 // как бы обойти нестыковку по параметрам
 #else
 #define info(fmt, ...)
@@ -26,8 +26,10 @@ extern class CAppConsole 	CACon;
 
 #define MAXMSGLEN			0x0040		// 64
 
-#define APP 		0x00	//сообщения приложения
-#define PACKLIB 	0x02	//библиотека распаковки, упаковки
+#define APP 		0x00	// сообщения приложения
+#define PACKLIB 	0x02	// библиотека распаковки, упаковки
+#define SI 			0x03	// библиотека saveinfo
+#define SS 			0x04	// библиотека saveslot
 
 typedef struct
 {
@@ -82,15 +84,13 @@ class CAppConsole
 	void ConsoleGetLine(void);
 	
 	public:
-	HWND hWndConsole;
-	HMENU hMenuConsole;
-	HINSTANCE hInstanceapp;
-	HWND hWndapp;
+	void* hWndConsole; //HWND
+	void* hMenuConsole;//HMENU
+	void* hInstanceapp;//HINSTANCE
+	void* hWndapp;//HWND
 	
 	private:
 
 };
-
-BOOL CALLBACK ConsoleWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #endif //__LOGGING_HPP__

@@ -43,7 +43,7 @@ Sample: progname.exe -C -i SaveInfo_uncompress.osi.tzf -o SaveInfo.osi.tzf
 
 /*в стадии разработки*/
 
-Сборка осуществляется с использованием rules.sh (makefile на прямую не вызываются)
+Сборка осуществляется с использованием rules.sh (makefile на прямую не вызывается)
 
 Использование: rules.sh options...
 
@@ -52,10 +52,3 @@ Sample: progname.exe -C -i SaveInfo_uncompress.osi.tzf -o SaveInfo.osi.tzf
 	- g opt			Cборка gui версии (требуются дополнительные ключи)
 	- c				Cборка console версии
 	- h				Справка
-
-Опции gui:
-
-	- l			сборка libcore
-	- e			сборка проекта
-	- a			сборка всего (без модулей)
-	- m			модули 							// не используется на данный момент

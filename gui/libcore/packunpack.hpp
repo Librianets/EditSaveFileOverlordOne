@@ -1,12 +1,6 @@
 #ifndef __UPAP_H__
 #define __UPAP_H__
 
-#include <stdio.h> 			// Language C
-#include <string.h>			// Language C
-#include <vector>			// Language C++
-#include <zlib.h>			// ZLIB LIB
-using std::vector;
-
 namespace OESD // OVERLORD EDITSAVEDATA
 {
 

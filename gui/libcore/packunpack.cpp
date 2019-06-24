@@ -1,4 +1,11 @@
+#include <iostream>			// Language C++
+#include <cstring>			// Language C++
+#include <vector>			// Language C++
+using std::vector;
+#include <zlib.h>			// ZLIB LIB
+
 #include "packunpack.hpp"	// project
+
 namespace OESD // OVERLORD EDITSAVEDATA
 {
 
@@ -80,7 +87,7 @@ int CUnpackPack::ClearClass()
 	if (aBufferOne.capacity() > 1) {aBufferOne.clear();}
 	memset(&UnionDataInfoOne, 0, sizeof(UnionDataInfo));
 	iFlagDefSave = 0;
-	iFlagDefSaveLang = 0;
+	//iFlagDefSaveLang = 0;
 }
 
 unsigned int CUnpackPack::CheckCrc32 (size_t iLenFile, vector <unsigned char> aBuf)
@@ -225,7 +232,13 @@ int CUnpackPack::DefineTypeFile ()
 	if (memcmp( &aBufferOne[0x4], &iSaveSlot[0x0], 4) == 0) iFlagDefSave = SAVESLOT;
 	if (iFlagDefSave == SAVEINFO) 
 	{
-		if (aBufferOne[UnionDataInfoOne.data.iUnzip-2] == (0xD0 | 0xD1))
+		unsigned char a[2] = {0xD0, 0xD1};
+		if 
+		(
+		memcmp( &aBufferOne[UnionDataInfoOne.data.iUnzip-2], &a[0], 1) == 0 ||
+		memcmp( &aBufferOne[UnionDataInfoOne.data.iUnzip-2], &a[1], 1) == 0
+		)
+		//aBufferOne[UnionDataInfoOne.data.iUnzip-2] == 0xD0 || aBufferOne[UnionDataInfoOne.data.iUnzip-2] == 0xD1)
 		{
 			iFlagDefSaveLang = LANGRU;
 		} else {} //return E_LIBPACK_CHECKLANG;

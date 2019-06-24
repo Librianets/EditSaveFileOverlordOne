@@ -1,3 +1,6 @@
+#include <iostream>			// Language C++
+#include <cstdarg>			// Language C++
+
 #include "debug.hpp"
 
 void CDebugInfo::Debug(const wchar_t *fmt, ...)

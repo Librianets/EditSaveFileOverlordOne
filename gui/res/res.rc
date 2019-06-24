@@ -1,7 +1,7 @@
 #include "resource.hpp"
 //#pragma code_page(cp866)
 
-1				RT_MANIFEST	"manifest.xml"
+//1				RT_MANIFEST	"manifest.xml"
 
 ID_APP_ICON		ICON		"overlord.ico"
 IDB_LOGO		BITMAP		"logo.bmp"

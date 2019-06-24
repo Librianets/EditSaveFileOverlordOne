@@ -8,8 +8,7 @@
 #define ERROR_OPENFILE 			-0x0005
 #define ERROR_FILESIZE 			-0x0006
 #define ERROR_SAVEFILE 			-0x0007
-#define ERROR_SAVECOUNT 		-0x0008
-#define ERROR_LIMITMAXSIZE 		-0x0009
+#define ERROR_LIMITMAXSIZE 		-0x00011
 
 //#define ERROR_NOTFILESELECT 	-0x000A
 //#define ERROR_FILECHECK 		-0x0005
@@ -17,8 +16,8 @@
 extern class CGameSaveControl CGameSaveControlOne;
 extern class CUnpackPack CUnpackPackOne;
 extern class CSaveInfo CSaveInfoOne;
-extern class CSaveInfoWndControl CSaveInfoWndControlOne;
-extern class CGlobal CGG;
+extern class CSaveInfoWndControl CSIWC;
+extern class COverlordApp COA;
 
 namespace OVERLORD
 {
@@ -34,7 +33,7 @@ typedef struct
 {
 	HWND hWnd;
 	DLGPROC WndProc;
-} Data;
+} DataWnd, *pDataWnd;
 
 typedef struct 
 {
@@ -44,60 +43,55 @@ typedef struct
 	wchar_t *gclass;
 	wchar_t *gwnd;
 	WNDPROC WndProc;
-} AppData;
+} AppData, *pAppData;
 
 typedef struct 
 {
-	int iEnable;
-	int iStatus;
-	RECT rectCB;
-	RECT rectText;
+	int 	iEnable;
+	int 	iStatus;
+	RECT 	rectCB;
 	wchar_t sText[30];
+	HWND	hWnd;
 } TCheckBox;
 
 typedef struct 
 {
 	RECT rectWnd;
 	wchar_t sText[30];
-	wchar_t sClassName[30];
 } TWndSI;
 
 /////////////////////////////////////////////
 /////////////////	CLASS	/////////////////
 /////////////////////////////////////////////
-class CGlobal
+class COverlordApp
 {
 public:
-	CGlobal();
-	~CGlobal();
-	
-	// public val
-	AppData gapp;
-	Data dlgapp[MAXCOUNTERPOINTER];
-	HDC 		HdcPaint;
-	BITMAP		bitmap;
-	HBITMAP		hBitmap;
-	
-	// public funcs
-	int Init(HINSTANCE hInstance);
+	COverlordApp();
+	~COverlordApp();
 	void ClearClass(void);
+	
+	int Init(HINSTANCE hInstance);
 	int SetPosDlg(HWND hwnd, HWND dia, POINT *pt);
 	HWND CreateMainWndApp(void);
 	void ShowWnd(HWND hWnd);
 	void DlgInit(int numdlg);
-	void PaintWnd (HWND hwnd, HDC hDC2);
-	HDC CreateWnd (HWND hwnd);
+	void PaintWnd(HWND hwnd, HDC hDC2);
+	HDC CreateWnd(HWND hwnd);
 	
-	
+public:
+	AppData 	gapp;
+	DataWnd 	dlgapp[1];
+	HDC 		HdcPaint;
+	BITMAP		bitmap;
+	HBITMAP		hBitmap;
+	int iSizeWndX = 1280/2;//min 640
+	int iSizeWndY = 1023/2;//min 512
+
 private:
-int iSizeWndX = 1280/2; //min 640
-int iSizeWndY = 1024/2; //min 512
-wchar_t sg_WndClass[MAXCLASSNAME] 		= L"Class main window";
-wchar_t sg_Wnd[MAXCLASSNAME] 			= L"Редактор сохранений игры Overlord";
-
-WNDCLASSEX WndCExMain;
-
-BOOL MainRegClass (WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTANCE hinstance);
+	wchar_t sg_WndClass[MAXCLASSNAME] 		= L"Class main window";
+	wchar_t sg_Wnd[MAXCLASSNAME] 			= L"Редактор сохранений игры Overlord";
+	WNDCLASSEX WndCExMain;
+	BOOL MainRegClass(WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTANCE hinstance);
 
 };
 
@@ -112,7 +106,7 @@ public:
 	CGameSaveControl();
 	~CGameSaveControl();
 	
-	void ClearClass(void); // исключительно для повышения управляемости
+	void ClearClass(void);// исключительно для повышения управляемости
 	int SelectGameFile(void);
 	int SelectSaveGameFile(void);
 	int ReadGameFile(void);
@@ -133,50 +127,46 @@ private:
 class CSaveInfoWndControl
 {
 public:
-CSaveInfoWndControl();
-~CSaveInfoWndControl();
-
-// public val
-HWND hWndSI[5];
-
-TCheckBox aCBSI[10] =
-{
-	{0, 0, {15,15,30,30}, {aCBSI[0].rectCB.left+15+5, aCBSI[0].rectCB.top, aCBSI[0].rectText.left+115, aCBSI[0].rectCB.bottom}, L"Сохранение №1"},
-	{0, 0, {15,40,30,55}, {aCBSI[1].rectCB.left+15+5, aCBSI[1].rectCB.top, aCBSI[1].rectText.left+115, aCBSI[1].rectCB.bottom}, L"Сохранение №2"},
-	{0, 0, {15,65,30,80}, {aCBSI[2].rectCB.left+15+5, aCBSI[2].rectCB.top, aCBSI[2].rectText.left+115, aCBSI[2].rectCB.bottom}, L"Сохранение №3"},
-	{0, 0, {15,90,30,105}, {aCBSI[3].rectCB.left+15+5, aCBSI[3].rectCB.top, aCBSI[3].rectText.left+115, aCBSI[3].rectCB.bottom}, L"Сохранение №4"},
-	{0, 0, {15,115,30,130}, {aCBSI[4].rectCB.left+15+5, aCBSI[4].rectCB.top, aCBSI[4].rectText.left+115, aCBSI[4].rectCB.bottom}, L"Сохранение №5"},
-	{0, 0, {15,140,30,155}, {aCBSI[5].rectCB.left+15+5, aCBSI[5].rectCB.top, aCBSI[5].rectText.left+115, aCBSI[5].rectCB.bottom}, L"Сохранение №6"},
-	{0, 0, {15,165,30,180}, {aCBSI[6].rectCB.left+15+5, aCBSI[6].rectCB.top, aCBSI[6].rectText.left+115, aCBSI[6].rectCB.bottom}, L"Сохранение №7"},
-	{0, 0, {15,190,30,205}, {aCBSI[7].rectCB.left+15+5, aCBSI[7].rectCB.top, aCBSI[7].rectText.left+115, aCBSI[7].rectCB.bottom}, L"Сохранение №8"},
-	{0, 0, {15,215,30,230}, {aCBSI[8].rectCB.left+15+5, aCBSI[8].rectCB.top, aCBSI[8].rectText.left+115, aCBSI[8].rectCB.bottom}, L"Сохранение №9"},
-	{0, 0, {15,240,30,255}, {aCBSI[9].rectCB.left+15+5, aCBSI[9].rectCB.top, aCBSI[9].rectText.left+115, aCBSI[9].rectCB.bottom}, L"Сохранение №10"}
-};
-
-TWndSI aWndSI[5] =
-{
-	{{5, 6, 155, 270}, L"Окно №1", L"ClassNameOne"},
-	{{5, 281, 155, 225}, L"Окно №2", L"ClassNameTwo"},
-	{{165, 6, 470, 500}, L"Окно №3", L"ClassNameThree"},
-	{{0, 0, 0, 0}, L"Окно №4", L"ClassNameFour"},
-	{{0, 0, 0, 0}, L"Окно №5", L"ClassNameFive"}
-};
+	CSaveInfoWndControl();
+	~CSaveInfoWndControl();
+	void ClearClass(void);// исключительно для повышения управляемости
 	
-	// public funcs
-	void ClearClass(void); // исключительно для повышения управляемости
 	int CreateWnd(void);
 	int CloseWnd(void);
 	int SetWndLong(int num);
+	BOOL RegClassGroupBox(WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTANCE hinstance);
+	int RefreshAlternativeInfoSI(int iSaveSelect);
 	
-	//Get, Set
+	
+public:
+	HWND hWndSI[5];
+	int iPosSaveInCB[10];
+	WNDCLASSEX WndCExGroupBoxOne;
+	
+	TCheckBox aCBSI[10] =
+	{
+		{0, 0, {10,20,135,23}, 			L"Сохранение №1", NULL},
+		{0, 0, {10,20+(23+2)*1,135,23}, L"Сохранение №2", NULL},
+		{0, 0, {10,20+(23+2)*2,135,23}, L"Сохранение №3", NULL},
+		{0, 0, {10,20+(23+2)*3,135,23}, L"Сохранение №4", NULL},
+		{0, 0, {10,20+(23+2)*4,135,23}, L"Сохранение №5", NULL},
+		{0, 0, {10,20+(23+2)*5,135,23}, L"Сохранение №6", NULL},
+		{0, 0, {10,20+(23+2)*6,135,23}, L"Сохранение №7", NULL},
+		{0, 0, {10,20+(23+2)*7,135,23}, L"Сохранение №8", NULL},
+		{0, 0, {10,20+(23+2)*8,135,23}, L"Сохранение №9", NULL},
+		{0, 0, {10,20+(23+2)*9,135,23}, L"Сохранение №10", NULL}
+	};
+
+	TWndSI aWndSI[5] =
+	{
+		{{5, 6, 155, 276}, 		L"Сохранения"},
+		{{5, 281, 155, 506}, 	L"Доп.информация"},
+		{{160, 6, 635, 506}, 	L"Информация"},
+		{{10, 286, 140, 200}, 	L"Ниспадающее меню"},
+		{{10, 316, 140, 185}, 	L"Ниспадающее меню"}
+	};
 	
 private:
-BOOL RegClassGroupBox(WNDCLASSEX classex, WNDPROC Proc, LPCWSTR szClassName, HINSTANCE hinstance);
-short int ihwndCount = 5;
-
-WNDCLASSEX WndCExGroupBoxOne;
-WNDCLASSEX WndCExGroupBoxTwo;
-WNDCLASSEX WndCExGroupBoxThree;
 
 };
 

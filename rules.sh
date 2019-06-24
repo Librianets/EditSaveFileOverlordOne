@@ -14,10 +14,17 @@ function print_help()
     echo "  Параметры gui:"
     echo "  l - сборка libcore"
     echo "  e - сборка проекта"
+    echo "  f - сборка проекта fast"
+    echo "  d - сборка проекта fast c дебагом"
     echo "  a - сборка всего (без модулей)"
     echo "  m - модули"
+    echo "  exp - режим сборки отдельно дебага и релиза"
+    echo "  expf - режим сборки отдельно дебага и релиза (fast)"
     echo
 }
+
+#переработать и make и bash, а то все коряво...
+#
 
 function console_f() 
 {
@@ -26,10 +33,52 @@ function console_f()
 
 function gui_f()
 {
+if [[ $1 = "exp" ]]
+then
+	make -f globalmake clear 			--eval=gui=1
+	make -f globalmake rebuildlib 		--eval=gui=1
+    make -f globalmake build_project 	--eval=gui=1
+	make -f globalmake strip 			--eval=gui=1
+	
+	make -f globalmake rebuildlib 		--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1
+	make -f globalmake build_project 	--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1
+fi
+
+if [[ $1 = "expf" ]]
+then
+	make -f globalmake clear 						--eval=gui=1
+	make -f globalmake rebuildlib 					--eval=gui=1 -j 8
+    make -f globalmake build_project_fast_begin 	--eval=gui=1 -j 8
+    make -f globalmake build_project_fast_end 		--eval=gui=1
+	make -f globalmake strip 						--eval=gui=1
+	
+	make -f globalmake rebuildlib 					--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1 -j 8
+	make -f globalmake build_project_fast_begin 	--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1 -j 8
+	make -f globalmake build_project_fast_end 		--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1
+fi
+
+if [[ $1 = "f" ]]
+then
+	make -f globalmake clear 					--eval=gui=1
+    make -f globalmake build_project_fast_begin --eval=gui=1 -j 8
+	make -f globalmake build_project_fast_end 	--eval=gui=1
+	make -f globalmake strip 					--eval=gui=1
+fi
+
+if [[ $1 = "d" ]]
+then
+	make -f globalmake rebuildlib 					--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1
+	make -f globalmake clear --eval=gui=1
+    make -f globalmake build_project_fast_begin 	--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1 -j 8
+	make -f globalmake build_project_fast_end 		--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1
+	make -f globalmake strip --eval=gui=1
+fi
+
 if [[ $1 = "e" ]]
 then
-    make -f globalmake build_project_fast --eval=gui=1 -j 8
-	make -f globalmake build_project --eval=gui=1
+	make -f globalmake clear 			--eval=gui=1
+    make -f globalmake build_project 	--eval=gui=1
+	make -f globalmake strip 			--eval=gui=1
 fi
 
 if [[ $1 = "l" ]]

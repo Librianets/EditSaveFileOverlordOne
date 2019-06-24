@@ -1,10 +1,6 @@
 #ifndef __DEBUG_HPP__
 #define __DEBUG_HPP__
 
-#include <stdio.h> 			// Language C
-#include <stdarg.h>			// Language C
-#include <wctype.h>			// Language C
-
 #define MAXMSGLOGLEN	0x0200 //512
 
 class CDebugInfo

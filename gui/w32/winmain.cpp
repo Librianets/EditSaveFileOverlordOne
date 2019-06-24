@@ -1,20 +1,28 @@
+#include <windows.h> 		// WINDOWS
+#include <vector>			// Language C++
+using std::vector;
+
 #include "global.hpp"		// project
+#include "functions.hpp"	// project
+#include "mainfuncs.hpp"	// project
+#include "logging.hpp"		// project
+#include "winmain.hpp"		// project
 
 int WINAPI wWinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpszCmdParam, int nCmdShow)
 {
 	int iStatus = 0;
 	
-	iStatus = CGG.Init(hInstance);
+	iStatus = COA.Init(hInstance);
 	if (iStatus == ERROR_GCLASSNOT) errormsg(ERROR_GCLASSNOT, APP);
 	iStatus = 0;
 	
-	CGG.gapp.hwnd = CGG.CreateMainWndApp();
-	if (CGG.gapp.hwnd == NULL) errormsg(ERROR_GWNDNOT, APP);
+	COA.gapp.hwnd = COA.CreateMainWndApp();
+	if (COA.gapp.hwnd == NULL) errormsg(ERROR_GWNDNOT, APP);
 	
-	CGG.ShowWnd(CGG.gapp.hwnd);
+	COA.ShowWnd(COA.gapp.hwnd);
 	
-	CACon.hInstanceapp = CGG.gapp.inst;
-	CACon.hWndapp = CGG.gapp.hwnd;
+	CACon.hInstanceapp = COA.gapp.inst;
+	CACon.hWndapp = COA.gapp.hwnd;
 	CACon.InitConsole();
 	
 	
@@ -22,8 +30,8 @@ int WINAPI wWinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpszCmd
 	return ParamReturn;
 }
 
-//GdiplusStartupInput gdiplusStartupInput; 
-//ULONG_PTR gdiplusToken; 
+//GdiplusStartupInput gdiplusStartupInput;
+//ULONG_PTR gdiplusToken;
 //GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 //WNDCLASSEX WndCTest;
 //TestClass(WndCTest, TestWndProc, L"testClass", hInstance);
@@ -58,8 +66,8 @@ T		type					тип	TObject
 I		interface				интерфейс	IDispatch
 v		void					отсутствие типа	vReserved
 
-i		index					Индекс	int ix; Array[ix] = 10;
-d		delta					Разница между значениями	int a, b; ... dba = b - a;
+i		index					Индекс	int ix;Array[ix] = 10;
+d		delta					Разница между значениями	int a, b;... dba = b - a;
 n		number					Количество	size_t nFound = 0;
 a		argument				Аргумент	SomeClass::SomeClass(int aX) : x(aX) {}
 */

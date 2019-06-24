@@ -14,25 +14,38 @@ res 		= $(wg)res/
 libcore 	= $(wg)libcore/
 sys 		= /usr/i686-w64-mingw32/sys-root/mingw/
 
-library		= -l:libz.a -lstdc++ -lcomctl32 -lkernel32 -lcomdlg32 -luser32 -lgdi32 -lgdiplus -lUxTheme -l:libwinpthread.a 
-projectlib 	= -l:libdebug.a -l:libpacker.a -l:libres.a
-projectopt	= -DDEBUGMODE -DLOGGING -DWINAPIMSG -DWINAPIPROJECT -DWINAPICONSOLE -DDWIN32PROJECT
+library		= -l:libz.a -lstdc++ -lcomctl32 -lkernel32 -lcomdlg32 -luser32 -lgdi32 -lgdiplus -l:libwinpthread.a 
+#-lUxTheme 
+projectlib 	= -l:libdebug.a -l:libpacker.a -l:libres.a -l:libsaveinfo.a
+projectopt	= -DLOGGING -DWINAPIMSG
+#-DWINAPIPROJECT -DWINAPICONSOLE -DDWIN32PROJECT
 win32opt	= -mwindows -municode 
 # -D_UNICODE -DUNICODE
 
 I 			= -I$(include) -I$(res) -I$(libcore) 
 L 			= $(projectlib) $(library) -L$(lib) -L$(libcore)
+debug 		=
+lang 		= -x c++
+
+ifdef modedebuginfo
+debug 		+= -g -ggdb
+endif
+ifdef modedebuginfoconsole
+projectopt 	+= -DDEBUGMODE
+endif
 
 opt 		= -fno-exceptions -static -static-libgcc -static-libstdc++ $(projectopt) $(win32opt)
 
-debug 		= -g -ggdb
-lang 		= -x c++
 
-# libcore 0.2
+
+
+# libcore 0.3
 packname 		= packunpack
 debugname 		= debug
+SIname 			= saveinfo
 packlibname 	= libpacker.a
 debuglibname 	= libdebug.a
+SIlibname 		= libsaveinfo.a
 
 ######
 punt =,
@@ -43,10 +56,11 @@ includefile 	= $(notdir $(wildcard $(w32)*.cpp))
 includeobject 	= $(patsubst %.cpp, %.o, $(includefile))
 includeobject_2 = $(subst $(space),$(punt),$(strip $(includeobject)))
 
-build_project_fast: start dir rm $(includeobject) 
-build_project: exe strip deltemp end
+build_project_fast_begin: start dir $(includeobject) 
+build_project_fast_end: exe deltemp end
+build_project: start dir $(includeobject) exe deltemp end
 	
-rebuildlib: libdel windres packlib debuglib
+rebuildlib: libdel windres packlib debuglib saveinfolib
 	@echo -e "rebuildlib"
 	@rm -f $(libcore)*.o
 	
@@ -71,6 +85,14 @@ exe:
 $(includeobject):
 	@echo -e "$*.cpp -->> $*.o"
 	@$(CC) $(lang) -c $(w32)$*.cpp -o $(temp)$*.o $(I) $(opt) $(debug)
+
+saveinfolib:
+	@echo -e "$*.cpp -->> $*.o"
+	@$(CC) $(lang) -c $(libcore)$(SIname).cpp -o $(libcore)$(SIname).o $(I) $(opt)
+	@echo -e "ar SIlib"
+	$(ar) cr $(libcore)$(SIlibname) $(libcore)$(SIname).o
+	@echo -e "ranlib SIlib"
+	$(ranlib) $(libcore)$(SIlibname)
 
 packlib:
 	@echo -e "$*.cpp -->> $*.o"
@@ -108,14 +130,14 @@ dir:
 	@mkdir -v -p $(bui_r)
 	@mkdir -v -p $(bui_d)
 	
-rm: deltemp
+clear: deltemp
 	@rm -f $(bui_d)*.*
 	@rm -f $(bui_r)*.*
 
 deltemp:
 	@rm -f $(temp)*.*
 
-clean: rm
+clean: clear
 	@echo -e ""
 
 

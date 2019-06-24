@@ -1,4 +1,20 @@
+#include <windows.h> 		// WINDOWS
+#include <iostream>			// Language C++
+#include <vector>			// Language C++
+using std::vector;
+
+#include "packunpack.hpp"	// project
+#include "saveinfo.hpp"		// project
+#include "resource.hpp"		// project
+
 #include "global.hpp"		// project
+#include "functions.hpp"	// project
+#include "mainfuncs.hpp"	// project
+
+#include "logging.hpp"		// project
+#include "debug.hpp"		// project
+
+BOOL CALLBACK ConsoleWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 class CDebugInfo 	Cdbg;
 class CAppLogging 	CALog;
@@ -7,7 +23,7 @@ class CAppConsole 	CACon;
 static wchar_t aMessageErrorTxt 	[MAXMSGLEN] = L"Ошибка";
 static wchar_t aMessageWarningTxt 	[MAXMSGLEN] = L"Предупреждение";
 
-TMessageErrorTxt aMsgErrorTxt[30] //2+2+2*64=132*50=6600 Байт
+TMessageErrorTxt aMsgErrorTxt[32] //2+2+2*64=132*50=6600 Байт (на каждыйе 30 элементов)
 {
 	{0, ERROR_NOTCORRECT, 		L"Не известная ошибка"},
 	{1, ERROR_GWNDNOT, 			L"Не удалось создать главное окно"},
@@ -18,7 +34,7 @@ TMessageErrorTxt aMsgErrorTxt[30] //2+2+2*64=132*50=6600 Байт
 	{5, ERROR_OPENFILE, 		L"Не удалось открыть файл"},
 	{6, ERROR_FILESIZE, 		L"Не удалось установить размер файла"},
 	{7, ERROR_SAVEFILE, 		L"Не удалось сохранить файл"},
-	{8, ERROR_SAVECOUNT, 		L"Не удалось установить количество сохранений"},
+	{8, 0, 		L"Не удалось установить количество сохранений"},
 	{9, ERROR_LIMITMAXSIZE, 	L"Превышен лимит размера файла ( > 1 мб)"},
 //	{ERROR_NOTFILESELECT, 		L"Открытие файла отменено"},
 	{10, 0, 					L""},
@@ -43,7 +59,10 @@ TMessageErrorTxt aMsgErrorTxt[30] //2+2+2*64=132*50=6600 Байт
 //	{E_LIBPACK_CHECKLANG, 		L"Не удалось установить язык"}	
 	{27, 0, 					L""},
 	{28, 0, 					L""},
-	{29, 0, 					L""}
+	{29, 0, 					L""},
+//SAVEINFO
+	{30, 0, 					L""},
+	{31, 0, 					L""}
 };
 
 void CAppLogging::ErrorMsg(int iMSG, int iCategory)
@@ -53,26 +72,18 @@ int flag_find = 0;
 
 switch (iCategory)
 {
-	case PACKLIB:
-	{
-		for (int i = 10*PACKLIB, a = i+10; i < a; i++)
-		{
-			if (aMsgErrorTxt[i].iMsgNum == iMSG)
-			{
-				MessageBox(NULL, aMsgErrorTxt[i].aMessageError, aMessageWarningTxt, MB_OK);
-				flag_find = 1;
-				break;
-			}
-		}
-	}break;
-	
 	case APP:
 	{
-		for (int i = APP, a = i+20; i < a; i++)
+		for (int i = APP, a = i+20;i < a;i++)
 		{
 			if (aMsgErrorTxt[i].iMsgNum == iMSG)
 			{
-				if (aMsgErrorTxt[i].iMsgNum == (ERROR_GWNDNOT || ERROR_GCLASSNOT))
+				if 
+				(
+				aMsgErrorTxt[i].iMsgNum == ERROR_GWNDNOT 
+				|| 
+				aMsgErrorTxt[i].iMsgNum == ERROR_GCLASSNOT
+				)
 				{
 					MessageBox(NULL, aMsgErrorTxt[i].aMessageError, aMessageErrorTxt, MB_OK);
 					iExit = 1;
@@ -87,7 +98,47 @@ switch (iCategory)
 		}
 	}break;
 	
-	default:		MessageBox(NULL, aMsgErrorTxt[0].aMessageError, aMessageWarningTxt, MB_OK); 	break;
+	case PACKLIB:
+	{
+		for (int i = 10*PACKLIB, a = i+10;i < a;i++)
+		{
+			if (aMsgErrorTxt[i].iMsgNum == iMSG)
+			{
+				MessageBox(NULL, aMsgErrorTxt[i].aMessageError, aMessageWarningTxt, MB_OK);
+				flag_find = 1;
+				break;
+			}
+		}
+	}break;	
+	
+	case SI:
+	{
+		for (int i = 10*SI, a = i+10; i < a; i++)
+		{
+			if (aMsgErrorTxt[i].iMsgNum == iMSG)
+			{
+				MessageBox(NULL, aMsgErrorTxt[i].aMessageError, aMessageWarningTxt, MB_OK);
+				flag_find = 1;
+				break;
+			}
+		}
+	}break;
+	
+	case SS:
+	{
+		for (int i = 10*SS, a = i+10; i < a; i++)
+		{
+			if (aMsgErrorTxt[i].iMsgNum == iMSG)
+			{
+				MessageBox(NULL, aMsgErrorTxt[i].aMessageError, aMessageWarningTxt, MB_OK);
+				flag_find = 1;
+				break;
+			}
+		}
+	}break;
+	
+	
+	default:		MessageBox(NULL, aMsgErrorTxt[0].aMessageError, aMessageWarningTxt, MB_OK);	break;
 }
 
 if (flag_find !=1) {MessageBox(NULL, aMsgErrorTxt[0].aMessageError, aMessageWarningTxt, MB_OK);}
@@ -96,15 +147,15 @@ if (iExit == 1) {PostQuitMessage(WM_DESTROY);}
 
 void CAppConsole::WriteDlgConsole(wchar_t *aBufMsg)
 {
-	SendDlgItemMessage(hWndConsole, IDI_CONSOLE_EDIT, EM_REPLACESEL, 0, (LPARAM)aBufMsg);
+	SendDlgItemMessage((HWND)hWndConsole, IDI_CONSOLE_EDIT, EM_REPLACESEL, 0, (LPARAM)aBufMsg);
 }
 
 void CAppConsole::InitConsole(void)
 {
-	hWndConsole = CreateDialog(hInstanceapp, MAKEINTRESOURCE(IDDLG_CONSOLE), hWndapp, ConsoleWndProc);
-	if (hWndConsole == NULL) errormsg(ERROR_CREATECONSOLE, APP);
-	hMenuConsole = LoadMenu(hInstanceapp, MAKEINTRESOURCE(IDM_MENU_CONSOLE));
-	SetMenu(hWndConsole, hMenuConsole);
+	hWndConsole = CreateDialog((HINSTANCE)hInstanceapp, MAKEINTRESOURCE(IDDLG_CONSOLE), (HWND)hWndapp, ConsoleWndProc);
+	if ((HWND)hWndConsole == NULL) errormsg(ERROR_CREATECONSOLE, APP);
+	hMenuConsole = LoadMenu((HINSTANCE)hInstanceapp, MAKEINTRESOURCE(IDM_MENU_CONSOLE));
+	SetMenu((HWND)hWndConsole, (HMENU)(HMENU)hMenuConsole);
 
 	info(L"Project: ESD overlord", L"");
 	info(L"\r\nTEST ТЕСТ. i=%i, c=%c, f=%f, s=%ls \r\n", 5, 't', 5.5, L"ТЕСТ TEST");
@@ -115,8 +166,8 @@ void CAppConsole::ConsoleShow(void)
 	POINT console_pos_temp;
 	RECT t_poswnd;
 	RECT t_posdia;
-	GetWindowRect(hWndapp, &t_poswnd);
-	GetWindowRect(hWndConsole, &t_posdia);
+	GetWindowRect((HWND)hWndapp, &t_poswnd);
+	GetWindowRect((HWND)hWndConsole, &t_posdia);
 	console_pos_temp.x = t_posdia.right - t_posdia.left;
 	console_pos_temp.y = t_posdia.bottom - t_posdia.top;
 	t_poswnd.left += ((t_poswnd.right-t_poswnd.left-console_pos_temp.x)/2);
@@ -124,24 +175,24 @@ void CAppConsole::ConsoleShow(void)
 	console_pos_temp.x = t_poswnd.left;
 	console_pos_temp.y = t_poswnd.top;
 	
-	SetWindowPos(hWndConsole, HWND_TOP, console_pos_temp.x,(console_pos_temp.y+(-25+Y_CONSOLE_DLG)*2), 0, 0, SWP_NOSIZE );
-	ShowWindow(hWndConsole, SW_SHOW);
+	SetWindowPos((HWND)hWndConsole, HWND_TOP, console_pos_temp.x,(console_pos_temp.y+(-25+Y_CONSOLE_DLG)*2), 0, 0, SWP_NOSIZE );
+	ShowWindow((HWND)hWndConsole, SW_SHOW);
 }
 
 void CAppConsole::ConsoleHide(void)
 {
-	ShowWindow(hWndConsole, SW_HIDE);
+	ShowWindow((HWND)hWndConsole, SW_HIDE);
 }
 
 void CAppConsole::ConsoleClear(void)
 {
-	SendDlgItemMessage(hWndConsole, IDI_CONSOLE_EDIT, WM_SETTEXT, 0, (LPARAM)L"");
+	SendDlgItemMessage((HWND)hWndConsole, IDI_CONSOLE_EDIT, WM_SETTEXT, 0, (LPARAM)L"");
 }
 
 void CAppConsole::ConsoleGetLine(void)
 {
 	wchar_t sTempLine[70];
-	GetDlgItemText(hWndConsole, IDI_CONSOLELINE, sTempLine, sizeof(sTempLine));
+	GetDlgItemText((HWND)hWndConsole, IDI_CONSOLELINE, sTempLine, sizeof(sTempLine));
 	info(L"%ls", sTempLine);
 }
 
@@ -149,18 +200,18 @@ BOOL CALLBACK ConsoleWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
-		case WM_INITDIALOG: 					return TRUE; break;
-		case WM_CLOSE: CACon.ConsoleHide(); 	return TRUE; break;
+		case WM_INITDIALOG: 					return TRUE;break;
+		case WM_CLOSE: CACon.ConsoleHide();	return TRUE;break;
 		case WM_COMMAND:
 		{
 		if (HIWORD(wParam) == 0)
 		{
 			switch (LOWORD(wParam))
 			{
-				case IDI_EXIT: 				PostQuitMessage(WM_DESTROY); 		return TRUE; break;
-				case IDI_CONSOLE_CLEAR: 	CACon.ConsoleClear(); 				return TRUE; break;
-				case IDI_CONSOLE_HIDE: 		CACon.ConsoleHide(); 				return TRUE; break;
-				case IDI_GETLINECONSOLE:	CACon.ConsoleGetLine(); 			return TRUE; break;
+				case IDI_EXIT: 				PostQuitMessage(WM_DESTROY);		return TRUE;break;
+				case IDI_CONSOLE_CLEAR: 	CACon.ConsoleClear();				return TRUE;break;
+				case IDI_CONSOLE_HIDE: 		CACon.ConsoleHide();				return TRUE;break;
+				case IDI_GETLINECONSOLE:	CACon.ConsoleGetLine();			return TRUE;break;
 			}
 		}
 		}

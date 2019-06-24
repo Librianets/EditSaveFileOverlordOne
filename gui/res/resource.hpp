@@ -71,8 +71,8 @@
 
 
 /////////	POSITION	/////////
-//CGG.szwnd.x = (1280/2); //640
-//CGG.szwnd.y = (1024/2); //512
+//CGG.szwnd.x = (1280/2);//640
+//CGG.szwnd.y = (1024/2);//512
 
 #define CX_CONSOLE_DLG			0
 #define CY_CONSOLE_DLG			143 // (512-(200+25)/2
