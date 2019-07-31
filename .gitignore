@@ -1,7 +1,4 @@
-console/temp/*.o
-console/build/*.*
-
-gui/module/*.*
-gui/temp/*.o
 gui/garbage/*.*
-gui/w64/*.*
+gui/temp/*.*
+
+console/temp/*.*

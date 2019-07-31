@@ -42,6 +42,7 @@
 #define	IDI_GETLINECONSOLE		0x1010
 #define	IDI_CLOZEFILE			0x1011
 #define	IDI_SAVEFILE			0x1012
+#define	IDI_OPTIONS				0x1013
 
 ////////////////////////////////////////
 ///////////////// Button /////////////////

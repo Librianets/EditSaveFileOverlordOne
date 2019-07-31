@@ -44,13 +44,13 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		
 		case MSG_SAVEINFO:
 		{
-			info(L"\r\n MSG_SAVEINFO", L"");
+			info(L"\r\nSelected SAVEINFO FILE", L"");
 			OVERLORD::SaveInfo();
 		} break;
 		
 		case MSG_SAVESLOT: 		
 		{
-			info(L"\r\n MSG_SAVESLOT", L"");
+			info(L"\r\nMSG_SAVESLOT", L"");
 			OVERLORD::SaveSlot();
 		} break;
 		
@@ -149,13 +149,13 @@ if (msg == WM_CTLCOLORSTATIC)
 ///////////////// извлечение некоторых сообщений для дочерних окон ///////////
 //////////////////////////////////////////////////////////////////////////////
 
-	//info(L"\r\n ProcAppGroupBoxSI", L"");
+	//info(L"\r\nProcAppGroupBoxSI", L"");
 	switch (msg)
 	{
 	//case WM_CREATE: {}break;
 	case WM_PAINT: 
 	{
-		info(L"\r\n WM_PAINT", L"");
+		//debug(L"\r\nWM_PAINT", L"");
 
 		HGDIOBJ hSOOne;
 		PAINTSTRUCT ps;
@@ -184,9 +184,9 @@ if (msg == WM_CTLCOLORSTATIC)
 	//case WM_ERASEBKGND:		{}break;
 	case WM_COMMAND:
 	{
-	//	info(L"\r\n WM_COMMAND", L"");
-	//	info(L"\r\n CBN_SELENDOK = %i", CBN_SELENDOK);
-	//	info(L"\r\n HIWORD(wParam) = %i", HIWORD(wParam));
+	//	info(L"\r\nWM_COMMAND", L"");
+	//	info(L"\r\nCBN_SELENDOK = %i", CBN_SELENDOK);
+	//	info(L"\r\nHIWORD(wParam) = %i", HIWORD(wParam));
 
 	if (HIWORD(wParam) == CBN_SELENDOK)
 	{

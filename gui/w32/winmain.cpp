@@ -1,4 +1,5 @@
 #include <windows.h> 		// WINDOWS
+#include <iostream>			// Language C++
 #include <vector>			// Language C++
 using std::vector;
 
@@ -10,25 +11,24 @@ using std::vector;
 
 int WINAPI wWinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpszCmdParam, int nCmdShow)
 {
-	int iStatus = 0;
+	COA.Init(hInstance);
+	if (COA.GetErrorStatus() == ERROR_GCLASSNOT) errormsg(ERROR_GCLASSNOT, APP);
 	
-	iStatus = COA.Init(hInstance);
-	if (iStatus == ERROR_GCLASSNOT) errormsg(ERROR_GCLASSNOT, APP);
-	iStatus = 0;
+	COA.ParseCommandLine(lpszCmdParam);
 	
 	COA.gapp.hwnd = COA.CreateMainWndApp();
-	if (COA.gapp.hwnd == NULL) errormsg(ERROR_GWNDNOT, APP);
+	if (COA.gapp.hwnd == NULL) errormsg(ERROR_GWNDNOT, APP); //поменять
 	
 	COA.ShowWnd(COA.gapp.hwnd);
 	
 	CACon.hInstanceapp = COA.gapp.inst;
 	CACon.hWndapp = COA.gapp.hwnd;
 	CACon.InitConsole();
-	
-	
+
 	WPARAM ParamReturn = RunMsg();
 	return ParamReturn;
 }
+
 
 //GdiplusStartupInput gdiplusStartupInput;
 //ULONG_PTR gdiplusToken;
@@ -70,4 +70,28 @@ i		index					Индекс	int ix;Array[ix] = 10;
 d		delta					Разница между значениями	int a, b;... dba = b - a;
 n		number					Количество	size_t nFound = 0;
 a		argument				Аргумент	SomeClass::SomeClass(int aX) : x(aX) {}
+
+g_	префикс для глобальной переменной	 
+m_	префикс для переменной класса	 
+c	константа (префикс для типа)	const
+l	длинный (префикс для типа)	far, long
+p	указатель (префикс для типа)	*
+ch	char	char
+b	байт	BYTE, unsinged char
+w	16-битное слово (2 байта)	WORD, unsigned short
+dw	32-битное слово (4 байта)	DWORD, unsigned long
+n,i	целое	int
+flt	с плавающей точкой	float
+dbl	с плавающей точкой	double
+f	логическое	BOOL
+sz	ASCIZ строка	char[]
+psz	ASCIZ строка	char *
+pcsz	константа ASCIZ строка	const char *
+pv	произвольный указатель	void *
+ppv	указатель на произвольный указатель	void **
+h	хендл	HANDLE, void *
+unk	OLE объект	IUnknown
+punk	указатель на OLE объект	IUnknown *
+disp	Automation объект	IDispatch
+pdisp	указатель на Automation объект	IDispatch *
 */

@@ -6,23 +6,35 @@ extern class CAppLogging	CALog;
 extern class CAppConsole	CACon;
 
 #ifdef DEBUGMODE
+#ifdef DEBUGCONSOLE
 #define debug(fmt, ...)				Cdbg.Debug(fmt, __VA_ARGS__);CACon.WriteDlgConsole(Cdbg.lpGetGlobalMsg());
+#elif DEBUGLOG
+#define debug(fmt, ...)				Cdbg.Debug(fmt, __VA_ARGS__);
+#endif //DEBUGCONSOLE
+
 #else
 #define debug(fmt, ...)
-#endif
+#endif //DEBUGMODE
 
-#ifdef LOGGING
+#ifdef INFOMODE
+#ifdef INFOCONSOLE
 #define info(fmt, ...)				Cdbg.Info(fmt, __VA_ARGS__);CACon.WriteDlgConsole(Cdbg.lpGetGlobalMsg());
-// как бы обойти нестыковку по параметрам
+#elif INFOLOG
+#define info(fmt, ...)				Cdbg.Info(fmt, __VA_ARGS__);
+#endif //INFOCONSOLE
+
 #else
 #define info(fmt, ...)
-#endif
+#endif //INFOMODE
 
 #ifdef WINAPIMSG
+/* для подавления всплывающих сообщений */
 #define errormsg(iMSG, iCategory)	CALog.ErrorMsg(iMSG, iCategory)
 #else
 #define errormsg(iMSG, iCategory)
 #endif
+
+
 
 #define MAXMSGLEN			0x0040		// 64
 

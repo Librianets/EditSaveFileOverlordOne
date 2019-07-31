@@ -1,15 +1,22 @@
-#define Author_0 Librianets
-#include "overlord.h"
+#include <stdio.h> 		// C
+#include <stdlib.h> 	// C
+#include <stdint.h> 	// C
+#include <string.h> 	// C
+#include <ctype.h> 		// C
+#include <sys/stat.h> 	// ??C
+#include <zlib.h>		// zlib
+
+#include "overlord.h" 	// project
 
 int argc_lia = 0;
-char *argv_lia[num_arg];
-char filename[len_arg_max];
+char *argv_lia[num_arg] = {};
+char filename[len_arg_max] = {};
 
 int check_status = 0;
 
-unsigned char *file_input = NULL;
-unsigned char *file_output = NULL;
-unsigned char *file_offset = NULL;
+char *file_input = NULL;
+char *file_output = NULL;
+char *file_offset = NULL;
 int windowBits = -15;
 
 int file_in_num = 0;
@@ -17,9 +24,7 @@ int file_out_num = 0;
 int f_comp = 0;
 int f_decom = 0;
 
-
-
-int table [256] = 
+unsigned int table [256] = 
 {
 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F, 0xE963A535, 
 0x9E6495A3, 0x0EDB8832, 0x79DCB8A4, 0xE0D5E91E, 0x97D2D988, 0x09B64C2B, 

@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+CPU=4
+
 ME=`basename $0`
 function print_help() 
 {
@@ -9,17 +11,21 @@ function print_help()
     echo "Использование: $ME options..."
     echo "Параметры:"
     echo "  -g opt            Cборка gui версии (требуются дополнительные ключи)"
-    echo "  -c                Cборка console версии"
+    echo "  -c opt            Cборка console версии"
     echo "  -h                Справка"
+    echo ""
+    echo "  Параметры console:"
+    echo "  all - сборка console"
+    echo "  debug - вывод переменных"
+    echo "  clean - очистка сборки"
+    echo ""
     echo "  Параметры gui:"
-    echo "  l - сборка libcore"
-    echo "  e - сборка проекта"
-    echo "  f - сборка проекта fast"
-    echo "  d - сборка проекта fast c дебагом"
-    echo "  a - сборка всего (без модулей)"
-    echo "  m - модули"
-    echo "  exp - режим сборки отдельно дебага и релиза"
-    echo "  expf - режим сборки отдельно дебага и релиза (fast)"
+    echo "  all - полная сборка"
+    echo "  alls - тихая сборка"
+    echo "  allfast - быстрая сборка (cpu=$CPU)с"
+    echo "  buildrelease - сборка только релиза"
+    echo "  builddebug - сборка только дебага"
+	echo "  clean - очистка сборки"
     echo
 }
 
@@ -28,73 +34,54 @@ function print_help()
 
 function console_f() 
 {
-    make -f globalmake all_UPAP --eval=console=1
+if [[ $1 = "all" ]]
+then
+    make -f globalmake all_OGUPAP --eval=make_console=1, host_win32=1
+elif [[ $1 = "debug" ]]
+then
+	make -f globalmake debug --eval=make_console=1, host_win32=1
+elif [[ $1 = "clean" ]]
+then
+	make -f globalmake clean --eval=make_console=1, host_win32=1
+else
+	echo "problems function console_f"
+	return 255
+fi
+return 0
 }
 
 function gui_f()
 {
-if [[ $1 = "exp" ]]
+if [[ $1 = "all" ]]
 then
-	make -f globalmake clear 			--eval=gui=1
-	make -f globalmake rebuildlib 		--eval=gui=1
-    make -f globalmake build_project 	--eval=gui=1
-	make -f globalmake strip 			--eval=gui=1
-	
-	make -f globalmake rebuildlib 		--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1
-	make -f globalmake build_project 	--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1
-fi
-
-if [[ $1 = "expf" ]]
+    make -f globalmake all_OGESD --eval=make_gui=1, host_win32=1
+    make -f globalmake all_OGESD --eval=make_gui=1, host_win32=1, debugmode=1
+elif [[ $1 = "alls" ]]
 then
-	make -f globalmake clear 						--eval=gui=1
-	make -f globalmake rebuildlib 					--eval=gui=1 -j 8
-    make -f globalmake build_project_fast_begin 	--eval=gui=1 -j 8
-    make -f globalmake build_project_fast_end 		--eval=gui=1
-	make -f globalmake strip 						--eval=gui=1
-	
-	make -f globalmake rebuildlib 					--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1 -j 8
-	make -f globalmake build_project_fast_begin 	--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1 -j 8
-	make -f globalmake build_project_fast_end 		--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1
-fi
-
-if [[ $1 = "f" ]]
+    make --silent --file=globalmake all_OGESD --eval=make_gui=1, host_win32=1
+    make --silent --file=globalmake all_OGESD --eval=make_gui=1, host_win32=1, debugmode=1
+elif [[ $1 = "allfast" ]]
 then
-	make -f globalmake clear 					--eval=gui=1
-    make -f globalmake build_project_fast_begin --eval=gui=1 -j 8
-	make -f globalmake build_project_fast_end 	--eval=gui=1
-	make -f globalmake strip 					--eval=gui=1
-fi
-
-if [[ $1 = "d" ]]
+    make --silent --file=globalmake all_OGESD_fast_1 --eval=make_gui=1, host_win32=1 -j $CPU
+	make --silent --file=globalmake all_OGESD_fast_1 --eval=make_gui=1, host_win32=1, debugmode=1 -j $CPU
+    make --silent --file=globalmake all_OGESD_fast_2 --eval=make_gui=1, host_win32=1
+    make --silent --file=globalmake all_OGESD_fast_2 --eval=make_gui=1, host_win32=1, debugmode=1
+elif [[ $1 = "debug" ]]
 then
-	make -f globalmake rebuildlib 					--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1
-	make -f globalmake clear --eval=gui=1
-    make -f globalmake build_project_fast_begin 	--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1 -j 8
-	make -f globalmake build_project_fast_end 		--eval=modedebuginfo=1 --eval=modedebuginfoconsole=1 --eval=gui=1
-	make -f globalmake strip --eval=gui=1
-fi
-
-if [[ $1 = "e" ]]
+	make -f globalmake debug --eval=make_gui=1, host_win32=1
+	make -f globalmake debug --eval=make_gui=1, host_win32=1, debugmode=1
+elif [[ $1 = "buildrelease" ]]
 then
-	make -f globalmake clear 			--eval=gui=1
-    make -f globalmake build_project 	--eval=gui=1
-	make -f globalmake strip 			--eval=gui=1
-fi
-
-if [[ $1 = "l" ]]
+	make -f globalmake all_OGESD --eval=make_gui=1, host_win32=1
+elif [[ $1 = "builddebug" ]]
 then
-	make -f globalmake rebuildlib --eval=gui=1
-fi
-
-if [[ $1 = "a" ]]
+	make -f globalmake all_OGESD --eval=make_gui=1, host_win32=1, debugmode=1
+elif [[ $1 = "clean" ]]
 then
-	gui_f l
-	gui_f e
-fi
-
-if [[ $1 = "m" ]]
-then
-	make -f globalmake module --eval=gui=1
+	make -f globalmake clean --eval=make_gui=1, host_win32=1
+else
+	echo "problems function gui_f"
+	return 255
 fi
 
 return 0
@@ -104,10 +91,10 @@ if [ $# = 0 ]; then
     print_help
 fi
 
-while getopts ":hcg:" opt
+while getopts ":hc:g:" opt
 do
     case $opt in
-        c) console_f;;
+        c) console_f $OPTARG;;
         g) gui_f $OPTARG;;
         h) print_help;;
         *) echo "Неправильный параметр";exit 1;;

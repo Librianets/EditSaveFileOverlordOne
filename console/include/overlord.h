@@ -1,12 +1,5 @@
-#include <stdio.h> // C
-#include <stdlib.h> // C
-#include <stdint.h> // C
-#include <string.h> // C
-#include <ctype.h> // C
-#include <sys/stat.h> // ??C
-//#include <direct.h> // win32
-
-#include <zlib.h>
+#ifndef __OVERLORD_H__
+#define __OVERLORD_H__
 
 #define VERprog			"0.1"
 #define VERgame			"1.4"
@@ -25,16 +18,6 @@
 #define checksum 6
 
 #define Z_LIA_SPEED	2
-
-void check_main(int argc, char *argv[num_arg]);
-int error(int val);
-void help_lia (void);
-void switch_lia (void);
-void file_inspection (void);
-void decompression();
-void compression(void);
-int check_crc32(unsigned char *address, unsigned long int outlen);
-int check_sum(unsigned char *address_file);
 
 typedef union val64 rax;
 
@@ -65,19 +48,22 @@ union
 	} info;
 } data_info;
 
-int argc_lia;
-char *argv_lia[num_arg];
-char filename[len_arg_max];
+extern int argc_lia;
+extern char *argv_lia[num_arg];
+extern char filename[len_arg_max];
 
-int check_status;
+extern int check_status;
 
-unsigned char *file_input;
-unsigned char *file_output;
-unsigned char *file_offset;
-int windowBits;
+extern char *file_input;
+extern char *file_output;
+extern char *file_offset;
+extern int windowBits;
 
-int file_in_num;
-int file_out_num;
-int f_comp;
-int f_decom;
-int table [256];
+extern int file_in_num;
+extern int file_out_num;
+extern int f_comp;
+extern int f_decom;
+extern unsigned int table [256];
+
+
+#endif // __OVERLORD_H__

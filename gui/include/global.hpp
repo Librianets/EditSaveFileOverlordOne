@@ -81,5 +81,4 @@ using OESD::CUnpackPack;
 
 */
 
-
 #endif //__GLOBAL_HPP__

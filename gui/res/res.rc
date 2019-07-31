@@ -46,7 +46,7 @@ POPUP "&Инструменты"
 	MENUITEM "&Отобразить консоль", IDI_CONSOLE_SHOW
 	MENUITEM "&Скрыть консоль", IDI_CONSOLE_HIDE
 	MENUITEM SEPARATOR
-	MENUITEM "reserved", 2
+	MENUITEM "Опции", IDI_OPTIONS
 	MENUITEM "reserved", 3
 	MENUITEM "reserved", 4
 }
@@ -108,7 +108,7 @@ CONTROL "IDB_LOGO2", -1, "STATIC", SS_BITMAP, 100, 0, -1, -1
 
 CONTROL "\n Автор: Librianets", -1, "STATIC", WS_EX_TRANSPARENT | SS_CENTER, 0, 50, 200, 20
 CONTROL "\n Реализовано:\n \
-\t 1. Распаковка, запаковка\n \
+\t 1. Распаковка, упаковка \n \
 \t 2. Консоль вывода доп.информации \n \n \
 В стадии реализации: \n \
 \t 1. Редактирование миньонов, вещей, статов \n \

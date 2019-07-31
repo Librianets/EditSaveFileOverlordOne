@@ -156,7 +156,8 @@ void CAppConsole::InitConsole(void)
 	if ((HWND)hWndConsole == NULL) errormsg(ERROR_CREATECONSOLE, APP);
 	hMenuConsole = LoadMenu((HINSTANCE)hInstanceapp, MAKEINTRESOURCE(IDM_MENU_CONSOLE));
 	SetMenu((HWND)hWndConsole, (HMENU)(HMENU)hMenuConsole);
-
+	Cdbg.SetPath(&COA.aPathApp[0x0], COA.iSizePath);
+	info(L"\r\n", L"");
 	info(L"Project: ESD overlord", L"");
 	info(L"\r\nTEST ТЕСТ. i=%i, c=%c, f=%f, s=%ls \r\n", 5, 't', 5.5, L"ТЕСТ TEST");
 }

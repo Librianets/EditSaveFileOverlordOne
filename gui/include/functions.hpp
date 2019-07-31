@@ -70,15 +70,29 @@ public:
 	~COverlordApp();
 	void ClearClass(void);
 	
-	int Init(HINSTANCE hInstance);
+	void Init(HINSTANCE hInstance);
 	int SetPosDlg(HWND hwnd, HWND dia, POINT *pt);
 	HWND CreateMainWndApp(void);
 	void ShowWnd(HWND hWnd);
 	void DlgInit(int numdlg);
 	void PaintWnd(HWND hwnd, HDC hDC2);
 	HDC CreateWnd(HWND hwnd);
+	void ParseCommandLine(PWSTR lpszCmdParam);
 	
+//// class status ////////////////////////
+	int iErrorStatus = 0; 				//
+	int SetErrorStatus (int iError);	//
+	int GetErrorStatus (void);			//
+	void ClearErrorStatus (void);		//
+//// class status ////////////////////////
+
 public:
+
+	LPWSTR *pArgv; 	//	
+	int iArgc;		//
+	vector <wchar_t> aPathApp;
+	int iSizePath;
+
 	AppData 	gapp;
 	DataWnd 	dlgapp[1];
 	HDC 		HdcPaint;
@@ -88,6 +102,7 @@ public:
 	int iSizeWndY = 1023/2;//min 512
 
 private:
+	HWND statusbar;
 	wchar_t sg_WndClass[MAXCLASSNAME] 		= L"Class main window";
 	wchar_t sg_Wnd[MAXCLASSNAME] 			= L"Редактор сохранений игры Overlord";
 	WNDCLASSEX WndCExMain;
@@ -100,7 +115,8 @@ class CGameSaveControl
 public:
 	
 	// public val
-	unsigned long int iNumberReadByte;wchar_t szFileTitle[MAXPATHLEN];
+	unsigned long int iNumberReadByte;
+	wchar_t szFileTitle[MAXPATHLEN];
 	wchar_t szFileName[MAXPATHLEN];
 	// public funcs
 	CGameSaveControl();
@@ -140,6 +156,9 @@ public:
 	
 public:
 	HWND hWndSI[5];
+	//HWND hEditControl[10];
+	//HWND hUpDownControl[10];
+		
 	int iPosSaveInCB[10];
 	WNDCLASSEX WndCExGroupBoxOne;
 	

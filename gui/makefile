@@ -1,123 +1,88 @@
 #project name = overlord game editor save data = OG_ESD
-exe 		= OG_ESD.exe 
 
-w32 		= $(wg)w32/
-w64 		= $(wg)w64/
-temp 		= $(wg)temp/
-log 		= $(wg)log/
-lib 		= $(wg)lib/
-include 	= $(wg)include/
-build 		= $(wg)build/
+##### functions ###############
+
+define fn_GetStatusFile
+$(shell function GetStatus(){ \
+if ( test -f $2 ); \
+then { if ( test $1 -nt $2 ); then echo fn_false; else echo notrebuild; fi; } \
+else echo fn_false; fi; }; GetStatus $1 $2; );
+endef
+### fn_GetStatusFile проверяет существует ли $2, если да, то проверяет модификацию файла $1 относительно $2
+
+##### dir #####
+w32 		= $(d_gui)w32/
+w64 		= $(d_gui)w64/
+temp 		= $(d_gui)temp/
+log 		= $(d_gui)log/
+lib 		= $(d_gui)lib/
+libcore 	= $(d_gui)libcore/
+include 	= $(d_gui)include/
+res 		= $(d_gui)res/
+module 		= $(d_gui)module/
+build 		= $(d_gui)build/
 bui_r 		= $(build)release/
 bui_d 		= $(build)debug/
-res 		= $(wg)res/
-libcore 	= $(wg)libcore/
-sys 		= /usr/i686-w64-mingw32/sys-root/mingw/
+###################################
 
-library		= -l:libz.a -lstdc++ -lcomctl32 -lkernel32 -lcomdlg32 -luser32 -lgdi32 -lgdiplus -l:libwinpthread.a 
-#-lUxTheme 
-projectlib 	= -l:libdebug.a -l:libpacker.a -l:libres.a -l:libsaveinfo.a
-projectopt	= -DLOGGING -DWINAPIMSG
-#-DWINAPIPROJECT -DWINAPICONSOLE -DDWIN32PROJECT
-win32opt	= -mwindows -municode 
-# -D_UNICODE -DUNICODE
-
-I 			= -I$(include) -I$(res) -I$(libcore) 
-L 			= $(projectlib) $(library) -L$(lib) -L$(libcore)
+projectopt	= -DWINAPIMSG -DINFOMODE -DINFOCONSOLE
 debug 		=
+resource 	= libres.a
+prefixdebug = debug
+
+ifdef debugmode
+debug 		+= -g -ggdb
+projectopt 	+= -DDEBUGMODE -DDEBUGLOG -DDEBUGCONSOLE -DINFOLOG
+moduleOne 	= libcore04_$(prefixdebug).a
+exe 		= og_esd_$(prefixdebug).exe
+stripexe	= og_esd_$(prefixdebug)_strip.exe
+else
+moduleOne 	= libcore04.a
+exe 		= og_esd.exe
+stripexe	= og_esd_strip.exe
+endif
+
+library		= -l:libz.a -lstdc++ -lcomctl32 -lkernel32 -lcomdlg32 -luser32 -lgdi32 -l:libwinpthread.a 
+projectlib 	= -l:$(moduleOne) -l:$(resource)
+win32opt	= -mwindows -municode 
 lang 		= -x c++
 
-ifdef modedebuginfo
-debug 		+= -g -ggdb
-endif
-ifdef modedebuginfoconsole
-projectopt 	+= -DDEBUGMODE
-endif
+I 			= -I$(include) -I$(res) -I$(libcore) -I$(module)
+L 			= $(projectlib) $(library) -L$(lib) -L$(libcore) -L$(module)
 
-opt 		= -fno-exceptions -static -static-libgcc -static-libstdc++ $(projectopt) $(win32opt)
-
-
-
-
-# libcore 0.3
-packname 		= packunpack
-debugname 		= debug
-SIname 			= saveinfo
-packlibname 	= libpacker.a
-debuglibname 	= libdebug.a
-SIlibname 		= libsaveinfo.a
+opt 		= $(debug) -fno-exceptions -static -static-libgcc -static-libstdc++ $(projectopt) $(win32opt)
 
 ######
 punt =,
 prob =
 space = $(prob) $(prob)
 ######
-includefile 	= $(notdir $(wildcard $(w32)*.cpp))
-includeobject 	= $(patsubst %.cpp, %.o, $(includefile))
-includeobject_2 = $(subst $(space),$(punt),$(strip $(includeobject)))
-
-build_project_fast_begin: start dir $(includeobject) 
-build_project_fast_end: exe deltemp end
-build_project: start dir $(includeobject) exe deltemp end
-	
-rebuildlib: libdel windres packlib debuglib saveinfolib
-	@echo -e "rebuildlib"
-	@rm -f $(libcore)*.o
-	
-libdel:
-	@rm -f $(libcore)*.a
-	@rm -f $(libcore)*.o
-
-end:
-	@echo -e ""
-	@echo -e "${GREEN}Ending compile project."
-	@echo -e "${YELLOW}Project name -> overlord game editor save data -> OG_ESD$(ECHO_C)"
-
-start:
-	@echo -e "${YELLOW}Start compile project."
-	@echo -e "${GREEN}Project name -> overlord game editor save data -> OG_ESD"
-	@echo -e "$(ECHO_C)"
-
-exe:
-	@echo -e "$(includeobject_2) -->> $(exe)"
-	$(CC) $(temp){$(includeobject_2)} -o $(bui_d)$(exe) $(I) $(L) $(opt) $(debug)
-
-$(includeobject):
-	@echo -e "$*.cpp -->> $*.o"
-	@$(CC) $(lang) -c $(w32)$*.cpp -o $(temp)$*.o $(I) $(opt) $(debug)
-
-saveinfolib:
-	@echo -e "$*.cpp -->> $*.o"
-	@$(CC) $(lang) -c $(libcore)$(SIname).cpp -o $(libcore)$(SIname).o $(I) $(opt)
-	@echo -e "ar SIlib"
-	$(ar) cr $(libcore)$(SIlibname) $(libcore)$(SIname).o
-	@echo -e "ranlib SIlib"
-	$(ranlib) $(libcore)$(SIlibname)
-
-packlib:
-	@echo -e "$*.cpp -->> $*.o"
-	@$(CC) $(lang) -c $(libcore)$(packname).cpp -o $(libcore)$(packname).o $(I) $(opt)
-	@echo -e "ar packlib"
-	$(ar) cr $(libcore)$(packlibname) $(libcore)$(packname).o
-	@echo -e "ranlib packlib"
-	$(ranlib) $(libcore)$(packlibname)
-
-debuglib:
-	@echo -e "$*.cpp -->> $*.o"
-	@$(CC) $(lang) -c $(libcore)$(debugname).cpp -o $(libcore)$(debugname).o $(I) $(opt)
-	@echo -e "ar debuglib"
-	$(ar) cr $(libcore)$(debuglibname) $(libcore)$(debugname).o
-	@echo -e "ranlib debuglib"
-	$(ranlib) $(libcore)$(debuglibname)
-
-windres:
-	@echo -e "res.rc --> libres.a"
-	@$(wres) --input=$(res)res.rc --output=$(libcore)libres.a $(I)
-
-strip:
-	@echo -e "${YELLOW}strip $(exe)$(ECHO_C)"
-	cp $(bui_d)$(exe) $(bui_r)$(exe)
-	@$(strip) $(bui_r)$(exe)
+ifdef debugmode
+win32cpp 		= $(strip $(notdir $(wildcard $(w32)*.cpp)))
+win32obj 		= $(strip $(patsubst %.cpp, %_$(prefixdebug).o, $(win32cpp)))
+win32objsub		= $(strip $(subst $(space),$(punt),$(strip $(win32obj))))
+modulecpp 		= $(strip $(notdir $(wildcard $(module)*.cpp)))
+moduleobj 		= $(strip $(patsubst %.cpp, %_$(prefixdebug).o, $(modulecpp)))
+moduleobjsub	= $(strip $(subst $(space),$(punt),$(strip $(moduleobj))))
+else
+win32cpp 		= $(strip $(notdir $(wildcard $(w32)*.cpp)))
+win32obj 		= $(strip $(patsubst %.cpp, %.o, $(win32cpp)))
+win32objsub		= $(strip $(subst $(space),$(punt),$(strip $(win32obj))))
+modulecpp 		= $(strip $(notdir $(wildcard $(module)*.cpp)))
+moduleobj 		= $(strip $(patsubst %.cpp, %.o, $(modulecpp)))
+moduleobjsub	= $(strip $(subst $(space),$(punt),$(strip $(moduleobj))))
+endif
+####################################################################################################
+debug:
+	@echo "debug start"
+	@echo "$(win32cpp)"
+	@echo "$(win32obj)"
+	@echo "$(win32objsub)"
+	@echo "$(modulecpp)"
+	@echo "$(moduleobj)"
+	@echo "$(moduleobjsub)"
+	@echo "$(CC)"
+	@echo "debug end"
 
 dir:
 	@mkdir -v -p $(w32)
@@ -125,48 +90,99 @@ dir:
 	@mkdir -v -p $(temp)
 	@mkdir -v -p $(log)
 	@mkdir -v -p $(lib)
+	@mkdir -v -p $(libcore)
 	@mkdir -v -p $(include)
+	@mkdir -v -p $(res)
+	@mkdir -v -p $(module)
 	@mkdir -v -p $(build)
 	@mkdir -v -p $(bui_r)
 	@mkdir -v -p $(bui_d)
 	
-clear: deltemp
+clearapp:
+	@rm -f $(bui_d)*.log
+	@rm -f $(bui_r)*.log
+	@rm -f $(temp)$(stripexe)
+	@rm -f $(temp)$(exe)
+
+clearbuild:
 	@rm -f $(bui_d)*.*
 	@rm -f $(bui_r)*.*
+
+clearres:
+	@rm -f $(temp)$(resource)
+	@rm -f $(libcore)$(resource)
+	
+clearmodule:
+	@rm -f $(temp)$(moduleOne)
+	@rm -f $(libcore)$(moduleOne)
 
 deltemp:
 	@rm -f $(temp)*.*
 
-clean: clear
+clean: deltemp clearmodule clearres clearbuild clearapp
 	@echo -e ""
 
+######
+all_OGESD: module app
+	@echo "build end"
 
+all_OGESD_fast_1: $(moduleobj) $(win32obj) windres 
+	@echo "fast_1 end"
 
+all_OGESD_fast_2: moduleranlib cpmodulelib clearapp appbuild
+	@echo "fast_2 end"
+##
+module: echomodule $(moduleobj) moduleranlib cpmodulelib
+	@echo "module end"
 
-###########################################################################################
-############# Тестовая зона... модули на gtk+ не рациональны.
+echomodule:
+	@echo "module start"
 
-module:
-	i686-w64-mingw32-gcc $(wg)module/GTK.cpp -o $(wg)module/gtk.exe \
-	-lz -lstdc++ -lcomctl32 -lcomdlg32 -luser32 \
-	$(sys)lib/libwinpthread.a -L$(lib) -L$(libcore) \
-	-mwindows -static \
-	`PKG_CONFIG_LIBDIR=yes PKG_CONFIG_PATH=/usr/i686-w64-mingw32/sys-root/mingw/lib/pkgconfig/ pkg-config --cflags gio-2.0 gtk+-3.0 librsvg-2.0 --libs gio-2.0 gtk+-3.0 gmodule-2.0 librsvg-2.0 epoxy`
+$(moduleobj):
+	$(if $(strip $(findstring notrebuild,$(call fn_GetStatusFile,\
+	$(module)$(strip $(patsubst %_$(prefixdebug), %, $*)).cpp,$(temp)$*.o))),\
+	@echo -e "${GREEN} not rebuild module $* $(ECHO_DEF)",\
+	@echo -e "${YELLOW} rebuild module $* $(ECHO_DEF)";\
+	$(CC) $(lang) -c $(module)$(strip $(patsubst %_$(prefixdebug), %, $*)).cpp -o $(temp)$*.o $(I) $(opt))
 
-#	-I./../../src/gtk/ \
-#	-I./../../src/glib/glib/ \
-#	-I./../../src/glib/
-#	-static-libgcc -static-libstdc++
+moduleranlib: modulear
+	@$(ranlib) $(temp)$(moduleOne)
 
-#	-O3 -lm \
-#	 \
-#	-I/usr/i686-w64-mingw32/sys-root/mingw/ \
-#	-I/usr/i686-w64-mingw32/sys-root/mingw/lib/ \
-#	-I/usr/i686-w64-mingw32/sys-root/mingw/include/
-	$(strip) $(wg)module/gtk.exe
-#	-I/usr/i686-w64-mingw32/sys-root/mingw/include/gtk-3.0/ \
-#	-I/usr/i686-w64-mingw32/sys-root/mingw/include/glib-2.0/ \
-#	-I/usr/i686-w64-mingw32/sys-root/mingw/lib/glib-2.0/include/ \
-#	r:\usr\i686-w64-mingw32\sys-root\mingw\lib\pkgconfig\
+modulear: clearmodule
+	@$(ar) cr $(temp)$(moduleOne) $(temp){$(moduleobjsub)}
 
-	
+cpmodulelib:
+	@cp $(temp)$(moduleOne) $(libcore)$(moduleOne)
+
+##
+app: echoapp clearapp $(win32obj) windres appbuild
+	@echo "app end"
+
+echoapp:
+	@echo "app start"
+
+$(win32obj):
+	$(if $(strip $(findstring notrebuild,$(call fn_GetStatusFile,\
+	$(w32)$(strip $(patsubst %_$(prefixdebug), %, $*)).cpp,$(temp)$*.o))),\
+	@echo -e "${GREEN} not rebuild $* $(ECHO_DEF)",\
+	@echo -e "${YELLOW} rebuild $* $(ECHO_DEF)";\
+	$(CC) $(lang) -c $(w32)$(strip $(patsubst %_$(prefixdebug), %, $*)).cpp -o $(temp)$*.o $(I) $(opt))
+
+windres: clearres
+	@$(wres) --input=$(res)$(strip $(notdir $(wildcard $(res)*.rc))) --output=$(libcore)$(resource) $(I)
+
+appbuild:
+	$(CC) $(temp){$(win32objsub)} -o $(temp)$(exe) $(I) $(L) $(opt)
+	@cp $(temp)$(exe) $(temp)$(stripexe)
+	@$(strip) $(temp)$(stripexe)
+ifdef debugmode
+	@rm -f $(bui_d)$(exe)
+	@rm -f $(bui_d)$(stripexe)
+	@cp $(temp)$(exe) $(bui_d)$(exe)
+	@cp $(temp)$(stripexe) $(bui_d)$(stripexe)
+else
+	@rm -f $(bui_r)$(exe)
+	@rm -f $(bui_r)$(stripexe)
+	@cp $(temp)$(exe) $(bui_r)$(exe)
+	@cp $(temp)$(stripexe) $(bui_r)$(stripexe)
+endif	
